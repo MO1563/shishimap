@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>領地管理マップ - 獅子の如く</title>
+<style>
+  :root{
+    --bg: #14181a;
+    --panel: #1d2325;
+    --panel-2: #242b2d;
+    --line: #313a3c;
+    --text: #e7e2d3;
+    --text-dim: #9aa3a0;
+    --accent: #b3462f;      /* 朱色 */
+    --accent-2: #c9a24b;    /* 金 */
+    --ok: #6ea56b;
+    --warn: #d94f3a;
+    --grid-line: #2a3234;
+    --grid-line-major: #3a4547;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: var(--bg); color: var(--text);
+    font-family: "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif;
+    overflow: hidden;
+  }
+  #app { display: flex; height: 100vh; width: 100vw; }
+
+  /* ---------- Sidebar ---------- */
+  #sidebar {
+    width: 300px; min-width: 300px;
+    background: var(--panel);
+    border-right: 1px solid var(--line);
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+  .brand {
+    padding: 16px 18px 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  .brand h1 {
+    margin: 0; font-size: 17px; font-weight: 700; letter-spacing: .02em;
+    color: var(--accent-2);
+  }
+  .brand p { margin: 4px 0 0; font-size: 11.5px; color: var(--text-dim); }
+
+  .modes {
+    display: flex; gap: 6px; padding: 12px 14px; border-bottom: 1px solid var(--line);
+  }
+  .mode-btn {
+    flex: 1; padding: 8px 4px; font-size: 12px; border-radius: 6px;
+    border: 1px solid var(--line); background: var(--panel-2); color: var(--text-dim);
+    cursor: pointer; text-align: center; transition: all .12s;
+  }
+  .mode-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .mode-btn:hover:not(.active) { border-color: var(--accent-2); color: var(--text); }
+
+  .section { padding: 12px 14px; border-bottom: 1px solid var(--line); overflow-y: auto; }
+  .section h2 {
+    font-size: 11px; text-transform: none; color: var(--text-dim);
+    margin: 0 0 8px; font-weight: 600; letter-spacing: .03em;
+  }
+
+  .member-add { display: flex; gap: 6px; margin-bottom: 10px; }
+  .member-add input[type=text] {
+    flex: 1; min-width: 0; padding: 6px 8px; font-size: 13px;
+    background: var(--panel-2); border: 1px solid var(--line); border-radius: 5px; color: var(--text);
+  }
+  .member-add input[type=color] {
+    width: 32px; height: 30px; padding: 0; border: 1px solid var(--line); border-radius: 5px; background: none; cursor: pointer;
+  }
+  .member-add button {
+    padding: 6px 10px; font-size: 13px; background: var(--accent); color: #fff;
+    border: none; border-radius: 5px; cursor: pointer;
+  }
+  .member-add button:hover { opacity: .9; }
+
+  #memberList { max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; }
+
+  .land-add { margin-bottom: 10px; display: flex; flex-direction: column; gap: 6px; }
+  .land-add select {
+    width: 100%; padding: 6px 8px; font-size: 13px;
+    background: var(--panel-2); border: 1px solid var(--line); border-radius: 5px; color: var(--text);
+  }
+  .coord-inputs { display: flex; align-items: center; gap: 4px; }
+  .coord-inputs input {
+    width: 0; flex: 1; min-width: 0; padding: 6px 4px; font-size: 12.5px; text-align: center;
+    background: var(--panel-2); border: 1px solid var(--line); border-radius: 5px; color: var(--text);
+    font-variant-numeric: tabular-nums;
+  }
+  .coord-inputs .sep { color: var(--text-dim); font-size: 12px; flex-shrink: 0; }
+  .land-add button {
+    padding: 7px 10px; font-size: 13px; background: var(--accent); color: #fff;
+    border: none; border-radius: 5px; cursor: pointer;
+  }
+  .land-add button:hover { opacity: .9; }  .member-row {
+    display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 6px;
+    background: var(--panel-2); border: 1px solid transparent; cursor: pointer; font-size: 13px;
+  }
+  .member-row.selected { border-color: var(--accent-2); background: #2c2419; }
+  .swatch { width: 13px; height: 13px; border-radius: 3px; flex-shrink: 0; }
+  .member-row .name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .member-row .status { font-size: 10.5px; padding: 1px 6px; border-radius: 4px; white-space: nowrap; }
+  .status.ok { color: var(--ok); }
+  .status.warn { color: #fff; background: var(--warn); }
+  .status.none { color: var(--text-dim); }
+  .member-row .del {
+    color: var(--text-dim); font-size: 13px; padding: 2px 5px; border-radius: 4px; opacity: 0;
+  }
+  .member-row:hover .del { opacity: 1; }
+  .member-row .del:hover { color: var(--warn); }
+
+  #landList { max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; }
+  .land-row {
+    display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 6px;
+    background: var(--panel-2); font-size: 12px; color: var(--text-dim);
+  }
+  .land-row .coord { font-variant-numeric: tabular-nums; flex: 1; }
+  .land-row .del { cursor: pointer; }
+  .land-row .del:hover { color: var(--warn); }
+
+  .hint { font-size: 11.5px; color: var(--text-dim); line-height: 1.6; padding: 12px 14px; }
+  .hint b { color: var(--accent-2); font-weight: 600; }
+
+  .footer-actions {
+    margin-top: auto; padding: 12px 14px; border-top: 1px solid var(--line);
+    display: flex; gap: 8px;
+  }
+  .footer-actions button {
+    flex: 1; padding: 8px; font-size: 12px; border-radius: 6px; cursor: pointer;
+    background: var(--panel-2); border: 1px solid var(--line); color: var(--text);
+  }
+  .footer-actions button:hover { border-color: var(--accent-2); }
+
+  /* ---------- Canvas area ---------- */
+  #canvasWrap { position: relative; flex: 1; overflow: hidden; }
+  canvas { display: block; background: var(--bg); cursor: grab; }
+  canvas.panning { cursor: grabbing; }
+  canvas.mode-land { cursor: crosshair; }
+  canvas.mode-place { cursor: cell; }
+
+  #hud {
+    position: absolute; top: 10px; left: 12px; font-size: 11.5px; color: var(--text-dim);
+    background: rgba(20,24,26,.75); padding: 5px 10px; border-radius: 6px; pointer-events: none;
+    font-variant-numeric: tabular-nums;
+  }
+  #zoomCtrl {
+    position: absolute; bottom: 14px; right: 14px; display: flex; flex-direction: column; gap: 6px;
+  }
+  #zoomCtrl button {
+    width: 32px; height: 32px; border-radius: 6px; background: var(--panel);
+    border: 1px solid var(--line); color: var(--text); font-size: 16px; cursor: pointer;
+  }
+  #zoomCtrl button:hover { border-color: var(--accent-2); }
+
+  #assignBar {
+    position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+    background: var(--panel); border: 1px solid var(--accent-2); border-radius: 8px;
+    padding: 8px 12px; font-size: 12.5px; display: none; align-items: center; gap: 10px;
+  }
+  #assignBar.show { display: flex; }
+  #assignBar select {
+    background: var(--panel-2); color: var(--text); border: 1px solid var(--line); border-radius: 5px; padding: 4px 6px; font-size: 12.5px;
+  }
+  #assignBar button { padding: 5px 10px; border-radius: 5px; border: none; cursor: pointer; font-size: 12px; }
+  #assignBar .confirm { background: var(--accent); color: #fff; }
+  #assignBar .cancel { background: var(--panel-2); color: var(--text-dim); }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="sidebar">
+    <div class="brand">
+      <h1>領地管理マップ</h1>
+      <p>一族の配置と割り当て地の可視化</p>
+    </div>
+
+    <div class="modes">
+      <div class="mode-btn active" data-mode="view">表示</div>
+      <div class="mode-btn" data-mode="land">土地作成</div>
+      <div class="mode-btn" data-mode="place">配置</div>
+    </div>
+
+    <div class="section" style="border-bottom:none; padding-bottom:0;">
+      <h2>メンバー</h2>
+      <div class="member-add">
+        <input type="text" id="memberName" placeholder="名前を入力">
+        <input type="color" id="memberColor" value="#c9a24b">
+        <button id="addMemberBtn">追加</button>
+      </div>
+      <div id="memberList"></div>
+    </div>
+
+    <div class="section">
+      <h2>割り当て済みの土地</h2>
+      <div class="land-add">
+        <select id="landAddMember"></select>
+        <div class="coord-inputs">
+          <input type="number" id="landX1" placeholder="X1">
+          <input type="number" id="landY1" placeholder="Y1">
+          <span class="sep">〜</span>
+          <input type="number" id="landX2" placeholder="X2">
+          <input type="number" id="landY2" placeholder="Y2">
+        </div>
+        <button id="addLandBtn">土地を追加</button>
+      </div>
+      <div id="landList"></div>
+    </div>
+
+    <div class="hint" id="modeHint">
+      メンバーを選択してから、<b>土地作成</b>モードでドラッグして矩形の土地を割り当てます。<b>配置</b>モードではマスをクリックして現在地を置きます。
+    </div>
+
+    <div class="footer-actions">
+      <button id="exportBtn">JSON書き出し</button>
+      <button id="importBtn">読み込み</button>
+      <input type="file" id="importFile" accept="application/json" style="display:none;">
+    </div>
+  </div>
+
+  <div id="canvasWrap">
+    <canvas id="mapCanvas"></canvas>
+    <div id="hud">x: 0, y: 0</div>
+    <div id="assignBar">
+      <span>この土地を割り当てる:</span>
+      <select id="assignSelect"></select>
+      <button class="confirm" id="assignConfirm">割り当て</button>
+      <button class="cancel" id="assignCancel">取消</button>
+    </div>
+    <div id="zoomCtrl">
+      <button id="zoomIn">+</button>
+      <button id="zoomOut">−</button>
+      <button id="zoomReset">⌂</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  const STORAGE_KEY = "shishi_land_management_v1";
+  const CELL = 22; // world px per cell at scale=1
+
+  // マップ全体の範囲（4隅座標）: X200-439, Y760-999
+  const MAP_BOUNDS = { x1: 200, y1: 760, x2: 439, y2: 999 };
+
+  // ---------------- State ----------------
+  let state = {
+    members: [],   // {id, name, color}
+    lands: [],     // {id, memberId, x1, y1, x2, y2}  (inclusive cell coords, 矩形の土地)
+    freeformCells: {}, // "x,y" -> memberId  (自由形状の土地セル)
+    positions: {}, // memberId -> {x, y}
+    selectedMemberId: null
+  };
+
+  function uid() { return Math.random().toString(36).slice(2, 10); }
+
+  function load() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        state = Object.assign(state, parsed);
+      }
+    } catch(e) { console.warn("load failed", e); }
+  }
+  let saveTimer = null;
+  function save() {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }, 150);
+  }
+
+  // ---------------- Canvas / viewport ----------------
+  const canvas = document.getElementById("mapCanvas");
+  const ctx = canvas.getContext("2d");
+  const wrap = document.getElementById("canvasWrap");
+  const hud = document.getElementById("hud");
+
+  let view = { offsetX: 200, offsetY: 200, scale: 1 };
+  let mode = "view";
+  let dpr = Math.max(1, window.devicePixelRatio || 1);
+
+  // マップ回転: X439,Y760(北東の角)が南(画面下)に来るよう135°回転
+  const MAP_ROTATION_DEG = 135;
+  const MAP_ROTATION_RAD = MAP_ROTATION_DEG * Math.PI / 180;
+  const ROT_COS = Math.cos(MAP_ROTATION_RAD);
+  const ROT_SIN = Math.sin(MAP_ROTATION_RAD);
+  const CENTER_WX = (MAP_BOUNDS.x1 + MAP_BOUNDS.x2 + 1) / 2 * CELL;
+  const CENTER_WY = (MAP_BOUNDS.y1 + MAP_BOUNDS.y2 + 1) / 2 * CELL;
+
+  function computeEffectiveBounds() {
+    let x1 = MAP_BOUNDS.x1, y1 = MAP_BOUNDS.y1, x2 = MAP_BOUNDS.x2, y2 = MAP_BOUNDS.y2;
+    state.lands.forEach(l => {
+      x1 = Math.min(x1, l.x1); y1 = Math.min(y1, l.y1);
+      x2 = Math.max(x2, l.x2); y2 = Math.max(y2, l.y2);
+    });
+    Object.keys(state.freeformCells).forEach(key => {
+      const parts = key.split(",");
+      const kx = parseInt(parts[0], 10), ky = parseInt(parts[1], 10);
+      x1 = Math.min(x1, kx); y1 = Math.min(y1, ky);
+      x2 = Math.max(x2, kx); y2 = Math.max(y2, ky);
+    });
+    return { x1, y1, x2, y2 };
+  }
+
+  function rotateFwd(dx, dy) {
+    const r = { x: dx * ROT_COS - dy * ROT_SIN, y: dx * ROT_SIN + dy * ROT_COS };
+    // 南北軸(y)を保ったまま東西(x)を反転
+    return { x: -r.x, y: r.y };
+  }
+  function rotateInv(dx, dy) {
+    const ux = -dx, uy = dy; // 東西反転を先に戻す
+    return { x: ux * ROT_COS + uy * ROT_SIN, y: -ux * ROT_SIN + uy * ROT_COS };
+  }
+
+  let hasFitOnce = false;
+  function resizeCanvas() {
+    const r = wrap.getBoundingClientRect();
+    canvas.width = Math.floor(r.width * dpr);
+    canvas.height = Math.floor(r.height * dpr);
+    canvas.style.width = r.width + "px";
+    canvas.style.height = r.height + "px";
+    if (!hasFitOnce) { fitViewToBounds(); hasFitOnce = true; }
+    draw();
+  }
+  window.addEventListener("resize", resizeCanvas);
+
+  function fitViewToBounds() {
+    const cw = canvas.width / dpr, ch = canvas.height / dpr;
+    if (cw === 0 || ch === 0) return;
+    const b = computeEffectiveBounds();
+    const corners = [
+      [b.x1 * CELL, b.y1 * CELL],
+      [(b.x2 + 1) * CELL, b.y1 * CELL],
+      [b.x1 * CELL, (b.y2 + 1) * CELL],
+      [(b.x2 + 1) * CELL, (b.y2 + 1) * CELL]
+    ];
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    corners.forEach(([px, py]) => {
+      const r = rotateFwd(px - CENTER_WX, py - CENTER_WY);
+      minX = Math.min(minX, r.x); maxX = Math.max(maxX, r.x);
+      minY = Math.min(minY, r.y); maxY = Math.max(maxY, r.y);
+    });
+    const boundsW = maxX - minX, boundsH = maxY - minY;
+    const pad = 60; // 画面余白(px)、座標ラベル分の余裕
+    const scaleX = (cw - pad * 2) / boundsW;
+    const scaleY = (ch - pad * 2) / boundsH;
+    view.scale = Math.min(8, Math.max(0.05, Math.min(scaleX, scaleY)));
+    view.offsetX = cw / 2;
+    view.offsetY = ch / 2;
+  }
+
+  function worldToScreen(wx, wy) {
+    const dx = wx * CELL - CENTER_WX;
+    const dy = wy * CELL - CENTER_WY;
+    const r = rotateFwd(dx, dy);
+    return { x: r.x * view.scale + view.offsetX, y: r.y * view.scale + view.offsetY };
+  }
+  function screenToWorldCell(sx, sy) {
+    const rx = (sx - view.offsetX) / view.scale;
+    const ry = (sy - view.offsetY) / view.scale;
+    const u = rotateInv(rx, ry);
+    const wx = (u.x + CENTER_WX) / CELL;
+    const wy = (u.y + CENTER_WY) / CELL;
+    return { x: Math.floor(wx), y: Math.floor(wy) };
+  }
+
+  // 世界座標の矩形(x1,y1)-(x2+1,y2+1)を回転を考慮した四角形として描画
+  function drawWorldRect(x1, y1, x2, y2, opts) {
+    const pts = [
+      worldToScreen(x1, y1),
+      worldToScreen(x2, y1),
+      worldToScreen(x2, y2),
+      worldToScreen(x1, y2)
+    ];
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x, pts[0].y);
+    for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
+    ctx.closePath();
+    if (opts.dash) ctx.setLineDash(opts.dash);
+    if (opts.fill) { ctx.fillStyle = opts.fill; ctx.fill(); }
+    if (opts.stroke) { ctx.strokeStyle = opts.stroke; ctx.lineWidth = opts.lineWidth || 1; ctx.stroke(); }
+    if (opts.dash) ctx.setLineDash([]);
+    return pts;
+  }
+
+  // ---------------- Drawing ----------------
+  function draw() {
+    const w = canvas.width, h = canvas.height;
+    ctx.save();
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const cw = canvas.width / dpr, ch = canvas.height / dpr;
+    ctx.clearRect(0, 0, cw, ch);
+    ctx.fillStyle = "#14181a";
+    ctx.fillRect(0, 0, cw, ch);
+
+    const cellPx = CELL * view.scale;
+
+    // visible cell range (virtualization: only compute/draw what's on screen)
+    const topLeft = screenToWorldCell(0, 0);
+    const bottomRight = screenToWorldCell(cw, ch);
+    const x0 = topLeft.x - 1, x1 = bottomRight.x + 1;
+    const y0 = topLeft.y - 1, y1 = bottomRight.y + 1;
+
+    // grid lines only if cells are big enough to be legible (回転を考慮し、各線をワールド座標の両端から描画)
+    if (cellPx > 3) {
+      ctx.lineWidth = 1;
+      for (let gx = x0; gx <= x1; gx++) {
+        const a = worldToScreen(gx, y0), b = worldToScreen(gx, y1);
+        ctx.strokeStyle = (gx % 10 === 0) ? "#3a4547" : "#2a3234";
+        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+      }
+      for (let gy = y0; gy <= y1; gy++) {
+        const a = worldToScreen(x0, gy), b = worldToScreen(x1, gy);
+        ctx.strokeStyle = (gy % 10 === 0) ? "#3a4547" : "#2a3234";
+        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+      }
+    }
+
+    // マップ全体の範囲枠（後から追加した土地も含めて自動拡張）
+    {
+      const b = computeEffectiveBounds();
+      const pts = drawWorldRect(b.x1, b.y1, b.x2 + 1, b.y2 + 1, { stroke: "#c9a24b", lineWidth: 3 });
+
+      ctx.font = "bold 11px sans-serif";
+      const corners = [
+        { x: b.x1, y: b.y1, pt: pts[0] },
+        { x: b.x2, y: b.y1, pt: pts[1] },
+        { x: b.x2, y: b.y2, pt: pts[2] },
+        { x: b.x1, y: b.y2, pt: pts[3] }
+      ];
+      corners.forEach(c => {
+        const label = `X${c.x}, Y${c.y}`;
+        ctx.textAlign = "center";
+        const tw = ctx.measureText(label).width;
+        ctx.fillStyle = "rgba(20,24,26,.85)";
+        ctx.fillRect(c.pt.x - tw / 2 - 2, c.pt.y - 16, tw + 4, 13);
+        ctx.fillStyle = "#c9a24b";
+        ctx.fillText(label, c.pt.x, c.pt.y - 6);
+      });
+    }
+
+    // lands
+    const memberById = {};
+    state.members.forEach(m => memberById[m.id] = m);
+
+    state.lands.forEach(land => {
+      const m = memberById[land.memberId];
+      if (!m) return;
+      const p1 = worldToScreen(land.x1, land.y1);
+      const p2 = worldToScreen(land.x2 + 1, land.y1);
+      const p3 = worldToScreen(land.x2 + 1, land.y2 + 1);
+      const p4 = worldToScreen(land.x1, land.y2 + 1);
+      // culling (回転後のバウンディングボックスで判定)
+      const allX = [p1.x, p2.x, p3.x, p4.x], allY = [p1.y, p2.y, p3.y, p4.y];
+      const bMinX = Math.min(...allX), bMaxX = Math.max(...allX);
+      const bMinY = Math.min(...allY), bMaxY = Math.max(...allY);
+      if (bMaxX < 0 || bMaxY < 0 || bMinX > cw || bMinY > ch) return;
+
+      const centerPt = { x: (bMinX + bMaxX) / 2, y: (bMinY + bMaxY) / 2 };
+
+      drawWorldRect(land.x1, land.y1, land.x2 + 1, land.y2 + 1, {
+        fill: m.color + "33", stroke: m.color, lineWidth: 2
+      });
+
+      // corner coordinate labels (always shown)
+      if (cellPx > 6) {
+        ctx.font = "10px sans-serif";
+        const corners = [
+          { x: land.x1, y: land.y1, pt: p1 },
+          { x: land.x2, y: land.y1, pt: p2 },
+          { x: land.x2, y: land.y2, pt: p3 },
+          { x: land.x1, y: land.y2, pt: p4 }
+        ];
+        corners.forEach(c => {
+          const label = `${c.x},${c.y}`;
+          ctx.textAlign = "center";
+          const tw = ctx.measureText(label).width;
+          // ラベルを土地の中心方向に少しオフセットして重なりを避ける
+          const ox = (centerPt.x - c.pt.x) * 0.12, oy = (centerPt.y - c.pt.y) * 0.12;
+          const lx = c.pt.x + ox, ly = c.pt.y + oy;
+          ctx.fillStyle = "rgba(20,24,26,.8)";
+          ctx.fillRect(lx - tw / 2 - 2, ly - 9, tw + 4, 12);
+          ctx.fillStyle = "#e7e2d3";
+          ctx.fillText(label, lx, ly);
+        });
+      }
+
+      // member name centered in land
+      if (cellPx > 10) {
+        ctx.fillStyle = "#e7e2d3cc";
+        ctx.font = "bold 11px sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText(m.name, centerPt.x, centerPt.y);
+      }
+    });
+
+    // 自由形状の土地セル
+    {
+      const fc = state.freeformCells;
+      for (let gx = x0; gx <= x1; gx++) {
+        for (let gy = y0; gy <= y1; gy++) {
+          const key = gx + "," + gy;
+          const ownerId = fc[key];
+          if (!ownerId) continue;
+          const m = memberById[ownerId];
+          if (!m) continue;
+          const p1 = worldToScreen(gx, gy);
+          const p2 = worldToScreen(gx + 1, gy);
+          const p3 = worldToScreen(gx + 1, gy + 1);
+          const p4 = worldToScreen(gx, gy + 1);
+          ctx.beginPath();
+          ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.lineTo(p3.x, p3.y); ctx.lineTo(p4.x, p4.y);
+          ctx.closePath();
+          ctx.fillStyle = m.color + "40";
+          ctx.fill();
+
+          // 隣接セルが別所有者/未所有なら境界線として描画（形の輪郭を分かりやすくする）
+          ctx.strokeStyle = m.color;
+          ctx.lineWidth = 2;
+          const edges = [
+            { nk: (gx) + "," + (gy - 1), a: p1, b: p2 },
+            { nk: (gx) + "," + (gy + 1), a: p4, b: p3 },
+            { nk: (gx - 1) + "," + (gy), a: p1, b: p4 },
+            { nk: (gx + 1) + "," + (gy), a: p2, b: p3 }
+          ];
+          edges.forEach(edge => {
+            if (fc[edge.nk] !== ownerId) {
+              ctx.beginPath(); ctx.moveTo(edge.a.x, edge.a.y); ctx.lineTo(edge.b.x, edge.b.y); ctx.stroke();
+            }
+          });
+        }
+      }
+    }
+
+    // drag-select preview (land creation)
+    if (dragSelect) {
+      const x1 = Math.min(dragSelect.x0, dragSelect.x1);
+      const y1 = Math.min(dragSelect.y0, dragSelect.y1);
+      const x2 = Math.max(dragSelect.x0, dragSelect.x1);
+      const y2 = Math.max(dragSelect.y0, dragSelect.y1);
+      drawWorldRect(x1, y1, x2 + 1, y2 + 1, { fill: "#c9a24b33", stroke: "#c9a24b", lineWidth: 1, dash: [4, 3] });
+    }
+
+    // members (pins)
+    state.members.forEach(m => {
+      const pos = state.positions[m.id];
+      if (!pos) return;
+      const center = worldToScreen(pos.x + 0.5, pos.y + 0.5);
+      if (center.x < -20 || center.y < -20 || center.x > cw + 20 || center.y > ch + 20) return;
+
+      const outside = isOutsideOwnLand(m.id);
+      const r = Math.max(5, Math.min(9, cellPx * 0.32));
+
+      if (outside) {
+        ctx.beginPath();
+        ctx.arc(center.x, center.y, r + 4, 0, Math.PI * 2);
+        ctx.strokeStyle = "#d94f3a";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+      ctx.beginPath();
+      ctx.arc(center.x, center.y, r, 0, Math.PI * 2);
+      ctx.fillStyle = m.color;
+      ctx.fill();
+      ctx.strokeStyle = "#14181a";
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      if (cellPx > 8) {
+        ctx.font = "10px sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillStyle = "#14181a";
+        ctx.fillRect(center.x - 20, center.y + r + 2, 40, 0); // no-op sizing guard
+        ctx.fillStyle = "#e7e2d3";
+        ctx.fillText(m.name, center.x, center.y - r - 4);
+      }
+    });
+
+    ctx.restore();
+  }
+
+  function isOutsideOwnLand(memberId) {
+    const pos = state.positions[memberId];
+    if (!pos) return false;
+    const ownLands = state.lands.filter(l => l.memberId === memberId);
+    const key = `${pos.x},${pos.y}`;
+    const ownsFreeformHere = state.freeformCells[key] === memberId;
+    const hasAnyFreeform = Object.values(state.freeformCells).includes(memberId);
+    if (ownLands.length === 0 && !hasAnyFreeform) return false; // 土地未割当なら警告なし
+    const insideRect = ownLands.some(l => pos.x >= l.x1 && pos.x <= l.x2 && pos.y >= l.y1 && pos.y <= l.y2);
+    return !(insideRect || ownsFreeformHere);
+  }
+
+  // ---------------- Interaction ----------------
+  let isPanning = false, panStart = null, viewStart = null;
+  let dragSelect = null; // {x0,y0,x1,y1} in cell coords, land-creation drag
+  let pendingLandRect = null;
+  let freeformPaint = null; // {action:'add'|'remove', memberId}
+
+  function applyFreeformPaint(x, y) {
+    const key = x + "," + y;
+    if (freeformPaint.action === "add") {
+      state.freeformCells[key] = freeformPaint.memberId;
+    } else if (state.freeformCells[key] === freeformPaint.memberId) {
+      delete state.freeformCells[key];
+    }
+  }
+
+  canvas.addEventListener("mousedown", (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const sx = e.clientX - rect.left, sy = e.clientY - rect.top;
+
+    if (mode === "land" && e.button === 0) {
+      const c = screenToWorldCell(sx, sy);
+      if (e.shiftKey) {
+        if (!state.selectedMemberId) { flashHint("先にメンバーを選択してください"); return; }
+        const key = c.x + "," + c.y;
+        const alreadyOwned = state.freeformCells[key] === state.selectedMemberId;
+        freeformPaint = { action: alreadyOwned ? "remove" : "add", memberId: state.selectedMemberId };
+        applyFreeformPaint(c.x, c.y);
+        draw();
+        return;
+      }
+      dragSelect = { x0: c.x, y0: c.y, x1: c.x, y1: c.y };
+      return;
+    }
+    if (mode === "place" && e.button === 0) {
+      if (!state.selectedMemberId) { flashHint("先にメンバーを選択してください"); return; }
+      const c = screenToWorldCell(sx, sy);
+      state.positions[state.selectedMemberId] = { x: c.x, y: c.y };
+      save(); draw(); renderMemberList();
+      return;
+    }
+    // pan (view mode, or middle/right drag anywhere)
+    isPanning = true;
+    panStart = { x: e.clientX, y: e.clientY };
+    viewStart = { x: view.offsetX, y: view.offsetY };
+    canvas.classList.add("panning");
+  });
+
+  window.addEventListener("mousemove", (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const sx = e.clientX - rect.left, sy = e.clientY - rect.top;
+    const c = screenToWorldCell(sx, sy);
+    hud.textContent = `x: ${c.x}, y: ${c.y}`;
+
+    if (dragSelect) {
+      dragSelect.x1 = c.x; dragSelect.y1 = c.y;
+      draw();
+      return;
+    }
+    if (freeformPaint) {
+      applyFreeformPaint(c.x, c.y);
+      draw();
+      return;
+    }
+    if (isPanning) {
+      view.offsetX = viewStart.x + (e.clientX - panStart.x);
+      view.offsetY = viewStart.y + (e.clientY - panStart.y);
+      draw();
+    }
+  });
+
+  window.addEventListener("mouseup", () => {
+    if (isPanning) { isPanning = false; canvas.classList.remove("panning"); }
+    if (freeformPaint) {
+      freeformPaint = null;
+      save(); draw(); renderLandList(); renderMemberList();
+    }
+    if (dragSelect) {
+      const x1 = Math.min(dragSelect.x0, dragSelect.x1);
+      const y1 = Math.min(dragSelect.y0, dragSelect.y1);
+      const x2 = Math.max(dragSelect.x0, dragSelect.x1);
+      const y2 = Math.max(dragSelect.y0, dragSelect.y1);
+      dragSelect = null;
+      pendingLandRect = { x1, y1, x2, y2 };
+      openAssignBar();
+      draw();
+    }
+  });
+
+  canvas.addEventListener("wheel", (e) => {
+    e.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    const sx = e.clientX - rect.left, sy = e.clientY - rect.top;
+    const worldBefore = { x: (sx - view.offsetX) / view.scale, y: (sy - view.offsetY) / view.scale };
+    const factor = e.deltaY > 0 ? 0.88 : 1.12;
+    view.scale = Math.min(8, Math.max(0.05, view.scale * factor));
+    view.offsetX = sx - worldBefore.x * view.scale;
+    view.offsetY = sy - worldBefore.y * view.scale;
+    draw();
+  }, { passive: false });
+
+  document.getElementById("zoomIn").onclick = () => zoomStep(1.2);
+  document.getElementById("zoomOut").onclick = () => zoomStep(0.83);
+  document.getElementById("zoomReset").onclick = () => { fitViewToBounds(); draw(); };
+  function zoomStep(f) {
+    const cw = canvas.width / dpr, ch = canvas.height / dpr;
+    const worldBefore = { x: (cw/2 - view.offsetX) / view.scale, y: (ch/2 - view.offsetY) / view.scale };
+    view.scale = Math.min(8, Math.max(0.05, view.scale * f));
+    view.offsetX = cw/2 - worldBefore.x * view.scale;
+    view.offsetY = ch/2 - worldBefore.y * view.scale;
+    draw();
+  }
+
+  // ---------------- Assign bar (land creation confirm) ----------------
+  const assignBar = document.getElementById("assignBar");
+  const assignSelect = document.getElementById("assignSelect");
+
+  function openAssignBar() {
+    assignSelect.innerHTML = "";
+    state.members.forEach(m => {
+      const opt = document.createElement("option");
+      opt.value = m.id; opt.textContent = m.name;
+      if (m.id === state.selectedMemberId) opt.selected = true;
+      assignSelect.appendChild(opt);
+    });
+    if (state.members.length === 0) {
+      flashHint("先にメンバーを追加してください");
+      pendingLandRect = null;
+      return;
+    }
+    assignBar.classList.add("show");
+  }
+  document.getElementById("assignConfirm").onclick = () => {
+    if (!pendingLandRect || !assignSelect.value) return;
+    state.lands.push(Object.assign({ id: uid(), memberId: assignSelect.value }, pendingLandRect));
+    pendingLandRect = null;
+    assignBar.classList.remove("show");
+    save(); draw(); renderLandList(); renderMemberList();
+  };
+  document.getElementById("assignCancel").onclick = () => {
+    pendingLandRect = null;
+    assignBar.classList.remove("show");
+    draw();
+  };
+
+  // ---------------- Mode switching ----------------
+  document.querySelectorAll(".mode-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".mode-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      mode = btn.dataset.mode;
+      canvas.classList.remove("mode-land", "mode-place");
+      if (mode === "land") canvas.classList.add("mode-land");
+      if (mode === "place") canvas.classList.add("mode-place");
+      updateHint();
+    });
+  });
+  function updateHint() {
+    const hint = document.getElementById("modeHint");
+    if (mode === "land") hint.innerHTML = "地図上をドラッグして矩形の土地を割り当てます。<b>Shift+クリック（ドラッグ可）</b>でマス目を1つずつ追加/削除し、自由形状の土地を作れます。";
+    else if (mode === "place") hint.innerHTML = "サイドバーでメンバーを選択し、地図上のマスをクリックして現在地を配置します。";
+    else hint.innerHTML = "ドラッグで地図を移動、ホイールでズームできます。<b>土地作成</b> / <b>配置</b>モードで編集します。";
+  }
+  function flashHint(msg) {
+    const hint = document.getElementById("modeHint");
+    const old = hint.innerHTML;
+    hint.innerHTML = `<b>${msg}</b>`;
+    setTimeout(() => { hint.innerHTML = old; }, 1800);
+  }
+
+  // ---------------- Member management ----------------
+  document.getElementById("addMemberBtn").onclick = addMember;
+  document.getElementById("memberName").addEventListener("keydown", (e) => { if (e.key === "Enter") addMember(); });
+
+  function addMember() {
+    const nameInput = document.getElementById("memberName");
+    const colorInput = document.getElementById("memberColor");
+    const name = nameInput.value.trim();
+    if (!name) return;
+    const m = { id: uid(), name, color: colorInput.value };
+    state.members.push(m);
+    state.selectedMemberId = m.id;
+    nameInput.value = "";
+    // cycle color a bit for the next add
+    save(); renderMemberList(); renderLandList(); draw();
+  }
+
+  function renderMemberList() {
+    const listEl = document.getElementById("memberList");
+    listEl.innerHTML = "";
+    state.members.forEach(m => {
+      const row = document.createElement("div");
+      row.className = "member-row" + (m.id === state.selectedMemberId ? " selected" : "");
+      const pos = state.positions[m.id];
+      const hasLand = state.lands.some(l => l.memberId === m.id) || Object.values(state.freeformCells).includes(m.id);
+      let statusHtml;
+      if (!pos) statusHtml = `<span class="status none">未配置</span>`;
+      else if (isOutsideOwnLand(m.id)) statusHtml = `<span class="status warn">はみ出し</span>`;
+      else if (hasLand) statusHtml = `<span class="status ok">領内</span>`;
+      else statusHtml = `<span class="status none">土地未割当</span>`;
+
+      row.innerHTML = `
+        <span class="swatch" style="background:${m.color}"></span>
+        <span class="name">${escapeHtml(m.name)}</span>
+        ${statusHtml}
+        <span class="del" data-id="${m.id}" title="削除">✕</span>
+      `;
+      row.addEventListener("click", (e) => {
+        if (e.target.classList.contains("del")) return;
+        state.selectedMemberId = m.id;
+        save(); renderMemberList();
+      });
+      row.querySelector(".del").addEventListener("click", (e) => {
+        e.stopPropagation();
+        state.members = state.members.filter(x => x.id !== m.id);
+        state.lands = state.lands.filter(l => l.memberId !== m.id);
+        Object.keys(state.freeformCells).forEach(k => {
+          if (state.freeformCells[k] === m.id) delete state.freeformCells[k];
+        });
+        delete state.positions[m.id];
+        if (state.selectedMemberId === m.id) state.selectedMemberId = null;
+        save(); renderMemberList(); renderLandList(); draw();
+      });
+      listEl.appendChild(row);
+    });
+  }
+
+  document.getElementById("addLandBtn").onclick = () => {
+    const memberSel = document.getElementById("landAddMember");
+    const memberId = memberSel.value;
+    if (!memberId) { flashHint("先にメンバーを追加してください"); return; }
+
+    const xEl1 = document.getElementById("landX1"), yEl1 = document.getElementById("landY1");
+    const xEl2 = document.getElementById("landX2"), yEl2 = document.getElementById("landY2");
+    const rawX1 = xEl1.value, rawY1 = yEl1.value, rawX2 = xEl2.value, rawY2 = yEl2.value;
+    if (rawX1 === "" || rawY1 === "" || rawX2 === "" || rawY2 === "") {
+      flashHint("X1・Y1・X2・Y2をすべて入力してください");
+      return;
+    }
+    const nx1 = parseInt(rawX1, 10), ny1 = parseInt(rawY1, 10);
+    const nx2 = parseInt(rawX2, 10), ny2 = parseInt(rawY2, 10);
+    if ([nx1, ny1, nx2, ny2].some(v => Number.isNaN(v))) {
+      flashHint("座標は整数で入力してください");
+      return;
+    }
+
+    const land = {
+      id: uid(),
+      memberId,
+      x1: Math.min(nx1, nx2), x2: Math.max(nx1, nx2),
+      y1: Math.min(ny1, ny2), y2: Math.max(ny1, ny2)
+    };
+    state.lands.push(land);
+    xEl1.value = ""; yEl1.value = ""; xEl2.value = ""; yEl2.value = "";
+    save(); draw(); renderLandList(); renderMemberList();
+
+    // 入力範囲が画面外の場合は見えるように移動
+    const cw = canvas.width / dpr, ch = canvas.height / dpr;
+    const center = worldToScreen((land.x1 + land.x2 + 1) / 2, (land.y1 + land.y2 + 1) / 2);
+    if (center.x < 0 || center.y < 0 || center.x > cw || center.y > ch) {
+      view.offsetX += cw / 2 - center.x;
+      view.offsetY += ch / 2 - center.y;
+      draw();
+    }
+  };
+
+  function renderLandAddMemberOptions() {
+    const sel = document.getElementById("landAddMember");
+    const prevValue = sel.value;
+    sel.innerHTML = "";
+    state.members.forEach(m => {
+      const opt = document.createElement("option");
+      opt.value = m.id; opt.textContent = m.name;
+      sel.appendChild(opt);
+    });
+    if (state.members.some(m => m.id === prevValue)) sel.value = prevValue;
+    else if (state.selectedMemberId) sel.value = state.selectedMemberId;
+  }
+
+  function renderLandList() {
+    renderLandAddMemberOptions();
+    const listEl = document.getElementById("landList");
+    listEl.innerHTML = "";
+    const memberById = {};
+    state.members.forEach(m => memberById[m.id] = m);
+    state.lands.forEach(l => {
+      const m = memberById[l.memberId];
+      const row = document.createElement("div");
+      row.className = "land-row";
+      row.innerHTML = `
+        <span class="swatch" style="background:${m ? m.color : '#666'}"></span>
+        <span class="coord">${m ? escapeHtml(m.name) : "?"}: (${l.x1},${l.y1})–(${l.x2},${l.y2})</span>
+        <span class="del" title="削除">✕</span>
+      `;
+      row.querySelector(".del").addEventListener("click", () => {
+        state.lands = state.lands.filter(x => x.id !== l.id);
+        save(); renderLandList(); renderMemberList(); draw();
+      });
+      listEl.appendChild(row);
+    });
+  }
+
+  function escapeHtml(s) {
+    return s.replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  }
+
+  // ---------------- Export / Import ----------------
+  document.getElementById("exportBtn").onclick = () => {
+    const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = "領地管理データ.json";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+  document.getElementById("importBtn").onclick = () => document.getElementById("importFile").click();
+  document.getElementById("importFile").addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const parsed = JSON.parse(reader.result);
+        state = Object.assign({ members: [], lands: [], freeformCells: {}, positions: {}, selectedMemberId: null }, parsed);
+        save(); renderMemberList(); renderLandList(); draw();
+      } catch(err) {
+        alert("読み込みに失敗しました。JSON形式を確認してください。");
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = "";
+  });
+
+  // ---------------- Init ----------------
+  load();
+  renderMemberList();
+  renderLandList();
+  updateHint();
+  resizeCanvas();
+})();
+</script>
+</body>
+</html>
