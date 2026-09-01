@@ -34,7 +34,7 @@
     border-right: 1px solid var(--line);
     display: flex; flex-direction: column;
     overflow: hidden;
-    transition: width .2s ease, min-width .2s ease, border-color .2s ease;
+    transition: width .2s ease, min-width .2s ease, border-color .2s ease, transform .2s ease;
   }
   #sidebar.collapsed { width: 0; min-width: 0; border-right-color: transparent; }
   #sidebarToggle {
@@ -65,6 +65,13 @@
   }
   .mode-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
   .mode-btn:hover:not(.active) { border-color: var(--accent-2); color: var(--text); }
+
+  #freeformToggleWrap {
+    display: flex; align-items: center; gap: 6px; margin: 0 14px 12px;
+    font-size: 11.5px; color: var(--text-dim); padding: 8px 10px;
+    background: var(--panel-2); border: 1px solid var(--line); border-radius: 6px; cursor: pointer;
+  }
+  #freeformToggleWrap input { width: 16px; height: 16px; flex-shrink: 0; }
 
   .section { padding: 12px 14px; border-bottom: 1px solid var(--line); overflow-y: auto; }
   .section h2 {
@@ -119,7 +126,7 @@
   .snapshot-row .info { flex: 1; overflow: hidden; }
   .snapshot-row .sname { color: var(--text); display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .snapshot-row .sdate { font-size: 10px; color: var(--text-dim); }
-  .snapshot-row .icon { cursor: pointer; padding: 2px 4px; border-radius: 4px; flex-shrink: 0; }
+  .snapshot-row .icon { cursor: pointer; padding: 3px 6px; font-size: 13px; border-radius: 4px; flex-shrink: 0; }
   .snapshot-row .load:hover { color: var(--ok); }
   .snapshot-row .rename:hover { color: var(--accent-2); }
   .snapshot-row .del:hover { color: var(--warn); }  .member-row {
@@ -134,7 +141,7 @@
   .status.warn { color: #fff; background: var(--warn); }
   .status.none { color: var(--text-dim); }
   .member-row .del, .member-row .rename, .member-row .clearpos {
-    color: var(--text-dim); font-size: 12.5px; padding: 2px 5px; border-radius: 4px; opacity: 0; cursor: pointer;
+    color: var(--text-dim); font-size: 14px; padding: 3px 6px; border-radius: 4px; opacity: .55; cursor: pointer;
   }
   .member-row:hover .del, .member-row:hover .rename, .member-row:hover .clearpos { opacity: 1; }
   .member-row .del:hover { color: var(--warn); }
@@ -147,7 +154,7 @@
     background: var(--panel-2); font-size: 12px; color: var(--text-dim);
   }
   .land-row .coord { font-variant-numeric: tabular-nums; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .land-row .del, .land-row .rename { cursor: pointer; }
+  .land-row .del, .land-row .rename { cursor: pointer; padding: 3px 5px; font-size: 13px; }
   .land-row .del:hover { color: var(--warn); }
   .land-row .rename:hover { color: var(--accent-2); }
 
@@ -166,7 +173,7 @@
 
   /* ---------- Canvas area ---------- */
   #canvasWrap { position: relative; flex: 1; overflow: hidden; }
-  canvas { display: block; background: var(--bg); cursor: grab; }
+  canvas { display: block; background: var(--bg); cursor: grab; touch-action: none; }
   canvas.panning { cursor: grabbing; }
   canvas.mode-land { cursor: crosshair; }
   canvas.mode-place { cursor: cell; }
@@ -181,8 +188,8 @@
     position: absolute; bottom: 14px; right: 14px; display: flex; flex-direction: column; gap: 6px;
   }
   #zoomCtrl button {
-    width: 32px; height: 32px; border-radius: 6px; background: var(--panel);
-    border: 1px solid var(--line); color: var(--text); font-size: 16px; cursor: pointer;
+    width: 40px; height: 40px; border-radius: 8px; background: var(--panel);
+    border: 1px solid var(--line); color: var(--text); font-size: 18px; cursor: pointer;
   }
   #zoomCtrl button:hover { border-color: var(--accent-2); }
 
@@ -190,14 +197,39 @@
     position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
     background: var(--panel); border: 1px solid var(--accent-2); border-radius: 8px;
     padding: 8px 12px; font-size: 12.5px; display: none; align-items: center; gap: 10px;
+    max-width: calc(100vw - 24px); flex-wrap: wrap; justify-content: center;
   }
   #assignBar.show { display: flex; }
   #assignBar select {
-    background: var(--panel-2); color: var(--text); border: 1px solid var(--line); border-radius: 5px; padding: 4px 6px; font-size: 12.5px;
+    background: var(--panel-2); color: var(--text); border: 1px solid var(--line); border-radius: 5px; padding: 6px 6px; font-size: 13px;
   }
-  #assignBar button { padding: 5px 10px; border-radius: 5px; border: none; cursor: pointer; font-size: 12px; }
+  #assignBar button { padding: 7px 12px; border-radius: 5px; border: none; cursor: pointer; font-size: 13px; }
   #assignBar .confirm { background: var(--accent); color: #fff; }
   #assignBar .cancel { background: var(--panel-2); color: var(--text-dim); }
+
+  /* ---------- スマホ向けレイアウト ---------- */
+  #sidebarBackdrop { display: none; }
+  @media (max-width: 720px) {
+    #sidebar {
+      position: fixed; top: 0; left: 0; height: 100%; z-index: 40;
+      width: min(86vw, 320px); min-width: 0;
+      box-shadow: 2px 0 16px rgba(0,0,0,.5);
+      transform: translateX(0);
+    }
+    #sidebar.collapsed { width: min(86vw, 320px); transform: translateX(-100%); border-right-color: var(--line); }
+    #sidebarToggle {
+      left: 8px; width: 30px; height: 52px; font-size: 13px;
+      transform: translateY(-50%);
+    }
+    #app { position: relative; }
+    #sidebarBackdrop {
+      display: block; position: fixed; inset: 0; background: rgba(0,0,0,0); z-index: 35;
+      pointer-events: none; transition: background .2s ease;
+    }
+    #sidebarBackdrop.show { background: rgba(0,0,0,.5); pointer-events: auto; }
+    .mode-btn { padding: 10px 4px; font-size: 12.5px; }
+    #zoomCtrl button { width: 44px; height: 44px; font-size: 20px; }
+  }
 </style>
 </head>
 <body>
@@ -214,6 +246,11 @@
       <div class="mode-btn" data-mode="place">配置</div>
       <div class="mode-btn" data-mode="mark">印</div>
     </div>
+
+    <label id="freeformToggleWrap" style="display:none;">
+      <input type="checkbox" id="freeformToggle">
+      自由形状で1マスずつ追加/削除する（スマホの場合はこちらを使用）
+    </label>
 
     <div class="section" style="border-bottom:none; padding-bottom:0;">
       <h2>メンバー</h2>
@@ -414,8 +451,8 @@
       <button id="saveSnapshotBtn" class="snapshot-save-btn">名前をつけて保存</button>
       <div id="snapshotList"><div class="snapshot-row">
         <div class="info">
-          <span class="sname">保存 2026/09/01 12:33</span>
-          <span class="sdate">2026/09/01 12:33</span>
+          <span class="sname">保存 2026/09/01 12:40</span>
+          <span class="sdate">2026/09/01 12:40</span>
         </div>
         <span class="icon load" title="このスナップショットを読み込む">⇩</span>
         <span class="icon rename" title="名前を変更">✎</span>
@@ -423,7 +460,7 @@
       </div></div>
     </div>
 
-    <div class="hint" id="modeHint">ドラッグで地図を移動、ホイールでズームできます。<b>土地作成</b> / <b>配置</b> / <b>印</b>モードで編集します。</div>
+    <div class="hint" id="modeHint">指でなぞる/ドラッグで地図を移動、ピンチ操作/ホイールでズームできます。<b>土地作成</b> / <b>配置</b> / <b>印</b>モードで編集します。</div>
 
     <div class="footer-actions">
       <button id="exportBtn">JSON書き出し</button>
@@ -435,10 +472,12 @@
     </div>
   </div>
 
+  <div id="sidebarBackdrop" class="show"></div>
+
   <div id="canvasWrap">
     <button id="sidebarToggle" title="パネルの表示/非表示">◀</button>
     <canvas id="mapCanvas" width="1545" height="869" style="width: 1236px; height: 695.2px;" class=""></canvas>
-    <div id="hud">x: 47, y: 352</div>
+    <div id="hud">x: 48, y: 348</div>
     <div id="assignBar">
       <span>この土地を割り当てる:</span>
       <select id="assignSelect"></select>
@@ -454,7 +493,7 @@
 </div>
 
 <!-- GitHub公開用に書き出す際、ここにスナップショット等の初期データがJSONとして埋め込まれる -->
-<script id="embedded-state" type="application/json">{"members":[{"id":"5icqcvh4","name":"肥後菊池武光","color":"#834ac9"},{"id":"ndqa8vpm","name":"Pマン","color":"#c94a4a"},{"id":"wppbuce7","name":"巴","color":"#f849d8"},{"id":"7e9n285w","name":"ホルモン男","color":"#0400f5"},{"id":"ugs4zcvm","name":"りくな","color":"#51fe06"},{"id":"w7er63b8","name":"とみ","color":"#fcff2e"},{"id":"3jnkclf9","name":"どらみ","color":"#2efcff"},{"id":"c6t48y9p","name":"瀧","color":"#a12eff"},{"id":"yqcasrlz","name":"あいにゃん","color":"#fe2f2f"},{"id":"ttci1nf0","name":"臥龍","color":"#ffffff"},{"id":"vnt9pv02","name":"パグ","color":"#a498fb"},{"id":"je7225jm","name":"マヨ","color":"#98fbda"},{"id":"i7njs1cb","name":"あんどぅ","color":"#ffc7cd"},{"id":"k0xggels","name":"ぷ～","color":"#edffc7"}],"lands":[{"id":"78yly7s8","memberId":"5icqcvh4","x1":407,"x2":417,"y1":828,"y2":838},{"id":"bk6vr0ks","memberId":"wppbuce7","x1":401,"x2":408,"y1":785,"y2":802},{"id":"03wz2i81","memberId":"ugs4zcvm","x1":365,"x2":376,"y1":806,"y2":815},{"id":"6l804n29","memberId":"k0xggels","x1":365,"x2":376,"y1":795,"y2":804},{"id":"yv0o3pxz","memberId":"7e9n285w","x1":377,"x2":386,"y1":803,"y2":815},{"id":"tbdgwi9f","memberId":"ndqa8vpm","x1":387,"x2":397,"y1":803,"y2":814},{"id":"8yxkfn3b","memberId":"i7njs1cb","x1":376,"x2":389,"y1":779,"y2":786},{"id":"uhqa279k","memberId":"je7225jm","x1":390,"x2":400,"y1":770,"y2":780},{"id":"xua8fqtj","memberId":"w7er63b8","x1":388,"x2":400,"y1":793,"y2":802},{"id":"p9xwwb55","memberId":"vnt9pv02","x1":401,"x2":408,"y1":770,"y2":784},{"id":"ycbwn97o","memberId":"c6t48y9p","x1":409,"x2":423,"y1":801,"y2":808},{"id":"1r03rvqi","memberId":"yqcasrlz","x1":412,"x2":419,"y1":813,"y2":827},{"id":"hhaajg0x","memberId":"ttci1nf0","x1":403,"x2":411,"y1":815,"y2":827},{"id":"14germx0","memberId":"3jnkclf9","x1":398,"x2":408,"y1":803,"y2":814}],"freeformCells":{"365,805":"ugs4zcvm","366,805":"k0xggels","367,805":"k0xggels","368,805":"k0xggels","369,805":"k0xggels","370,805":"k0xggels","371,805":"k0xggels","372,805":"k0xggels","373,805":"k0xggels","374,805":"k0xggels","375,805":"k0xggels","376,805":"k0xggels","366,794":"k0xggels","367,794":"k0xggels","368,794":"k0xggels","369,794":"k0xggels","370,794":"k0xggels","371,794":"k0xggels","372,794":"k0xggels","373,794":"k0xggels","374,794":"k0xggels","375,794":"k0xggels","376,794":"k0xggels","387,815":"ndqa8vpm","388,815":"ndqa8vpm","389,815":"ndqa8vpm","390,815":"ndqa8vpm","376,778":"i7njs1cb","377,778":"i7njs1cb","378,778":"i7njs1cb","380,778":"i7njs1cb","381,778":"i7njs1cb","382,778":"i7njs1cb","383,778":"i7njs1cb","384,778":"i7njs1cb","386,778":"i7njs1cb","387,778":"i7njs1cb","388,778":"i7njs1cb","389,778":"i7njs1cb","385,778":"i7njs1cb","387,787":"i7njs1cb","387,788":"i7njs1cb","377,787":"i7njs1cb","377,788":"i7njs1cb","378,788":"i7njs1cb","379,788":"i7njs1cb","380,788":"i7njs1cb","381,788":"i7njs1cb","382,788":"i7njs1cb","383,788":"i7njs1cb","384,788":"i7njs1cb","385,788":"i7njs1cb","386,788":"i7njs1cb","386,787":"i7njs1cb","385,787":"i7njs1cb","384,787":"i7njs1cb","383,787":"i7njs1cb","382,787":"i7njs1cb","381,787":"i7njs1cb","380,787":"i7njs1cb","379,787":"i7njs1cb","378,787":"i7njs1cb","411,814":"ttci1nf0","410,814":"ttci1nf0","409,814":"ttci1nf0"},"positions":{"5icqcvh4":{"x":412,"y":833},"wppbuce7":{"x":404,"y":793},"ugs4zcvm":{"x":370,"y":811},"k0xggels":{"x":371,"y":800},"7e9n285w":{"x":381,"y":808},"ndqa8vpm":{"x":394,"y":805},"i7njs1cb":{"x":382,"y":783},"je7225jm":{"x":396,"y":775},"w7er63b8":{"x":394,"y":798},"vnt9pv02":{"x":405,"y":777},"c6t48y9p":{"x":416,"y":804},"yqcasrlz":{"x":416,"y":819},"3jnkclf9":{"x":403,"y":809},"ttci1nf0":{"x":408,"y":821}},"markedCells":{},"selectedMemberId":null,"snapshots":[{"id":"1dc33qsp","name":"保存 2026/09/01 12:33","savedAt":"2026-09-01T03:33:15.601Z","data":{"members":[{"id":"5icqcvh4","name":"肥後菊池武光","color":"#834ac9"},{"id":"ndqa8vpm","name":"Pマン","color":"#c94a4a"},{"id":"wppbuce7","name":"巴","color":"#f849d8"},{"id":"7e9n285w","name":"ホルモン男","color":"#0400f5"},{"id":"ugs4zcvm","name":"りくな","color":"#51fe06"},{"id":"w7er63b8","name":"とみ","color":"#fcff2e"},{"id":"3jnkclf9","name":"どらみ","color":"#2efcff"},{"id":"c6t48y9p","name":"瀧","color":"#a12eff"},{"id":"yqcasrlz","name":"あいにゃん","color":"#fe2f2f"},{"id":"ttci1nf0","name":"臥龍","color":"#ffffff"},{"id":"vnt9pv02","name":"パグ","color":"#a498fb"},{"id":"je7225jm","name":"マヨ","color":"#98fbda"},{"id":"i7njs1cb","name":"あんどぅ","color":"#ffc7cd"},{"id":"k0xggels","name":"ぷ～","color":"#edffc7"}],"lands":[{"id":"78yly7s8","memberId":"5icqcvh4","x1":407,"x2":417,"y1":828,"y2":838},{"id":"bk6vr0ks","memberId":"wppbuce7","x1":401,"x2":408,"y1":785,"y2":802},{"id":"03wz2i81","memberId":"ugs4zcvm","x1":365,"x2":376,"y1":806,"y2":815},{"id":"6l804n29","memberId":"k0xggels","x1":365,"x2":376,"y1":795,"y2":804},{"id":"yv0o3pxz","memberId":"7e9n285w","x1":377,"x2":386,"y1":803,"y2":815},{"id":"tbdgwi9f","memberId":"ndqa8vpm","x1":387,"x2":397,"y1":803,"y2":814},{"id":"8yxkfn3b","memberId":"i7njs1cb","x1":376,"x2":389,"y1":779,"y2":786},{"id":"uhqa279k","memberId":"je7225jm","x1":390,"x2":400,"y1":770,"y2":780},{"id":"xua8fqtj","memberId":"w7er63b8","x1":388,"x2":400,"y1":793,"y2":802},{"id":"p9xwwb55","memberId":"vnt9pv02","x1":401,"x2":408,"y1":770,"y2":784},{"id":"ycbwn97o","memberId":"c6t48y9p","x1":409,"x2":423,"y1":801,"y2":808},{"id":"1r03rvqi","memberId":"yqcasrlz","x1":412,"x2":419,"y1":813,"y2":827},{"id":"hhaajg0x","memberId":"ttci1nf0","x1":403,"x2":411,"y1":815,"y2":827},{"id":"14germx0","memberId":"3jnkclf9","x1":398,"x2":408,"y1":803,"y2":814}],"freeformCells":{"365,805":"ugs4zcvm","366,805":"k0xggels","367,805":"k0xggels","368,805":"k0xggels","369,805":"k0xggels","370,805":"k0xggels","371,805":"k0xggels","372,805":"k0xggels","373,805":"k0xggels","374,805":"k0xggels","375,805":"k0xggels","376,805":"k0xggels","366,794":"k0xggels","367,794":"k0xggels","368,794":"k0xggels","369,794":"k0xggels","370,794":"k0xggels","371,794":"k0xggels","372,794":"k0xggels","373,794":"k0xggels","374,794":"k0xggels","375,794":"k0xggels","376,794":"k0xggels","387,815":"ndqa8vpm","388,815":"ndqa8vpm","389,815":"ndqa8vpm","390,815":"ndqa8vpm","376,778":"i7njs1cb","377,778":"i7njs1cb","378,778":"i7njs1cb","380,778":"i7njs1cb","381,778":"i7njs1cb","382,778":"i7njs1cb","383,778":"i7njs1cb","384,778":"i7njs1cb","386,778":"i7njs1cb","387,778":"i7njs1cb","388,778":"i7njs1cb","389,778":"i7njs1cb","385,778":"i7njs1cb","387,787":"i7njs1cb","387,788":"i7njs1cb","377,787":"i7njs1cb","377,788":"i7njs1cb","378,788":"i7njs1cb","379,788":"i7njs1cb","380,788":"i7njs1cb","381,788":"i7njs1cb","382,788":"i7njs1cb","383,788":"i7njs1cb","384,788":"i7njs1cb","385,788":"i7njs1cb","386,788":"i7njs1cb","386,787":"i7njs1cb","385,787":"i7njs1cb","384,787":"i7njs1cb","383,787":"i7njs1cb","382,787":"i7njs1cb","381,787":"i7njs1cb","380,787":"i7njs1cb","379,787":"i7njs1cb","378,787":"i7njs1cb","411,814":"ttci1nf0","410,814":"ttci1nf0","409,814":"ttci1nf0"},"positions":{"5icqcvh4":{"x":412,"y":833},"wppbuce7":{"x":404,"y":793},"ugs4zcvm":{"x":370,"y":811},"k0xggels":{"x":371,"y":800},"7e9n285w":{"x":381,"y":808},"ndqa8vpm":{"x":394,"y":805},"i7njs1cb":{"x":382,"y":783},"je7225jm":{"x":396,"y":775},"w7er63b8":{"x":394,"y":798},"vnt9pv02":{"x":405,"y":777},"c6t48y9p":{"x":416,"y":804},"yqcasrlz":{"x":416,"y":819},"3jnkclf9":{"x":403,"y":809},"ttci1nf0":{"x":408,"y":821}},"markedCells":{}}}]}</script>
+<script id="embedded-state" type="application/json">{"members":[{"id":"5icqcvh4","name":"肥後菊池武光","color":"#834ac9"},{"id":"ndqa8vpm","name":"Pマン","color":"#c94a4a"},{"id":"wppbuce7","name":"巴","color":"#f849d8"},{"id":"7e9n285w","name":"ホルモン男","color":"#0400f5"},{"id":"ugs4zcvm","name":"りくな","color":"#51fe06"},{"id":"w7er63b8","name":"とみ","color":"#fcff2e"},{"id":"3jnkclf9","name":"どらみ","color":"#2efcff"},{"id":"c6t48y9p","name":"瀧","color":"#a12eff"},{"id":"yqcasrlz","name":"あいにゃん","color":"#fe2f2f"},{"id":"ttci1nf0","name":"臥龍","color":"#ffffff"},{"id":"vnt9pv02","name":"パグ","color":"#a498fb"},{"id":"je7225jm","name":"マヨ","color":"#98fbda"},{"id":"i7njs1cb","name":"あんどぅ","color":"#ffc7cd"},{"id":"k0xggels","name":"ぷ～","color":"#edffc7"}],"lands":[{"id":"78yly7s8","memberId":"5icqcvh4","x1":407,"x2":417,"y1":828,"y2":838},{"id":"bk6vr0ks","memberId":"wppbuce7","x1":401,"x2":408,"y1":785,"y2":802},{"id":"03wz2i81","memberId":"ugs4zcvm","x1":365,"x2":376,"y1":806,"y2":815},{"id":"6l804n29","memberId":"k0xggels","x1":365,"x2":376,"y1":795,"y2":804},{"id":"yv0o3pxz","memberId":"7e9n285w","x1":377,"x2":386,"y1":803,"y2":815},{"id":"tbdgwi9f","memberId":"ndqa8vpm","x1":387,"x2":397,"y1":803,"y2":814},{"id":"8yxkfn3b","memberId":"i7njs1cb","x1":376,"x2":389,"y1":779,"y2":786},{"id":"uhqa279k","memberId":"je7225jm","x1":390,"x2":400,"y1":770,"y2":780},{"id":"xua8fqtj","memberId":"w7er63b8","x1":388,"x2":400,"y1":793,"y2":802},{"id":"p9xwwb55","memberId":"vnt9pv02","x1":401,"x2":408,"y1":770,"y2":784},{"id":"ycbwn97o","memberId":"c6t48y9p","x1":409,"x2":423,"y1":801,"y2":808},{"id":"1r03rvqi","memberId":"yqcasrlz","x1":412,"x2":419,"y1":813,"y2":827},{"id":"hhaajg0x","memberId":"ttci1nf0","x1":403,"x2":411,"y1":815,"y2":827},{"id":"14germx0","memberId":"3jnkclf9","x1":398,"x2":408,"y1":803,"y2":814}],"freeformCells":{"365,805":"ugs4zcvm","366,805":"k0xggels","367,805":"k0xggels","368,805":"k0xggels","369,805":"k0xggels","370,805":"k0xggels","371,805":"k0xggels","372,805":"k0xggels","373,805":"k0xggels","374,805":"k0xggels","375,805":"k0xggels","376,805":"k0xggels","366,794":"k0xggels","367,794":"k0xggels","368,794":"k0xggels","369,794":"k0xggels","370,794":"k0xggels","371,794":"k0xggels","372,794":"k0xggels","373,794":"k0xggels","374,794":"k0xggels","375,794":"k0xggels","376,794":"k0xggels","387,815":"ndqa8vpm","388,815":"ndqa8vpm","389,815":"ndqa8vpm","390,815":"ndqa8vpm","376,778":"i7njs1cb","377,778":"i7njs1cb","378,778":"i7njs1cb","380,778":"i7njs1cb","381,778":"i7njs1cb","382,778":"i7njs1cb","383,778":"i7njs1cb","384,778":"i7njs1cb","386,778":"i7njs1cb","387,778":"i7njs1cb","388,778":"i7njs1cb","389,778":"i7njs1cb","385,778":"i7njs1cb","387,787":"i7njs1cb","387,788":"i7njs1cb","377,787":"i7njs1cb","377,788":"i7njs1cb","378,788":"i7njs1cb","379,788":"i7njs1cb","380,788":"i7njs1cb","381,788":"i7njs1cb","382,788":"i7njs1cb","383,788":"i7njs1cb","384,788":"i7njs1cb","385,788":"i7njs1cb","386,788":"i7njs1cb","386,787":"i7njs1cb","385,787":"i7njs1cb","384,787":"i7njs1cb","383,787":"i7njs1cb","382,787":"i7njs1cb","381,787":"i7njs1cb","380,787":"i7njs1cb","379,787":"i7njs1cb","378,787":"i7njs1cb","411,814":"ttci1nf0","410,814":"ttci1nf0","409,814":"ttci1nf0"},"positions":{"5icqcvh4":{"x":412,"y":833},"wppbuce7":{"x":404,"y":793},"ugs4zcvm":{"x":370,"y":811},"k0xggels":{"x":371,"y":800},"7e9n285w":{"x":381,"y":808},"ndqa8vpm":{"x":394,"y":805},"i7njs1cb":{"x":382,"y":783},"je7225jm":{"x":396,"y":775},"w7er63b8":{"x":394,"y":798},"vnt9pv02":{"x":405,"y":777},"c6t48y9p":{"x":416,"y":804},"yqcasrlz":{"x":416,"y":819},"3jnkclf9":{"x":403,"y":809},"ttci1nf0":{"x":408,"y":821}},"markedCells":{},"selectedMemberId":null,"snapshots":[{"id":"ifjmwi7k","name":"保存 2026/09/01 12:40","savedAt":"2026-09-01T03:40:53.025Z","data":{"members":[{"id":"5icqcvh4","name":"肥後菊池武光","color":"#834ac9"},{"id":"ndqa8vpm","name":"Pマン","color":"#c94a4a"},{"id":"wppbuce7","name":"巴","color":"#f849d8"},{"id":"7e9n285w","name":"ホルモン男","color":"#0400f5"},{"id":"ugs4zcvm","name":"りくな","color":"#51fe06"},{"id":"w7er63b8","name":"とみ","color":"#fcff2e"},{"id":"3jnkclf9","name":"どらみ","color":"#2efcff"},{"id":"c6t48y9p","name":"瀧","color":"#a12eff"},{"id":"yqcasrlz","name":"あいにゃん","color":"#fe2f2f"},{"id":"ttci1nf0","name":"臥龍","color":"#ffffff"},{"id":"vnt9pv02","name":"パグ","color":"#a498fb"},{"id":"je7225jm","name":"マヨ","color":"#98fbda"},{"id":"i7njs1cb","name":"あんどぅ","color":"#ffc7cd"},{"id":"k0xggels","name":"ぷ～","color":"#edffc7"}],"lands":[{"id":"78yly7s8","memberId":"5icqcvh4","x1":407,"x2":417,"y1":828,"y2":838},{"id":"bk6vr0ks","memberId":"wppbuce7","x1":401,"x2":408,"y1":785,"y2":802},{"id":"03wz2i81","memberId":"ugs4zcvm","x1":365,"x2":376,"y1":806,"y2":815},{"id":"6l804n29","memberId":"k0xggels","x1":365,"x2":376,"y1":795,"y2":804},{"id":"yv0o3pxz","memberId":"7e9n285w","x1":377,"x2":386,"y1":803,"y2":815},{"id":"tbdgwi9f","memberId":"ndqa8vpm","x1":387,"x2":397,"y1":803,"y2":814},{"id":"8yxkfn3b","memberId":"i7njs1cb","x1":376,"x2":389,"y1":779,"y2":786},{"id":"uhqa279k","memberId":"je7225jm","x1":390,"x2":400,"y1":770,"y2":780},{"id":"xua8fqtj","memberId":"w7er63b8","x1":388,"x2":400,"y1":793,"y2":802},{"id":"p9xwwb55","memberId":"vnt9pv02","x1":401,"x2":408,"y1":770,"y2":784},{"id":"ycbwn97o","memberId":"c6t48y9p","x1":409,"x2":423,"y1":801,"y2":808},{"id":"1r03rvqi","memberId":"yqcasrlz","x1":412,"x2":419,"y1":813,"y2":827},{"id":"hhaajg0x","memberId":"ttci1nf0","x1":403,"x2":411,"y1":815,"y2":827},{"id":"14germx0","memberId":"3jnkclf9","x1":398,"x2":408,"y1":803,"y2":814}],"freeformCells":{"365,805":"ugs4zcvm","366,805":"k0xggels","367,805":"k0xggels","368,805":"k0xggels","369,805":"k0xggels","370,805":"k0xggels","371,805":"k0xggels","372,805":"k0xggels","373,805":"k0xggels","374,805":"k0xggels","375,805":"k0xggels","376,805":"k0xggels","366,794":"k0xggels","367,794":"k0xggels","368,794":"k0xggels","369,794":"k0xggels","370,794":"k0xggels","371,794":"k0xggels","372,794":"k0xggels","373,794":"k0xggels","374,794":"k0xggels","375,794":"k0xggels","376,794":"k0xggels","387,815":"ndqa8vpm","388,815":"ndqa8vpm","389,815":"ndqa8vpm","390,815":"ndqa8vpm","376,778":"i7njs1cb","377,778":"i7njs1cb","378,778":"i7njs1cb","380,778":"i7njs1cb","381,778":"i7njs1cb","382,778":"i7njs1cb","383,778":"i7njs1cb","384,778":"i7njs1cb","386,778":"i7njs1cb","387,778":"i7njs1cb","388,778":"i7njs1cb","389,778":"i7njs1cb","385,778":"i7njs1cb","387,787":"i7njs1cb","387,788":"i7njs1cb","377,787":"i7njs1cb","377,788":"i7njs1cb","378,788":"i7njs1cb","379,788":"i7njs1cb","380,788":"i7njs1cb","381,788":"i7njs1cb","382,788":"i7njs1cb","383,788":"i7njs1cb","384,788":"i7njs1cb","385,788":"i7njs1cb","386,788":"i7njs1cb","386,787":"i7njs1cb","385,787":"i7njs1cb","384,787":"i7njs1cb","383,787":"i7njs1cb","382,787":"i7njs1cb","381,787":"i7njs1cb","380,787":"i7njs1cb","379,787":"i7njs1cb","378,787":"i7njs1cb","411,814":"ttci1nf0","410,814":"ttci1nf0","409,814":"ttci1nf0"},"positions":{"5icqcvh4":{"x":412,"y":833},"wppbuce7":{"x":404,"y":793},"ugs4zcvm":{"x":370,"y":811},"k0xggels":{"x":371,"y":800},"7e9n285w":{"x":381,"y":808},"ndqa8vpm":{"x":394,"y":805},"i7njs1cb":{"x":382,"y":783},"je7225jm":{"x":396,"y":775},"w7er63b8":{"x":394,"y":798},"vnt9pv02":{"x":405,"y":777},"c6t48y9p":{"x":416,"y":804},"yqcasrlz":{"x":416,"y":819},"3jnkclf9":{"x":403,"y":809},"ttci1nf0":{"x":408,"y":821}},"markedCells":{}}}]}</script>
 
 <script>
 (function(){
@@ -574,12 +613,21 @@
   {
     const sidebarEl = document.getElementById("sidebar");
     const toggleBtn = document.getElementById("sidebarToggle");
+    const backdropEl = document.getElementById("sidebarBackdrop");
     let collapsed = true;
-    toggleBtn.addEventListener("click", () => {
-      collapsed = !collapsed;
+    function applyCollapsed() {
       sidebarEl.classList.toggle("collapsed", collapsed);
       toggleBtn.textContent = collapsed ? "▶" : "◀";
+      backdropEl.classList.toggle("show", !collapsed);
       setTimeout(() => resizeCanvas(), 210);
+    }
+    toggleBtn.addEventListener("click", () => {
+      collapsed = !collapsed;
+      applyCollapsed();
+    });
+    backdropEl.addEventListener("click", () => {
+      collapsed = true;
+      applyCollapsed();
     });
   }
 
@@ -1053,13 +1101,18 @@
     }
   }
 
-  canvas.addEventListener("mousedown", (e) => {
-    const rect = canvas.getBoundingClientRect();
-    const sx = e.clientX - rect.left, sy = e.clientY - rect.top;
+  function isFreeformIntent(shiftKey) {
+    const toggle = document.getElementById("freeformToggle");
+    return shiftKey || (toggle && toggle.checked);
+  }
 
-    if (mode === "land" && e.button === 0) {
+  function handlePointerDown(clientX, clientY, shiftKey) {
+    const rect = canvas.getBoundingClientRect();
+    const sx = clientX - rect.left, sy = clientY - rect.top;
+
+    if (mode === "land") {
       const c = screenToWorldCell(sx, sy);
-      if (e.shiftKey) {
+      if (isFreeformIntent(shiftKey)) {
         if (!state.selectedMemberId) { flashHint("先にメンバーを選択してください"); return; }
         const key = c.x + "," + c.y;
         const alreadyOwned = state.freeformCells[key] === state.selectedMemberId;
@@ -1072,7 +1125,7 @@
       dragSelect = { x0: c.x, y0: c.y, x1: c.x, y1: c.y };
       return;
     }
-    if (mode === "place" && e.button === 0) {
+    if (mode === "place") {
       if (!state.selectedMemberId) { flashHint("先にメンバーを選択してください"); return; }
       const c = screenToWorldCell(sx, sy);
       pushHistory();
@@ -1080,7 +1133,7 @@
       save(); draw(); renderMemberList();
       return;
     }
-    if (mode === "mark" && e.button === 0) {
+    if (mode === "mark") {
       const c = screenToWorldCell(sx, sy);
       const key = c.x + "," + c.y;
       const alreadyMarked = !!state.markedCells[key];
@@ -1090,16 +1143,16 @@
       save(); draw();
       return;
     }
-    // pan (view mode, or middle/right drag anywhere)
+    // pan (view mode)
     isPanning = true;
-    panStart = { x: e.clientX, y: e.clientY };
+    panStart = { x: clientX, y: clientY };
     viewStart = { x: view.offsetX, y: view.offsetY };
     canvas.classList.add("panning");
-  });
+  }
 
-  window.addEventListener("mousemove", (e) => {
+  function handlePointerMove(clientX, clientY) {
     const rect = canvas.getBoundingClientRect();
-    const sx = e.clientX - rect.left, sy = e.clientY - rect.top;
+    const sx = clientX - rect.left, sy = clientY - rect.top;
     const c = screenToWorldCell(sx, sy);
     hud.textContent = `x: ${c.x}, y: ${c.y}`;
 
@@ -1119,13 +1172,13 @@
       return;
     }
     if (isPanning) {
-      view.offsetX = viewStart.x + (e.clientX - panStart.x);
-      view.offsetY = viewStart.y + (e.clientY - panStart.y);
+      view.offsetX = viewStart.x + (clientX - panStart.x);
+      view.offsetY = viewStart.y + (clientY - panStart.y);
       draw();
     }
-  });
+  }
 
-  window.addEventListener("mouseup", () => {
+  function handlePointerUp() {
     if (isPanning) { isPanning = false; canvas.classList.remove("panning"); }
     if (freeformPaint) {
       freeformPaint = null;
@@ -1136,15 +1189,101 @@
       save(); draw();
     }
     if (dragSelect) {
-      const x1 = Math.min(dragSelect.x0, dragSelect.x1);
-      const y1 = Math.min(dragSelect.y0, dragSelect.y1);
-      const x2 = Math.max(dragSelect.x0, dragSelect.x1);
-      const y2 = Math.max(dragSelect.y0, dragSelect.y1);
-      dragSelect = null;
-      pendingLandRect = { x1, y1, x2, y2 };
-      openAssignBar();
-      draw();
+      finalizeDragSelect();
     }
+  }
+
+  function finalizeDragSelect() {
+    const x1 = Math.min(dragSelect.x0, dragSelect.x1);
+    const y1 = Math.min(dragSelect.y0, dragSelect.y1);
+    const x2 = Math.max(dragSelect.x0, dragSelect.x1);
+    const y2 = Math.max(dragSelect.y0, dragSelect.y1);
+    dragSelect = null;
+    pendingLandRect = { x1, y1, x2, y2 };
+    openAssignBar();
+    draw();
+  }
+
+  canvas.addEventListener("mousedown", (e) => {
+    if (e.button !== 0 && e.button !== undefined) {
+      // 中/右ボタンドラッグはパンとして扱う
+      isPanning = true;
+      panStart = { x: e.clientX, y: e.clientY };
+      viewStart = { x: view.offsetX, y: view.offsetY };
+      canvas.classList.add("panning");
+      return;
+    }
+    handlePointerDown(e.clientX, e.clientY, e.shiftKey);
+  });
+
+  window.addEventListener("mousemove", (e) => {
+    handlePointerMove(e.clientX, e.clientY);
+  });
+
+  window.addEventListener("mouseup", () => {
+    handlePointerUp();
+  });
+
+  // ---------------- タッチ操作（スマホ・タブレット対応） ----------------
+  let pinch = null; // {startDist, startScale, midX, midY}
+
+  function touchDist(t0, t1) {
+    return Math.hypot(t1.clientX - t0.clientX, t1.clientY - t0.clientY);
+  }
+  function touchMid(t0, t1, rect) {
+    return { x: (t0.clientX + t1.clientX) / 2 - rect.left, y: (t0.clientY + t1.clientY) / 2 - rect.top };
+  }
+
+  canvas.addEventListener("touchstart", (e) => {
+    e.preventDefault();
+    if (e.touches.length === 2) {
+      // ピンチズーム開始（進行中の単指操作はキャンセル）
+      isPanning = false; dragSelect = null; freeformPaint = null; markPaint = null;
+      canvas.classList.remove("panning");
+      const rect = canvas.getBoundingClientRect();
+      pinch = {
+        startDist: touchDist(e.touches[0], e.touches[1]),
+        startScale: view.scale,
+        mid: touchMid(e.touches[0], e.touches[1], rect)
+      };
+      return;
+    }
+    if (e.touches.length === 1) {
+      const t = e.touches[0];
+      handlePointerDown(t.clientX, t.clientY, false);
+    }
+  }, { passive: false });
+
+  canvas.addEventListener("touchmove", (e) => {
+    e.preventDefault();
+    if (e.touches.length === 2 && pinch) {
+      const dist = touchDist(e.touches[0], e.touches[1]);
+      const factor = dist / pinch.startDist;
+      const newScale = Math.min(8, Math.max(0.05, pinch.startScale * factor));
+      const worldBefore = { x: (pinch.mid.x - view.offsetX) / view.scale, y: (pinch.mid.y - view.offsetY) / view.scale };
+      view.scale = newScale;
+      view.offsetX = pinch.mid.x - worldBefore.x * view.scale;
+      view.offsetY = pinch.mid.y - worldBefore.y * view.scale;
+      draw();
+      return;
+    }
+    if (e.touches.length === 1) {
+      const t = e.touches[0];
+      handlePointerMove(t.clientX, t.clientY);
+    }
+  }, { passive: false });
+
+  canvas.addEventListener("touchend", (e) => {
+    e.preventDefault();
+    if (e.touches.length === 0) {
+      pinch = null;
+      handlePointerUp();
+    }
+  }, { passive: false });
+  canvas.addEventListener("touchcancel", (e) => {
+    pinch = null;
+    isPanning = false; dragSelect = null; freeformPaint = null; markPaint = null;
+    canvas.classList.remove("panning");
   });
 
   canvas.addEventListener("wheel", (e) => {
@@ -1228,10 +1367,12 @@
   });
   function updateHint() {
     const hint = document.getElementById("modeHint");
-    if (mode === "land") hint.innerHTML = "地図上をドラッグして矩形の土地を割り当てます。<b>Shift+クリック（ドラッグ可）</b>でマス目を1つずつ追加/削除し、自由形状の土地を作れます。";
-    else if (mode === "place") hint.innerHTML = "サイドバーでメンバーを選択し、地図上のマスをクリックして現在地を配置します。";
-    else if (mode === "mark") hint.innerHTML = "地図上のマスをクリック（ドラッグ可）すると✕印を付けられます。もう一度クリックすると消えます。侵蝕箇所の記録などに使えます。";
-    else hint.innerHTML = "ドラッグで地図を移動、ホイールでズームできます。<b>土地作成</b> / <b>配置</b> / <b>印</b>モードで編集します。";
+    const freeformWrap = document.getElementById("freeformToggleWrap");
+    if (freeformWrap) freeformWrap.style.display = (mode === "land") ? "flex" : "none";
+    if (mode === "land") hint.innerHTML = "地図上をドラッグ（スマホは指でなぞる）して矩形の土地を割り当てます。<b>Shift+クリック</b>、またはチェックボックスをONにして操作すると、マス目を1つずつ追加/削除して自由形状の土地を作れます。";
+    else if (mode === "place") hint.innerHTML = "サイドバーでメンバーを選択し、地図上のマスをタップ/クリックして現在地を配置します。";
+    else if (mode === "mark") hint.innerHTML = "地図上のマスをタップ/クリック（なぞって複数可）すると✕印を付けられます。もう一度同じ操作で消えます。侵蝕箇所の記録などに使えます。";
+    else hint.innerHTML = "指でなぞる/ドラッグで地図を移動、ピンチ操作/ホイールでズームできます。<b>土地作成</b> / <b>配置</b> / <b>印</b>モードで編集します。";
   }
   function flashHint(msg) {
     const hint = document.getElementById("modeHint");
