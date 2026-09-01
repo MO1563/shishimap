@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja">
-<head>
+<html lang="ja"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>領地管理マップ - 獅子の如く</title>
@@ -95,7 +94,25 @@
     padding: 7px 10px; font-size: 13px; background: var(--accent); color: #fff;
     border: none; border-radius: 5px; cursor: pointer;
   }
-  .land-add button:hover { opacity: .9; }  .member-row {
+  .land-add button:hover { opacity: .9; }
+
+  .snapshot-save-btn {
+    width: 100%; padding: 7px 10px; font-size: 13px; background: var(--accent); color: #fff;
+    border: none; border-radius: 5px; cursor: pointer; margin-bottom: 8px;
+  }
+  .snapshot-save-btn:hover { opacity: .9; }
+  #snapshotList { max-height: 180px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; }
+  .snapshot-row {
+    display: flex; align-items: center; gap: 6px; padding: 6px 8px; border-radius: 6px;
+    background: var(--panel-2); font-size: 12px; color: var(--text-dim);
+  }
+  .snapshot-row .info { flex: 1; overflow: hidden; }
+  .snapshot-row .sname { color: var(--text); display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .snapshot-row .sdate { font-size: 10px; color: var(--text-dim); }
+  .snapshot-row .icon { cursor: pointer; padding: 2px 4px; border-radius: 4px; flex-shrink: 0; }
+  .snapshot-row .load:hover { color: var(--ok); }
+  .snapshot-row .rename:hover { color: var(--accent-2); }
+  .snapshot-row .del:hover { color: var(--warn); }  .member-row {
     display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 6px;
     background: var(--panel-2); border: 1px solid transparent; cursor: pointer; font-size: 13px;
   }
@@ -106,20 +123,23 @@
   .status.ok { color: var(--ok); }
   .status.warn { color: #fff; background: var(--warn); }
   .status.none { color: var(--text-dim); }
-  .member-row .del {
-    color: var(--text-dim); font-size: 13px; padding: 2px 5px; border-radius: 4px; opacity: 0;
+  .member-row .del, .member-row .rename, .member-row .clearpos {
+    color: var(--text-dim); font-size: 12.5px; padding: 2px 5px; border-radius: 4px; opacity: 0; cursor: pointer;
   }
-  .member-row:hover .del { opacity: 1; }
+  .member-row:hover .del, .member-row:hover .rename, .member-row:hover .clearpos { opacity: 1; }
   .member-row .del:hover { color: var(--warn); }
+  .member-row .rename:hover { color: var(--accent-2); }
+  .member-row .clearpos:hover { color: var(--accent); }
 
   #landList { max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; }
   .land-row {
     display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 6px;
     background: var(--panel-2); font-size: 12px; color: var(--text-dim);
   }
-  .land-row .coord { font-variant-numeric: tabular-nums; flex: 1; }
-  .land-row .del { cursor: pointer; }
+  .land-row .coord { font-variant-numeric: tabular-nums; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .land-row .del, .land-row .rename { cursor: pointer; }
   .land-row .del:hover { color: var(--warn); }
+  .land-row .rename:hover { color: var(--accent-2); }
 
   .hint { font-size: 11.5px; color: var(--text-dim); line-height: 1.6; padding: 12px 14px; }
   .hint b { color: var(--accent-2); font-weight: 600; }
@@ -190,13 +210,111 @@
         <input type="color" id="memberColor" value="#c9a24b">
         <button id="addMemberBtn">追加</button>
       </div>
-      <div id="memberList"></div>
+      <div id="memberList"><div class="member-row">
+        <span class="swatch" style="background:#834ac9"></span>
+        <span class="name">肥後菊池武光</span>
+        <span class="status ok">領内</span>
+        <span class="clearpos" title="配置を解除">⌖✕</span>
+        <span class="rename" title="名前を変更">✎</span>
+        <span class="del" data-id="5icqcvh4" title="削除">✕</span>
+      </div><div class="member-row">
+        <span class="swatch" style="background:#c94a4a"></span>
+        <span class="name">Pマン</span>
+        <span class="status ok">領内</span>
+        <span class="clearpos" title="配置を解除">⌖✕</span>
+        <span class="rename" title="名前を変更">✎</span>
+        <span class="del" data-id="ndqa8vpm" title="削除">✕</span>
+      </div><div class="member-row">
+        <span class="swatch" style="background:#f849d8"></span>
+        <span class="name">巴</span>
+        <span class="status ok">領内</span>
+        <span class="clearpos" title="配置を解除">⌖✕</span>
+        <span class="rename" title="名前を変更">✎</span>
+        <span class="del" data-id="wppbuce7" title="削除">✕</span>
+      </div><div class="member-row">
+        <span class="swatch" style="background:#0400f5"></span>
+        <span class="name">ホルモン男</span>
+        <span class="status ok">領内</span>
+        <span class="clearpos" title="配置を解除">⌖✕</span>
+        <span class="rename" title="名前を変更">✎</span>
+        <span class="del" data-id="7e9n285w" title="削除">✕</span>
+      </div><div class="member-row">
+        <span class="swatch" style="background:#51fe06"></span>
+        <span class="name">りくな</span>
+        <span class="status ok">領内</span>
+        <span class="clearpos" title="配置を解除">⌖✕</span>
+        <span class="rename" title="名前を変更">✎</span>
+        <span class="del" data-id="ugs4zcvm" title="削除">✕</span>
+      </div><div class="member-row">
+        <span class="swatch" style="background:#fcff2e"></span>
+        <span class="name">とみ</span>
+        <span class="status ok">領内</span>
+        <span class="clearpos" title="配置を解除">⌖✕</span>
+        <span class="rename" title="名前を変更">✎</span>
+        <span class="del" data-id="w7er63b8" title="削除">✕</span>
+      </div><div class="member-row">
+        <span class="swatch" style="background:#2efcff"></span>
+        <span class="name">どらみ</span>
+        <span class="status ok">領内</span>
+        <span class="clearpos" title="配置を解除">⌖✕</span>
+        <span class="rename" title="名前を変更">✎</span>
+        <span class="del" data-id="3jnkclf9" title="削除">✕</span>
+      </div><div class="member-row">
+        <span class="swatch" style="background:#a12eff"></span>
+        <span class="name">瀧</span>
+        <span class="status ok">領内</span>
+        <span class="clearpos" title="配置を解除">⌖✕</span>
+        <span class="rename" title="名前を変更">✎</span>
+        <span class="del" data-id="c6t48y9p" title="削除">✕</span>
+      </div><div class="member-row">
+        <span class="swatch" style="background:#fe2f2f"></span>
+        <span class="name">あいにゃん</span>
+        <span class="status ok">領内</span>
+        <span class="clearpos" title="配置を解除">⌖✕</span>
+        <span class="rename" title="名前を変更">✎</span>
+        <span class="del" data-id="yqcasrlz" title="削除">✕</span>
+      </div><div class="member-row selected">
+        <span class="swatch" style="background:#ffffff"></span>
+        <span class="name">臥龍</span>
+        <span class="status ok">領内</span>
+        <span class="clearpos" title="配置を解除">⌖✕</span>
+        <span class="rename" title="名前を変更">✎</span>
+        <span class="del" data-id="ttci1nf0" title="削除">✕</span>
+      </div><div class="member-row">
+        <span class="swatch" style="background:#a498fb"></span>
+        <span class="name">パグ</span>
+        <span class="status ok">領内</span>
+        <span class="clearpos" title="配置を解除">⌖✕</span>
+        <span class="rename" title="名前を変更">✎</span>
+        <span class="del" data-id="vnt9pv02" title="削除">✕</span>
+      </div><div class="member-row">
+        <span class="swatch" style="background:#98fbda"></span>
+        <span class="name">マヨ</span>
+        <span class="status ok">領内</span>
+        <span class="clearpos" title="配置を解除">⌖✕</span>
+        <span class="rename" title="名前を変更">✎</span>
+        <span class="del" data-id="je7225jm" title="削除">✕</span>
+      </div><div class="member-row">
+        <span class="swatch" style="background:#ffc7cd"></span>
+        <span class="name">あんどぅ</span>
+        <span class="status ok">領内</span>
+        <span class="clearpos" title="配置を解除">⌖✕</span>
+        <span class="rename" title="名前を変更">✎</span>
+        <span class="del" data-id="i7njs1cb" title="削除">✕</span>
+      </div><div class="member-row">
+        <span class="swatch" style="background:#edffc7"></span>
+        <span class="name">ぷ～</span>
+        <span class="status ok">領内</span>
+        <span class="clearpos" title="配置を解除">⌖✕</span>
+        <span class="rename" title="名前を変更">✎</span>
+        <span class="del" data-id="k0xggels" title="削除">✕</span>
+      </div></div>
     </div>
 
     <div class="section">
       <h2>割り当て済みの土地</h2>
       <div class="land-add">
-        <select id="landAddMember"></select>
+        <select id="landAddMember"><option value="5icqcvh4">肥後菊池武光</option><option value="ndqa8vpm">Pマン</option><option value="wppbuce7">巴</option><option value="7e9n285w">ホルモン男</option><option value="ugs4zcvm">りくな</option><option value="w7er63b8">とみ</option><option value="3jnkclf9">どらみ</option><option value="c6t48y9p">瀧</option><option value="yqcasrlz">あいにゃん</option><option value="ttci1nf0">臥龍</option><option value="vnt9pv02">パグ</option><option value="je7225jm">マヨ</option><option value="i7njs1cb">あんどぅ</option><option value="k0xggels">ぷ～</option></select>
         <div class="coord-inputs">
           <input type="number" id="landX1" placeholder="X1">
           <input type="number" id="landY1" placeholder="Y1">
@@ -206,23 +324,108 @@
         </div>
         <button id="addLandBtn">土地を追加</button>
       </div>
-      <div id="landList"></div>
+      <div id="landList"><div class="land-row">
+        <span class="swatch" style="background:#834ac9"></span>
+        <span class="coord">肥後菊池武光: (407,828)–(417,838)</span>
+        <span class="rename" title="名前を変更">✎</span>
+        <span class="del" title="削除">✕</span>
+      </div><div class="land-row">
+        <span class="swatch" style="background:#f849d8"></span>
+        <span class="coord">巴: (401,785)–(408,802)</span>
+        <span class="rename" title="名前を変更">✎</span>
+        <span class="del" title="削除">✕</span>
+      </div><div class="land-row">
+        <span class="swatch" style="background:#51fe06"></span>
+        <span class="coord">りくな: (365,806)–(376,815)</span>
+        <span class="rename" title="名前を変更">✎</span>
+        <span class="del" title="削除">✕</span>
+      </div><div class="land-row">
+        <span class="swatch" style="background:#edffc7"></span>
+        <span class="coord">ぷ～: (365,795)–(376,804)</span>
+        <span class="rename" title="名前を変更">✎</span>
+        <span class="del" title="削除">✕</span>
+      </div><div class="land-row">
+        <span class="swatch" style="background:#0400f5"></span>
+        <span class="coord">ホルモン男: (377,803)–(386,815)</span>
+        <span class="rename" title="名前を変更">✎</span>
+        <span class="del" title="削除">✕</span>
+      </div><div class="land-row">
+        <span class="swatch" style="background:#c94a4a"></span>
+        <span class="coord">Pマン: (387,803)–(397,814)</span>
+        <span class="rename" title="名前を変更">✎</span>
+        <span class="del" title="削除">✕</span>
+      </div><div class="land-row">
+        <span class="swatch" style="background:#ffc7cd"></span>
+        <span class="coord">あんどぅ: (376,779)–(389,786)</span>
+        <span class="rename" title="名前を変更">✎</span>
+        <span class="del" title="削除">✕</span>
+      </div><div class="land-row">
+        <span class="swatch" style="background:#98fbda"></span>
+        <span class="coord">マヨ: (390,770)–(400,780)</span>
+        <span class="rename" title="名前を変更">✎</span>
+        <span class="del" title="削除">✕</span>
+      </div><div class="land-row">
+        <span class="swatch" style="background:#fcff2e"></span>
+        <span class="coord">とみ: (388,793)–(400,802)</span>
+        <span class="rename" title="名前を変更">✎</span>
+        <span class="del" title="削除">✕</span>
+      </div><div class="land-row">
+        <span class="swatch" style="background:#a498fb"></span>
+        <span class="coord">パグ: (401,770)–(408,784)</span>
+        <span class="rename" title="名前を変更">✎</span>
+        <span class="del" title="削除">✕</span>
+      </div><div class="land-row">
+        <span class="swatch" style="background:#a12eff"></span>
+        <span class="coord">瀧: (409,801)–(423,808)</span>
+        <span class="rename" title="名前を変更">✎</span>
+        <span class="del" title="削除">✕</span>
+      </div><div class="land-row">
+        <span class="swatch" style="background:#fe2f2f"></span>
+        <span class="coord">あいにゃん: (412,813)–(419,827)</span>
+        <span class="rename" title="名前を変更">✎</span>
+        <span class="del" title="削除">✕</span>
+      </div><div class="land-row">
+        <span class="swatch" style="background:#ffffff"></span>
+        <span class="coord">臥龍: (403,815)–(411,827)</span>
+        <span class="rename" title="名前を変更">✎</span>
+        <span class="del" title="削除">✕</span>
+      </div><div class="land-row">
+        <span class="swatch" style="background:#2efcff"></span>
+        <span class="coord">どらみ: (398,803)–(408,814)</span>
+        <span class="rename" title="名前を変更">✎</span>
+        <span class="del" title="削除">✕</span>
+      </div></div>
     </div>
 
-    <div class="hint" id="modeHint">
-      メンバーを選択してから、<b>土地作成</b>モードでドラッグして矩形の土地を割り当てます。<b>配置</b>モードではマスをクリックして現在地を置きます。
+    <div class="section">
+      <h2>スナップショット保存</h2>
+      <button id="saveSnapshotBtn" class="snapshot-save-btn">名前をつけて保存</button>
+      <div id="snapshotList"><div class="snapshot-row">
+        <div class="info">
+          <span class="sname">保存 2026/09/01 11:56</span>
+          <span class="sdate">2026/09/01 11:56</span>
+        </div>
+        <span class="icon load" title="このスナップショットを読み込む">⇩</span>
+        <span class="icon rename" title="名前を変更">✎</span>
+        <span class="icon del" title="削除">✕</span>
+      </div></div>
     </div>
+
+    <div class="hint" id="modeHint">ドラッグで地図を移動、ホイールでズームできます。<b>土地作成</b> / <b>配置</b>モードで編集します。</div>
 
     <div class="footer-actions">
       <button id="exportBtn">JSON書き出し</button>
       <button id="importBtn">読み込み</button>
       <input type="file" id="importFile" accept="application/json" style="display:none;">
     </div>
+    <div class="footer-actions">
+      <button id="exportGithubBtn">GitHub公開用に書き出す</button>
+    </div>
   </div>
 
   <div id="canvasWrap">
-    <canvas id="mapCanvas"></canvas>
-    <div id="hud">x: 0, y: 0</div>
+    <canvas id="mapCanvas" width="1545" height="869" style="width: 1236px; height: 695.2px;" class=""></canvas>
+    <div id="hud">x: 357, y: 688</div>
     <div id="assignBar">
       <span>この土地を割り当てる:</span>
       <select id="assignSelect"></select>
@@ -236,6 +439,9 @@
     </div>
   </div>
 </div>
+
+<!-- GitHub公開用に書き出す際、ここにスナップショット等の初期データがJSONとして埋め込まれる -->
+<script id="embedded-state" type="application/json">{"members":[{"id":"5icqcvh4","name":"肥後菊池武光","color":"#834ac9"},{"id":"ndqa8vpm","name":"Pマン","color":"#c94a4a"},{"id":"wppbuce7","name":"巴","color":"#f849d8"},{"id":"7e9n285w","name":"ホルモン男","color":"#0400f5"},{"id":"ugs4zcvm","name":"りくな","color":"#51fe06"},{"id":"w7er63b8","name":"とみ","color":"#fcff2e"},{"id":"3jnkclf9","name":"どらみ","color":"#2efcff"},{"id":"c6t48y9p","name":"瀧","color":"#a12eff"},{"id":"yqcasrlz","name":"あいにゃん","color":"#fe2f2f"},{"id":"ttci1nf0","name":"臥龍","color":"#ffffff"},{"id":"vnt9pv02","name":"パグ","color":"#a498fb"},{"id":"je7225jm","name":"マヨ","color":"#98fbda"},{"id":"i7njs1cb","name":"あんどぅ","color":"#ffc7cd"},{"id":"k0xggels","name":"ぷ～","color":"#edffc7"}],"lands":[{"id":"78yly7s8","memberId":"5icqcvh4","x1":407,"x2":417,"y1":828,"y2":838},{"id":"bk6vr0ks","memberId":"wppbuce7","x1":401,"x2":408,"y1":785,"y2":802},{"id":"03wz2i81","memberId":"ugs4zcvm","x1":365,"x2":376,"y1":806,"y2":815},{"id":"6l804n29","memberId":"k0xggels","x1":365,"x2":376,"y1":795,"y2":804},{"id":"yv0o3pxz","memberId":"7e9n285w","x1":377,"x2":386,"y1":803,"y2":815},{"id":"tbdgwi9f","memberId":"ndqa8vpm","x1":387,"x2":397,"y1":803,"y2":814},{"id":"8yxkfn3b","memberId":"i7njs1cb","x1":376,"x2":389,"y1":779,"y2":786},{"id":"uhqa279k","memberId":"je7225jm","x1":390,"x2":400,"y1":770,"y2":780},{"id":"xua8fqtj","memberId":"w7er63b8","x1":388,"x2":400,"y1":793,"y2":802},{"id":"p9xwwb55","memberId":"vnt9pv02","x1":401,"x2":408,"y1":770,"y2":784},{"id":"ycbwn97o","memberId":"c6t48y9p","x1":409,"x2":423,"y1":801,"y2":808},{"id":"1r03rvqi","memberId":"yqcasrlz","x1":412,"x2":419,"y1":813,"y2":827},{"id":"hhaajg0x","memberId":"ttci1nf0","x1":403,"x2":411,"y1":815,"y2":827},{"id":"14germx0","memberId":"3jnkclf9","x1":398,"x2":408,"y1":803,"y2":814}],"freeformCells":{"365,805":"ugs4zcvm","366,805":"k0xggels","367,805":"k0xggels","368,805":"k0xggels","369,805":"k0xggels","370,805":"k0xggels","371,805":"k0xggels","372,805":"k0xggels","373,805":"k0xggels","374,805":"k0xggels","375,805":"k0xggels","376,805":"k0xggels","366,794":"k0xggels","367,794":"k0xggels","368,794":"k0xggels","369,794":"k0xggels","370,794":"k0xggels","371,794":"k0xggels","372,794":"k0xggels","373,794":"k0xggels","374,794":"k0xggels","375,794":"k0xggels","376,794":"k0xggels","387,815":"ndqa8vpm","388,815":"ndqa8vpm","389,815":"ndqa8vpm","390,815":"ndqa8vpm","376,778":"i7njs1cb","377,778":"i7njs1cb","378,778":"i7njs1cb","380,778":"i7njs1cb","381,778":"i7njs1cb","382,778":"i7njs1cb","383,778":"i7njs1cb","384,778":"i7njs1cb","386,778":"i7njs1cb","387,778":"i7njs1cb","388,778":"i7njs1cb","389,778":"i7njs1cb","385,778":"i7njs1cb","387,787":"i7njs1cb","387,788":"i7njs1cb","377,787":"i7njs1cb","377,788":"i7njs1cb","378,788":"i7njs1cb","379,788":"i7njs1cb","380,788":"i7njs1cb","381,788":"i7njs1cb","382,788":"i7njs1cb","383,788":"i7njs1cb","384,788":"i7njs1cb","385,788":"i7njs1cb","386,788":"i7njs1cb","386,787":"i7njs1cb","385,787":"i7njs1cb","384,787":"i7njs1cb","383,787":"i7njs1cb","382,787":"i7njs1cb","381,787":"i7njs1cb","380,787":"i7njs1cb","379,787":"i7njs1cb","378,787":"i7njs1cb","411,814":"ttci1nf0","410,814":"ttci1nf0","409,814":"ttci1nf0"},"positions":{"5icqcvh4":{"x":412,"y":833},"wppbuce7":{"x":404,"y":793},"ugs4zcvm":{"x":370,"y":811},"k0xggels":{"x":371,"y":800},"7e9n285w":{"x":381,"y":808},"ndqa8vpm":{"x":394,"y":805},"i7njs1cb":{"x":382,"y":783},"je7225jm":{"x":396,"y":775},"w7er63b8":{"x":394,"y":798},"vnt9pv02":{"x":405,"y":777},"c6t48y9p":{"x":416,"y":804},"yqcasrlz":{"x":416,"y":819},"3jnkclf9":{"x":403,"y":809},"ttci1nf0":{"x":408,"y":821}},"selectedMemberId":null,"snapshots":[{"id":"0a2dnflp","name":"保存 2026/09/01 11:56","savedAt":"2026-09-01T02:56:06.400Z","data":{"members":[{"id":"5icqcvh4","name":"肥後菊池武光","color":"#834ac9"},{"id":"ndqa8vpm","name":"Pマン","color":"#c94a4a"},{"id":"wppbuce7","name":"巴","color":"#f849d8"},{"id":"7e9n285w","name":"ホルモン男","color":"#0400f5"},{"id":"ugs4zcvm","name":"りくな","color":"#51fe06"},{"id":"w7er63b8","name":"とみ","color":"#fcff2e"},{"id":"3jnkclf9","name":"どらみ","color":"#2efcff"},{"id":"c6t48y9p","name":"瀧","color":"#a12eff"},{"id":"yqcasrlz","name":"あいにゃん","color":"#fe2f2f"},{"id":"ttci1nf0","name":"臥龍","color":"#ffffff"},{"id":"vnt9pv02","name":"パグ","color":"#a498fb"},{"id":"je7225jm","name":"マヨ","color":"#98fbda"},{"id":"i7njs1cb","name":"あんどぅ","color":"#ffc7cd"},{"id":"k0xggels","name":"ぷ～","color":"#edffc7"}],"lands":[{"id":"78yly7s8","memberId":"5icqcvh4","x1":407,"x2":417,"y1":828,"y2":838},{"id":"bk6vr0ks","memberId":"wppbuce7","x1":401,"x2":408,"y1":785,"y2":802},{"id":"03wz2i81","memberId":"ugs4zcvm","x1":365,"x2":376,"y1":806,"y2":815},{"id":"6l804n29","memberId":"k0xggels","x1":365,"x2":376,"y1":795,"y2":804},{"id":"yv0o3pxz","memberId":"7e9n285w","x1":377,"x2":386,"y1":803,"y2":815},{"id":"tbdgwi9f","memberId":"ndqa8vpm","x1":387,"x2":397,"y1":803,"y2":814},{"id":"8yxkfn3b","memberId":"i7njs1cb","x1":376,"x2":389,"y1":779,"y2":786},{"id":"uhqa279k","memberId":"je7225jm","x1":390,"x2":400,"y1":770,"y2":780},{"id":"xua8fqtj","memberId":"w7er63b8","x1":388,"x2":400,"y1":793,"y2":802},{"id":"p9xwwb55","memberId":"vnt9pv02","x1":401,"x2":408,"y1":770,"y2":784},{"id":"ycbwn97o","memberId":"c6t48y9p","x1":409,"x2":423,"y1":801,"y2":808},{"id":"1r03rvqi","memberId":"yqcasrlz","x1":412,"x2":419,"y1":813,"y2":827},{"id":"hhaajg0x","memberId":"ttci1nf0","x1":403,"x2":411,"y1":815,"y2":827},{"id":"14germx0","memberId":"3jnkclf9","x1":398,"x2":408,"y1":803,"y2":814}],"freeformCells":{"365,805":"ugs4zcvm","366,805":"k0xggels","367,805":"k0xggels","368,805":"k0xggels","369,805":"k0xggels","370,805":"k0xggels","371,805":"k0xggels","372,805":"k0xggels","373,805":"k0xggels","374,805":"k0xggels","375,805":"k0xggels","376,805":"k0xggels","366,794":"k0xggels","367,794":"k0xggels","368,794":"k0xggels","369,794":"k0xggels","370,794":"k0xggels","371,794":"k0xggels","372,794":"k0xggels","373,794":"k0xggels","374,794":"k0xggels","375,794":"k0xggels","376,794":"k0xggels","387,815":"ndqa8vpm","388,815":"ndqa8vpm","389,815":"ndqa8vpm","390,815":"ndqa8vpm","376,778":"i7njs1cb","377,778":"i7njs1cb","378,778":"i7njs1cb","380,778":"i7njs1cb","381,778":"i7njs1cb","382,778":"i7njs1cb","383,778":"i7njs1cb","384,778":"i7njs1cb","386,778":"i7njs1cb","387,778":"i7njs1cb","388,778":"i7njs1cb","389,778":"i7njs1cb","385,778":"i7njs1cb","387,787":"i7njs1cb","387,788":"i7njs1cb","377,787":"i7njs1cb","377,788":"i7njs1cb","378,788":"i7njs1cb","379,788":"i7njs1cb","380,788":"i7njs1cb","381,788":"i7njs1cb","382,788":"i7njs1cb","383,788":"i7njs1cb","384,788":"i7njs1cb","385,788":"i7njs1cb","386,788":"i7njs1cb","386,787":"i7njs1cb","385,787":"i7njs1cb","384,787":"i7njs1cb","383,787":"i7njs1cb","382,787":"i7njs1cb","381,787":"i7njs1cb","380,787":"i7njs1cb","379,787":"i7njs1cb","378,787":"i7njs1cb","411,814":"ttci1nf0","410,814":"ttci1nf0","409,814":"ttci1nf0"},"positions":{"5icqcvh4":{"x":412,"y":833},"wppbuce7":{"x":404,"y":793},"ugs4zcvm":{"x":370,"y":811},"k0xggels":{"x":371,"y":800},"7e9n285w":{"x":381,"y":808},"ndqa8vpm":{"x":394,"y":805},"i7njs1cb":{"x":382,"y":783},"je7225jm":{"x":396,"y":775},"w7er63b8":{"x":394,"y":798},"vnt9pv02":{"x":405,"y":777},"c6t48y9p":{"x":416,"y":804},"yqcasrlz":{"x":416,"y":819},"3jnkclf9":{"x":403,"y":809},"ttci1nf0":{"x":408,"y":821}}}}]}</script>
 
 <script>
 (function(){
@@ -253,26 +459,97 @@
     lands: [],     // {id, memberId, x1, y1, x2, y2}  (inclusive cell coords, 矩形の土地)
     freeformCells: {}, // "x,y" -> memberId  (自由形状の土地セル)
     positions: {}, // memberId -> {x, y}
-    selectedMemberId: null
+    selectedMemberId: null,
+    snapshots: [] // {id, name, savedAt, data:{members,lands,freeformCells,positions}}
   };
+
+  // 指定した矩形範囲が、既存の土地(矩形・自由形状、所有者問わず)と重なるか判定
+  function rectOverlapsAny(x1, y1, x2, y2) {
+    for (const l of state.lands) {
+      if (x1 <= l.x2 && x2 >= l.x1 && y1 <= l.y2 && y2 >= l.y1) return true;
+    }
+    for (const key in state.freeformCells) {
+      const parts = key.split(",");
+      const kx = parseInt(parts[0], 10), ky = parseInt(parts[1], 10);
+      if (kx >= x1 && kx <= x2 && ky >= y1 && ky <= y2) return true;
+    }
+    return false;
+  }
+
+  // ---------------- Undo (Ctrl+Z) ----------------
+  let history = [];
+  const MAX_HISTORY = 50;
+  function pushHistory() {
+    history.push(JSON.stringify({
+      members: state.members,
+      lands: state.lands,
+      freeformCells: state.freeformCells,
+      positions: state.positions
+    }));
+    if (history.length > MAX_HISTORY) history.shift();
+  }
+  function undo() {
+    if (history.length === 0) { flashHint("これ以上元に戻せません"); return; }
+    const snap = JSON.parse(history.pop());
+    state.members = snap.members;
+    state.lands = snap.lands;
+    state.freeformCells = snap.freeformCells;
+    state.positions = snap.positions;
+    if (state.selectedMemberId && !state.members.some(m => m.id === state.selectedMemberId)) {
+      state.selectedMemberId = null;
+    }
+    save(); draw(); renderMemberList(); renderLandList();
+  }
+  window.addEventListener("keydown", (e) => {
+    const tag = (document.activeElement && document.activeElement.tagName) || "";
+    const isEditable = tag === "INPUT" || tag === "SELECT" || tag === "TEXTAREA";
+    if (isEditable) return;
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z") {
+      e.preventDefault();
+      undo();
+    }
+  });
 
   function uid() { return Math.random().toString(36).slice(2, 10); }
 
-  function load() {
+  // ---------------- 保存/読み込み（共有ストレージ対応） ----------------
+  // Claude上でこのファイルを開いている場合はwindow.storageを使い、全員が同じデータを見られるようにする。
+  // window.storageが無い環境（ダウンロードして単体で開いた場合など）ではブラウザのlocalStorageにフォールバックする。
+  const HAS_SHARED_STORAGE = typeof window.storage !== "undefined";
+
+  async function loadState() {
+    if (HAS_SHARED_STORAGE) {
+      try {
+        const res = await window.storage.get(STORAGE_KEY, true);
+        if (res && res.value) return JSON.parse(res.value);
+      } catch (e) { /* キーが無い場合はエラーになるので握りつぶす */ }
+      return null;
+    }
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        state = Object.assign(state, parsed);
-      }
-    } catch(e) { console.warn("load failed", e); }
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) { return null; }
   }
+
   let saveTimer = null;
   function save() {
     clearTimeout(saveTimer);
-    saveTimer = setTimeout(() => {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    }, 150);
+    saveTimer = setTimeout(doSave, 400);
+  }
+  async function doSave() {
+    const payload = JSON.stringify({
+      members: state.members,
+      lands: state.lands,
+      freeformCells: state.freeformCells,
+      positions: state.positions,
+      selectedMemberId: state.selectedMemberId
+    });
+    if (HAS_SHARED_STORAGE) {
+      try { await window.storage.set(STORAGE_KEY, payload, true); }
+      catch (e) { console.error("save failed", e); }
+    } else {
+      try { localStorage.setItem(STORAGE_KEY, payload); } catch (e) { /* ignore */ }
+    }
   }
 
   // ---------------- Canvas / viewport ----------------
@@ -292,6 +569,40 @@
   const ROT_SIN = Math.sin(MAP_ROTATION_RAD);
   const CENTER_WX = (MAP_BOUNDS.x1 + MAP_BOUNDS.x2 + 1) / 2 * CELL;
   const CENTER_WY = (MAP_BOUNDS.y1 + MAP_BOUNDS.y2 + 1) / 2 * CELL;
+
+  // 指定セルの所有者を返す（矩形の土地・自由形状セルの両方を考慮）。境界線の一体化に使用。
+  function cellOwner(x, y) {
+    const key = x + "," + y;
+    const fcOwner = state.freeformCells[key];
+    if (fcOwner) return fcOwner;
+    for (let i = 0; i < state.lands.length; i++) {
+      const l = state.lands[i];
+      if (x >= l.x1 && x <= l.x2 && y >= l.y1 && y <= l.y2) return l.memberId;
+    }
+    return undefined;
+  }
+
+  // 指定範囲のセル所有者マップを事前構築（角座標ラベル描画用、毎セルでcellOwnerを呼ぶより高速）
+  function buildOwnerGrid(gx0, gy0, gx1, gy1) {
+    const grid = {};
+    state.lands.forEach(l => {
+      const ix1 = Math.max(l.x1, gx0), iy1 = Math.max(l.y1, gy0);
+      const ix2 = Math.min(l.x2, gx1), iy2 = Math.min(l.y2, gy1);
+      if (ix1 > ix2 || iy1 > iy2) return;
+      for (let cx = ix1; cx <= ix2; cx++) {
+        for (let cy = iy1; cy <= iy2; cy++) {
+          grid[cx + "," + cy] = l.memberId;
+        }
+      }
+    });
+    for (const key in state.freeformCells) {
+      const parts = key.split(",");
+      const kx = parseInt(parts[0], 10), ky = parseInt(parts[1], 10);
+      if (kx < gx0 || kx > gx1 || ky < gy0 || ky > gy1) continue;
+      grid[key] = state.freeformCells[key];
+    }
+    return grid;
+  }
 
   function computeEffectiveBounds() {
     let x1 = MAP_BOUNDS.x1, y1 = MAP_BOUNDS.y1, x2 = MAP_BOUNDS.x2, y2 = MAP_BOUNDS.y2;
@@ -464,40 +775,32 @@
 
       const centerPt = { x: (bMinX + bMaxX) / 2, y: (bMinY + bMaxY) / 2 };
 
-      drawWorldRect(land.x1, land.y1, land.x2 + 1, land.y2 + 1, {
-        fill: m.color + "33", stroke: m.color, lineWidth: 2
-      });
+      drawWorldRect(land.x1, land.y1, land.x2 + 1, land.y2 + 1, { fill: m.color + "33" });
 
-      // corner coordinate labels (always shown)
-      if (cellPx > 6) {
-        ctx.font = "10px sans-serif";
-        const corners = [
-          { x: land.x1, y: land.y1, pt: p1 },
-          { x: land.x2, y: land.y1, pt: p2 },
-          { x: land.x2, y: land.y2, pt: p3 },
-          { x: land.x1, y: land.y2, pt: p4 }
-        ];
-        corners.forEach(c => {
-          const label = `${c.x},${c.y}`;
-          ctx.textAlign = "center";
-          const tw = ctx.measureText(label).width;
-          // ラベルを土地の中心方向に少しオフセットして重なりを避ける
-          const ox = (centerPt.x - c.pt.x) * 0.12, oy = (centerPt.y - c.pt.y) * 0.12;
-          const lx = c.pt.x + ox, ly = c.pt.y + oy;
-          ctx.fillStyle = "rgba(20,24,26,.8)";
-          ctx.fillRect(lx - tw / 2 - 2, ly - 9, tw + 4, 12);
-          ctx.fillStyle = "#e7e2d3";
-          ctx.fillText(label, lx, ly);
-        });
+      // 境界線: 隣のセルが別所有者/未所有の辺だけ描画（自由形状セルと接する部分はつなぎ目なく合体させる）
+      ctx.strokeStyle = m.color;
+      ctx.lineWidth = 2;
+      for (let gx = land.x1; gx <= land.x2; gx++) {
+        if (cellOwner(gx, land.y1 - 1) !== land.memberId) {
+          const a = worldToScreen(gx, land.y1), b = worldToScreen(gx + 1, land.y1);
+          ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+        }
+        if (cellOwner(gx, land.y2 + 1) !== land.memberId) {
+          const a = worldToScreen(gx, land.y2 + 1), b = worldToScreen(gx + 1, land.y2 + 1);
+          ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+        }
+      }
+      for (let gy = land.y1; gy <= land.y2; gy++) {
+        if (cellOwner(land.x1 - 1, gy) !== land.memberId) {
+          const a = worldToScreen(land.x1, gy), b = worldToScreen(land.x1, gy + 1);
+          ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+        }
+        if (cellOwner(land.x2 + 1, gy) !== land.memberId) {
+          const a = worldToScreen(land.x2 + 1, gy), b = worldToScreen(land.x2 + 1, gy + 1);
+          ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+        }
       }
 
-      // member name centered in land
-      if (cellPx > 10) {
-        ctx.fillStyle = "#e7e2d3cc";
-        ctx.font = "bold 11px sans-serif";
-        ctx.textAlign = "center";
-        ctx.fillText(m.name, centerPt.x, centerPt.y);
-      }
     });
 
     // 自由形状の土地セル
@@ -520,19 +823,79 @@
           ctx.fillStyle = m.color + "40";
           ctx.fill();
 
-          // 隣接セルが別所有者/未所有なら境界線として描画（形の輪郭を分かりやすくする）
+          // 隣接セルが別所有者/未所有なら境界線として描画（矩形の土地とも一体化させる）
           ctx.strokeStyle = m.color;
           ctx.lineWidth = 2;
           const edges = [
-            { nk: (gx) + "," + (gy - 1), a: p1, b: p2 },
-            { nk: (gx) + "," + (gy + 1), a: p4, b: p3 },
-            { nk: (gx - 1) + "," + (gy), a: p1, b: p4 },
-            { nk: (gx + 1) + "," + (gy), a: p2, b: p3 }
+            { nx: gx, ny: gy - 1, a: p1, b: p2 },
+            { nx: gx, ny: gy + 1, a: p4, b: p3 },
+            { nx: gx - 1, ny: gy, a: p1, b: p4 },
+            { nx: gx + 1, ny: gy, a: p2, b: p3 }
           ];
           edges.forEach(edge => {
-            if (fc[edge.nk] !== ownerId) {
+            if (cellOwner(edge.nx, edge.ny) !== ownerId) {
               ctx.beginPath(); ctx.moveTo(edge.a.x, edge.a.y); ctx.lineTo(edge.b.x, edge.b.y); ctx.stroke();
             }
+          });
+        }
+      }
+    }
+
+    // 土地の輪郭上の全ての角(頂点)に座標ラベルを表示（矩形・自由形状どちらも対象、境界が合体した場所は角として扱わない）
+    if (cellPx > 6) {
+      const grid = buildOwnerGrid(x0 - 1, y0 - 1, x1 + 1, y1 + 1);
+      ctx.font = "9px sans-serif";
+      ctx.textAlign = "center";
+      for (let vx = x0; vx <= x1 + 1; vx++) {
+        for (let vy = y0; vy <= y1 + 1; vy++) {
+          const tl = grid[(vx - 1) + "," + (vy - 1)];
+          const tr = grid[vx + "," + (vy - 1)];
+          const bl = grid[(vx - 1) + "," + vy];
+          const br = grid[vx + "," + vy];
+          const owners = [];
+          [tl, tr, bl, br].forEach(o => { if (o && owners.indexOf(o) === -1) owners.push(o); });
+          if (owners.length === 0) continue;
+
+          const pt = worldToScreen(vx, vy);
+          if (pt.x < -20 || pt.y < -20 || pt.x > cw + 20 || pt.y > ch + 20) continue;
+
+          let stack = 0;
+          owners.forEach(ownerId => {
+            const a = tl === ownerId, b = tr === ownerId, c = bl === ownerId, d = br === ownerId;
+            const count = (a ? 1 : 0) + (b ? 1 : 0) + (c ? 1 : 0) + (d ? 1 : 0);
+            const isDiagonal = (a && d && !b && !c) || (b && c && !a && !d);
+            const isCorner = count === 1 || count === 3 || isDiagonal;
+            if (!isCorner) return;
+            const m = memberById[ownerId];
+            if (!m) return;
+
+            // 表示する座標は「頂点の通し番号」ではなく、その角を構成するマス自身の座標
+            let cellCoord;
+            if (count === 1) {
+              if (a) cellCoord = { x: vx - 1, y: vy - 1 };
+              else if (b) cellCoord = { x: vx, y: vy - 1 };
+              else if (c) cellCoord = { x: vx - 1, y: vy };
+              else cellCoord = { x: vx, y: vy };
+            } else if (count === 3) {
+              if (!a) cellCoord = { x: vx, y: vy };         // 欠けているのがTL→対角のBRを採用
+              else if (!d) cellCoord = { x: vx - 1, y: vy - 1 }; // 欠けているのがBR→対角のTLを採用
+              else if (!b) cellCoord = { x: vx - 1, y: vy };     // 欠けているのがTR→対角のBLを採用
+              else cellCoord = { x: vx, y: vy - 1 };             // 欠けているのがBL→対角のTRを採用
+            } else { // isDiagonal (鞍点)
+              cellCoord = a ? { x: vx - 1, y: vy - 1 } : { x: vx, y: vy - 1 };
+            }
+
+            // ラベルは、そのマス(セル)自身の中心に表示
+            const cellCenter = worldToScreen(cellCoord.x + 0.5, cellCoord.y + 0.5);
+            const lx = cellCenter.x, ly = cellCenter.y;
+
+            const label = cellCoord.x + "," + cellCoord.y;
+            const tw = ctx.measureText(label).width;
+            ctx.fillStyle = "rgba(20,24,26,.8)";
+            ctx.fillRect(lx - tw / 2 - 2, ly - 6, tw + 4, 11);
+            ctx.fillStyle = m.color;
+            ctx.fillText(label, lx, ly + 3);
+            stack++;
           });
         }
       }
@@ -573,12 +936,22 @@
       ctx.stroke();
 
       if (cellPx > 8) {
-        ctx.font = "10px sans-serif";
         ctx.textAlign = "center";
-        ctx.fillStyle = "#14181a";
-        ctx.fillRect(center.x - 20, center.y + r + 2, 40, 0); // no-op sizing guard
+        ctx.font = "bold 10px sans-serif";
+        const nameLabel = m.name;
+        let tw = ctx.measureText(nameLabel).width;
+        ctx.fillStyle = "rgba(20,24,26,.8)";
+        ctx.fillRect(center.x - tw / 2 - 3, center.y - r - 17, tw + 6, 13);
         ctx.fillStyle = "#e7e2d3";
-        ctx.fillText(m.name, center.x, center.y - r - 4);
+        ctx.fillText(nameLabel, center.x, center.y - r - 7);
+
+        const coordLabel = `(${pos.x}, ${pos.y})`;
+        ctx.font = "9px sans-serif";
+        tw = ctx.measureText(coordLabel).width;
+        ctx.fillStyle = "rgba(20,24,26,.8)";
+        ctx.fillRect(center.x - tw / 2 - 3, center.y + r + 4, tw + 6, 12);
+        ctx.fillStyle = "#c9a24b";
+        ctx.fillText(coordLabel, center.x, center.y + r + 13);
       }
     });
 
@@ -606,6 +979,11 @@
   function applyFreeformPaint(x, y) {
     const key = x + "," + y;
     if (freeformPaint.action === "add") {
+      const existingOwner = cellOwner(x, y);
+      if (existingOwner && existingOwner !== freeformPaint.memberId) {
+        if (!freeformPaint.warned) { flashHint("他のメンバーの土地には設置できません"); freeformPaint.warned = true; }
+        return;
+      }
       state.freeformCells[key] = freeformPaint.memberId;
     } else if (state.freeformCells[key] === freeformPaint.memberId) {
       delete state.freeformCells[key];
@@ -622,6 +1000,7 @@
         if (!state.selectedMemberId) { flashHint("先にメンバーを選択してください"); return; }
         const key = c.x + "," + c.y;
         const alreadyOwned = state.freeformCells[key] === state.selectedMemberId;
+        pushHistory();
         freeformPaint = { action: alreadyOwned ? "remove" : "add", memberId: state.selectedMemberId };
         applyFreeformPaint(c.x, c.y);
         draw();
@@ -633,6 +1012,7 @@
     if (mode === "place" && e.button === 0) {
       if (!state.selectedMemberId) { flashHint("先にメンバーを選択してください"); return; }
       const c = screenToWorldCell(sx, sy);
+      pushHistory();
       state.positions[state.selectedMemberId] = { x: c.x, y: c.y };
       save(); draw(); renderMemberList();
       return;
@@ -730,7 +1110,17 @@
   }
   document.getElementById("assignConfirm").onclick = () => {
     if (!pendingLandRect || !assignSelect.value) return;
-    state.lands.push(Object.assign({ id: uid(), memberId: assignSelect.value }, pendingLandRect));
+    const memberId = assignSelect.value;
+    const { x1, y1, x2, y2 } = pendingLandRect;
+    if (rectOverlapsAny(x1, y1, x2, y2)) {
+      flashHint("既存の土地と重なっています");
+      pendingLandRect = null;
+      assignBar.classList.remove("show");
+      draw();
+      return;
+    }
+    pushHistory();
+    state.lands.push(Object.assign({ id: uid(), memberId }, pendingLandRect));
     pendingLandRect = null;
     assignBar.classList.remove("show");
     save(); draw(); renderLandList(); renderMemberList();
@@ -775,6 +1165,7 @@
     const colorInput = document.getElementById("memberColor");
     const name = nameInput.value.trim();
     if (!name) return;
+    pushHistory();
     const m = { id: uid(), name, color: colorInput.value };
     state.members.push(m);
     state.selectedMemberId = m.id;
@@ -801,15 +1192,37 @@
         <span class="swatch" style="background:${m.color}"></span>
         <span class="name">${escapeHtml(m.name)}</span>
         ${statusHtml}
+        ${pos ? `<span class="clearpos" title="配置を解除">⌖✕</span>` : ""}
+        <span class="rename" title="名前を変更">✎</span>
         <span class="del" data-id="${m.id}" title="削除">✕</span>
       `;
       row.addEventListener("click", (e) => {
-        if (e.target.classList.contains("del")) return;
+        if (e.target.classList.contains("del") || e.target.classList.contains("rename") || e.target.classList.contains("clearpos")) return;
         state.selectedMemberId = m.id;
         save(); renderMemberList();
       });
+      row.querySelector(".rename").addEventListener("click", (e) => {
+        e.stopPropagation();
+        const newName = prompt("新しい名前を入力してください", m.name);
+        if (newName === null) return;
+        const trimmed = newName.trim();
+        if (!trimmed) return;
+        pushHistory();
+        m.name = trimmed;
+        save(); renderMemberList(); renderLandList(); draw();
+      });
+      const clearPosBtn = row.querySelector(".clearpos");
+      if (clearPosBtn) {
+        clearPosBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          pushHistory();
+          delete state.positions[m.id];
+          save(); renderMemberList(); draw();
+        });
+      }
       row.querySelector(".del").addEventListener("click", (e) => {
         e.stopPropagation();
+        pushHistory();
         state.members = state.members.filter(x => x.id !== m.id);
         state.lands = state.lands.filter(l => l.memberId !== m.id);
         Object.keys(state.freeformCells).forEach(k => {
@@ -842,12 +1255,15 @@
       return;
     }
 
-    const land = {
-      id: uid(),
-      memberId,
-      x1: Math.min(nx1, nx2), x2: Math.max(nx1, nx2),
-      y1: Math.min(ny1, ny2), y2: Math.max(ny1, ny2)
-    };
+    const rx1 = Math.min(nx1, nx2), rx2 = Math.max(nx1, nx2);
+    const ry1 = Math.min(ny1, ny2), ry2 = Math.max(ny1, ny2);
+    if (rectOverlapsAny(rx1, ry1, rx2, ry2)) {
+      flashHint("既存の土地と重なっています");
+      return;
+    }
+
+    pushHistory();
+    const land = { id: uid(), memberId, x1: rx1, x2: rx2, y1: ry1, y2: ry2 };
     state.lands.push(land);
     xEl1.value = ""; yEl1.value = ""; xEl2.value = ""; yEl2.value = "";
     save(); draw(); renderLandList(); renderMemberList();
@@ -885,12 +1301,22 @@
       const m = memberById[l.memberId];
       const row = document.createElement("div");
       row.className = "land-row";
+      const label = l.name ? `${escapeHtml(l.name)} ・ ${m ? escapeHtml(m.name) : "?"}` : (m ? escapeHtml(m.name) : "?");
       row.innerHTML = `
         <span class="swatch" style="background:${m ? m.color : '#666'}"></span>
-        <span class="coord">${m ? escapeHtml(m.name) : "?"}: (${l.x1},${l.y1})–(${l.x2},${l.y2})</span>
+        <span class="coord">${label}: (${l.x1},${l.y1})–(${l.x2},${l.y2})</span>
+        <span class="rename" title="名前を変更">✎</span>
         <span class="del" title="削除">✕</span>
       `;
+      row.querySelector(".rename").addEventListener("click", () => {
+        const newName = prompt("この土地の名前を入力してください（空にすると解除）", l.name || "");
+        if (newName === null) return;
+        pushHistory();
+        l.name = newName.trim();
+        save(); renderLandList();
+      });
       row.querySelector(".del").addEventListener("click", () => {
+        pushHistory();
         state.lands = state.lands.filter(x => x.id !== l.id);
         save(); renderLandList(); renderMemberList(); draw();
       });
@@ -919,8 +1345,9 @@
     reader.onload = () => {
       try {
         const parsed = JSON.parse(reader.result);
-        state = Object.assign({ members: [], lands: [], freeformCells: {}, positions: {}, selectedMemberId: null }, parsed);
-        save(); renderMemberList(); renderLandList(); draw();
+        pushHistory();
+        state = Object.assign({ members: [], lands: [], freeformCells: {}, positions: {}, selectedMemberId: null, snapshots: [] }, parsed);
+        save(); renderMemberList(); renderLandList(); renderSnapshotList(); draw();
       } catch(err) {
         alert("読み込みに失敗しました。JSON形式を確認してください。");
       }
@@ -929,13 +1356,154 @@
     e.target.value = "";
   });
 
+  // ---------------- スナップショット保存 ----------------
+  function saveSnapshot() {
+    const defaultName = "保存 " + new Date().toLocaleString("ja-JP", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" });
+    const name = prompt("スナップショット名を入力してください", defaultName);
+    if (name === null) return;
+    const trimmed = name.trim();
+    if (!trimmed) return;
+    const snap = {
+      id: uid(),
+      name: trimmed,
+      savedAt: new Date().toISOString(),
+      data: {
+        members: JSON.parse(JSON.stringify(state.members)),
+        lands: JSON.parse(JSON.stringify(state.lands)),
+        freeformCells: JSON.parse(JSON.stringify(state.freeformCells)),
+        positions: JSON.parse(JSON.stringify(state.positions))
+      }
+    };
+    if (!state.snapshots) state.snapshots = [];
+    state.snapshots.push(snap);
+    save();
+    renderSnapshotList();
+  }
+  document.getElementById("saveSnapshotBtn").onclick = saveSnapshot;
+
+  function loadSnapshot(id) {
+    const snap = (state.snapshots || []).find(s => s.id === id);
+    if (!snap) return;
+    if (!confirm(`「${snap.name}」を読み込みます。現在編集中の内容は上書きされます。よろしいですか？`)) return;
+    pushHistory();
+    state.members = JSON.parse(JSON.stringify(snap.data.members));
+    state.lands = JSON.parse(JSON.stringify(snap.data.lands));
+    state.freeformCells = JSON.parse(JSON.stringify(snap.data.freeformCells));
+    state.positions = JSON.parse(JSON.stringify(snap.data.positions));
+    state.selectedMemberId = null;
+    save(); draw(); renderMemberList(); renderLandList();
+  }
+
+  function renameSnapshot(id) {
+    const snap = (state.snapshots || []).find(s => s.id === id);
+    if (!snap) return;
+    const name = prompt("新しい名前を入力してください", snap.name);
+    if (name === null) return;
+    const trimmed = name.trim();
+    if (!trimmed) return;
+    snap.name = trimmed;
+    save(); renderSnapshotList();
+  }
+
+  function deleteSnapshot(id) {
+    if (!confirm("このスナップショットを削除しますか？")) return;
+    state.snapshots = (state.snapshots || []).filter(s => s.id !== id);
+    save(); renderSnapshotList();
+  }
+
+  function renderSnapshotList() {
+    const listEl = document.getElementById("snapshotList");
+    if (!listEl) return;
+    listEl.innerHTML = "";
+    const snaps = (state.snapshots || []).slice().reverse();
+    if (snaps.length === 0) {
+      listEl.innerHTML = '<div style="font-size:11.5px; color:var(--text-dim); padding:2px 2px;">まだ保存されたスナップショットはありません</div>';
+      return;
+    }
+    snaps.forEach(snap => {
+      const row = document.createElement("div");
+      row.className = "snapshot-row";
+      const d = new Date(snap.savedAt);
+      const dateStr = isNaN(d.getTime()) ? "" : d.toLocaleString("ja-JP", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" });
+      row.innerHTML = `
+        <div class="info">
+          <span class="sname">${escapeHtml(snap.name)}</span>
+          <span class="sdate">${dateStr}</span>
+        </div>
+        <span class="icon load" title="このスナップショットを読み込む">⇩</span>
+        <span class="icon rename" title="名前を変更">✎</span>
+        <span class="icon del" title="削除">✕</span>
+      `;
+      row.querySelector(".load").addEventListener("click", () => loadSnapshot(snap.id));
+      row.querySelector(".rename").addEventListener("click", () => renameSnapshot(snap.id));
+      row.querySelector(".del").addEventListener("click", () => deleteSnapshot(snap.id));
+      listEl.appendChild(row);
+    });
+  }
+
+  // ---------------- GitHub公開用に書き出す ----------------
+  // 現在のページ自身(HTML)を複製し、保存済みスナップショット＋現在の内容を初期データとして埋め込んだファイルを作る。
+  // サーバーを持たない静的ホスティング(GitHub Pagesなど)でも、埋め込んだスナップショットを選んで閲覧できる。
+  document.getElementById("exportGithubBtn").onclick = () => {
+    const list = state.snapshots || [];
+    if (list.length === 0) {
+      if (!confirm("保存済みのスナップショットがまだありません。現在の内容だけを書き出しますか？\n（あとで「名前をつけて保存」をしてから書き出すと、複数のバージョンを選べるようになります）")) return;
+    }
+    const seed = {
+      members: state.members,
+      lands: state.lands,
+      freeformCells: state.freeformCells,
+      positions: state.positions,
+      selectedMemberId: null,
+      snapshots: list
+    };
+    const json = JSON.stringify(seed).replace(/<\/script/gi, "<\\/script");
+
+    let html = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+    html = html.replace(
+      /(<script id="embedded-state" type="application\/json">)[\s\S]*?(<\/script>)/,
+      "$1" + json + "$2"
+    );
+
+    const blob = new Blob([html], { type: "text/html" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = "領地管理マップ_公開用.html";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   // ---------------- Init ----------------
-  load();
-  renderMemberList();
-  renderLandList();
-  updateHint();
-  resizeCanvas();
+  (async function init() {
+    // GitHub公開用に書き出された場合、ここに埋め込まれたスナップショット/データを初期値として読み込む
+    try {
+      const seedEl = document.getElementById("embedded-state");
+      if (seedEl) {
+        const text = seedEl.textContent.trim();
+        if (text && text !== "{}") {
+          const seed = JSON.parse(text);
+          state = Object.assign(state, seed);
+        }
+      }
+    } catch (e) {
+      console.error("埋め込みデータの読み込みに失敗しました", e);
+    }
+
+    try {
+      const loaded = await loadState();
+      if (loaded) state = Object.assign(state, loaded);
+    } catch (e) {
+      console.error("初期読み込みに失敗しました", e);
+    }
+
+    renderMemberList();
+    renderLandList();
+    renderSnapshotList();
+    updateHint();
+    resizeCanvas();
+  })();
 })();
 </script>
-</body>
-</html>
+
+
+</body></html>
