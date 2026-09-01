@@ -34,7 +34,17 @@
     border-right: 1px solid var(--line);
     display: flex; flex-direction: column;
     overflow: hidden;
+    transition: width .2s ease, min-width .2s ease, border-color .2s ease;
   }
+  #sidebar.collapsed { width: 0; min-width: 0; border-right-color: transparent; }
+  #sidebarToggle {
+    position: absolute; left: 0; top: 50%; transform: translate(-50%, -50%);
+    width: 20px; height: 44px; border-radius: 5px;
+    background: var(--panel); border: 1px solid var(--line); color: var(--text-dim);
+    cursor: pointer; z-index: 20; font-size: 11px; display: flex; align-items: center; justify-content: center;
+    padding: 0;
+  }
+  #sidebarToggle:hover { color: var(--text); border-color: var(--accent-2); }
   .brand {
     padding: 16px 18px 12px;
     border-bottom: 1px solid var(--line);
@@ -160,6 +170,7 @@
   canvas.panning { cursor: grabbing; }
   canvas.mode-land { cursor: crosshair; }
   canvas.mode-place { cursor: cell; }
+  canvas.mode-mark { cursor: not-allowed; }
 
   #hud {
     position: absolute; top: 10px; left: 12px; font-size: 11.5px; color: var(--text-dim);
@@ -191,7 +202,7 @@
 </head>
 <body>
 <div id="app">
-  <div id="sidebar">
+  <div id="sidebar" class="">
     <div class="brand">
       <h1>領地管理マップ</h1>
       <p>一族の配置と割り当て地の可視化</p>
@@ -201,6 +212,7 @@
       <div class="mode-btn active" data-mode="view">表示</div>
       <div class="mode-btn" data-mode="land">土地作成</div>
       <div class="mode-btn" data-mode="place">配置</div>
+      <div class="mode-btn" data-mode="mark">印</div>
     </div>
 
     <div class="section" style="border-bottom:none; padding-bottom:0;">
@@ -402,8 +414,8 @@
       <button id="saveSnapshotBtn" class="snapshot-save-btn">名前をつけて保存</button>
       <div id="snapshotList"><div class="snapshot-row">
         <div class="info">
-          <span class="sname">保存 2026/09/01 11:56</span>
-          <span class="sdate">2026/09/01 11:56</span>
+          <span class="sname">保存 2026/09/01 12:33</span>
+          <span class="sdate">2026/09/01 12:33</span>
         </div>
         <span class="icon load" title="このスナップショットを読み込む">⇩</span>
         <span class="icon rename" title="名前を変更">✎</span>
@@ -411,7 +423,7 @@
       </div></div>
     </div>
 
-    <div class="hint" id="modeHint">ドラッグで地図を移動、ホイールでズームできます。<b>土地作成</b> / <b>配置</b>モードで編集します。</div>
+    <div class="hint" id="modeHint">ドラッグで地図を移動、ホイールでズームできます。<b>土地作成</b> / <b>配置</b> / <b>印</b>モードで編集します。</div>
 
     <div class="footer-actions">
       <button id="exportBtn">JSON書き出し</button>
@@ -424,8 +436,9 @@
   </div>
 
   <div id="canvasWrap">
+    <button id="sidebarToggle" title="パネルの表示/非表示">◀</button>
     <canvas id="mapCanvas" width="1545" height="869" style="width: 1236px; height: 695.2px;" class=""></canvas>
-    <div id="hud">x: 357, y: 688</div>
+    <div id="hud">x: 47, y: 352</div>
     <div id="assignBar">
       <span>この土地を割り当てる:</span>
       <select id="assignSelect"></select>
@@ -441,7 +454,7 @@
 </div>
 
 <!-- GitHub公開用に書き出す際、ここにスナップショット等の初期データがJSONとして埋め込まれる -->
-<script id="embedded-state" type="application/json">{"members":[{"id":"5icqcvh4","name":"肥後菊池武光","color":"#834ac9"},{"id":"ndqa8vpm","name":"Pマン","color":"#c94a4a"},{"id":"wppbuce7","name":"巴","color":"#f849d8"},{"id":"7e9n285w","name":"ホルモン男","color":"#0400f5"},{"id":"ugs4zcvm","name":"りくな","color":"#51fe06"},{"id":"w7er63b8","name":"とみ","color":"#fcff2e"},{"id":"3jnkclf9","name":"どらみ","color":"#2efcff"},{"id":"c6t48y9p","name":"瀧","color":"#a12eff"},{"id":"yqcasrlz","name":"あいにゃん","color":"#fe2f2f"},{"id":"ttci1nf0","name":"臥龍","color":"#ffffff"},{"id":"vnt9pv02","name":"パグ","color":"#a498fb"},{"id":"je7225jm","name":"マヨ","color":"#98fbda"},{"id":"i7njs1cb","name":"あんどぅ","color":"#ffc7cd"},{"id":"k0xggels","name":"ぷ～","color":"#edffc7"}],"lands":[{"id":"78yly7s8","memberId":"5icqcvh4","x1":407,"x2":417,"y1":828,"y2":838},{"id":"bk6vr0ks","memberId":"wppbuce7","x1":401,"x2":408,"y1":785,"y2":802},{"id":"03wz2i81","memberId":"ugs4zcvm","x1":365,"x2":376,"y1":806,"y2":815},{"id":"6l804n29","memberId":"k0xggels","x1":365,"x2":376,"y1":795,"y2":804},{"id":"yv0o3pxz","memberId":"7e9n285w","x1":377,"x2":386,"y1":803,"y2":815},{"id":"tbdgwi9f","memberId":"ndqa8vpm","x1":387,"x2":397,"y1":803,"y2":814},{"id":"8yxkfn3b","memberId":"i7njs1cb","x1":376,"x2":389,"y1":779,"y2":786},{"id":"uhqa279k","memberId":"je7225jm","x1":390,"x2":400,"y1":770,"y2":780},{"id":"xua8fqtj","memberId":"w7er63b8","x1":388,"x2":400,"y1":793,"y2":802},{"id":"p9xwwb55","memberId":"vnt9pv02","x1":401,"x2":408,"y1":770,"y2":784},{"id":"ycbwn97o","memberId":"c6t48y9p","x1":409,"x2":423,"y1":801,"y2":808},{"id":"1r03rvqi","memberId":"yqcasrlz","x1":412,"x2":419,"y1":813,"y2":827},{"id":"hhaajg0x","memberId":"ttci1nf0","x1":403,"x2":411,"y1":815,"y2":827},{"id":"14germx0","memberId":"3jnkclf9","x1":398,"x2":408,"y1":803,"y2":814}],"freeformCells":{"365,805":"ugs4zcvm","366,805":"k0xggels","367,805":"k0xggels","368,805":"k0xggels","369,805":"k0xggels","370,805":"k0xggels","371,805":"k0xggels","372,805":"k0xggels","373,805":"k0xggels","374,805":"k0xggels","375,805":"k0xggels","376,805":"k0xggels","366,794":"k0xggels","367,794":"k0xggels","368,794":"k0xggels","369,794":"k0xggels","370,794":"k0xggels","371,794":"k0xggels","372,794":"k0xggels","373,794":"k0xggels","374,794":"k0xggels","375,794":"k0xggels","376,794":"k0xggels","387,815":"ndqa8vpm","388,815":"ndqa8vpm","389,815":"ndqa8vpm","390,815":"ndqa8vpm","376,778":"i7njs1cb","377,778":"i7njs1cb","378,778":"i7njs1cb","380,778":"i7njs1cb","381,778":"i7njs1cb","382,778":"i7njs1cb","383,778":"i7njs1cb","384,778":"i7njs1cb","386,778":"i7njs1cb","387,778":"i7njs1cb","388,778":"i7njs1cb","389,778":"i7njs1cb","385,778":"i7njs1cb","387,787":"i7njs1cb","387,788":"i7njs1cb","377,787":"i7njs1cb","377,788":"i7njs1cb","378,788":"i7njs1cb","379,788":"i7njs1cb","380,788":"i7njs1cb","381,788":"i7njs1cb","382,788":"i7njs1cb","383,788":"i7njs1cb","384,788":"i7njs1cb","385,788":"i7njs1cb","386,788":"i7njs1cb","386,787":"i7njs1cb","385,787":"i7njs1cb","384,787":"i7njs1cb","383,787":"i7njs1cb","382,787":"i7njs1cb","381,787":"i7njs1cb","380,787":"i7njs1cb","379,787":"i7njs1cb","378,787":"i7njs1cb","411,814":"ttci1nf0","410,814":"ttci1nf0","409,814":"ttci1nf0"},"positions":{"5icqcvh4":{"x":412,"y":833},"wppbuce7":{"x":404,"y":793},"ugs4zcvm":{"x":370,"y":811},"k0xggels":{"x":371,"y":800},"7e9n285w":{"x":381,"y":808},"ndqa8vpm":{"x":394,"y":805},"i7njs1cb":{"x":382,"y":783},"je7225jm":{"x":396,"y":775},"w7er63b8":{"x":394,"y":798},"vnt9pv02":{"x":405,"y":777},"c6t48y9p":{"x":416,"y":804},"yqcasrlz":{"x":416,"y":819},"3jnkclf9":{"x":403,"y":809},"ttci1nf0":{"x":408,"y":821}},"selectedMemberId":null,"snapshots":[{"id":"0a2dnflp","name":"保存 2026/09/01 11:56","savedAt":"2026-09-01T02:56:06.400Z","data":{"members":[{"id":"5icqcvh4","name":"肥後菊池武光","color":"#834ac9"},{"id":"ndqa8vpm","name":"Pマン","color":"#c94a4a"},{"id":"wppbuce7","name":"巴","color":"#f849d8"},{"id":"7e9n285w","name":"ホルモン男","color":"#0400f5"},{"id":"ugs4zcvm","name":"りくな","color":"#51fe06"},{"id":"w7er63b8","name":"とみ","color":"#fcff2e"},{"id":"3jnkclf9","name":"どらみ","color":"#2efcff"},{"id":"c6t48y9p","name":"瀧","color":"#a12eff"},{"id":"yqcasrlz","name":"あいにゃん","color":"#fe2f2f"},{"id":"ttci1nf0","name":"臥龍","color":"#ffffff"},{"id":"vnt9pv02","name":"パグ","color":"#a498fb"},{"id":"je7225jm","name":"マヨ","color":"#98fbda"},{"id":"i7njs1cb","name":"あんどぅ","color":"#ffc7cd"},{"id":"k0xggels","name":"ぷ～","color":"#edffc7"}],"lands":[{"id":"78yly7s8","memberId":"5icqcvh4","x1":407,"x2":417,"y1":828,"y2":838},{"id":"bk6vr0ks","memberId":"wppbuce7","x1":401,"x2":408,"y1":785,"y2":802},{"id":"03wz2i81","memberId":"ugs4zcvm","x1":365,"x2":376,"y1":806,"y2":815},{"id":"6l804n29","memberId":"k0xggels","x1":365,"x2":376,"y1":795,"y2":804},{"id":"yv0o3pxz","memberId":"7e9n285w","x1":377,"x2":386,"y1":803,"y2":815},{"id":"tbdgwi9f","memberId":"ndqa8vpm","x1":387,"x2":397,"y1":803,"y2":814},{"id":"8yxkfn3b","memberId":"i7njs1cb","x1":376,"x2":389,"y1":779,"y2":786},{"id":"uhqa279k","memberId":"je7225jm","x1":390,"x2":400,"y1":770,"y2":780},{"id":"xua8fqtj","memberId":"w7er63b8","x1":388,"x2":400,"y1":793,"y2":802},{"id":"p9xwwb55","memberId":"vnt9pv02","x1":401,"x2":408,"y1":770,"y2":784},{"id":"ycbwn97o","memberId":"c6t48y9p","x1":409,"x2":423,"y1":801,"y2":808},{"id":"1r03rvqi","memberId":"yqcasrlz","x1":412,"x2":419,"y1":813,"y2":827},{"id":"hhaajg0x","memberId":"ttci1nf0","x1":403,"x2":411,"y1":815,"y2":827},{"id":"14germx0","memberId":"3jnkclf9","x1":398,"x2":408,"y1":803,"y2":814}],"freeformCells":{"365,805":"ugs4zcvm","366,805":"k0xggels","367,805":"k0xggels","368,805":"k0xggels","369,805":"k0xggels","370,805":"k0xggels","371,805":"k0xggels","372,805":"k0xggels","373,805":"k0xggels","374,805":"k0xggels","375,805":"k0xggels","376,805":"k0xggels","366,794":"k0xggels","367,794":"k0xggels","368,794":"k0xggels","369,794":"k0xggels","370,794":"k0xggels","371,794":"k0xggels","372,794":"k0xggels","373,794":"k0xggels","374,794":"k0xggels","375,794":"k0xggels","376,794":"k0xggels","387,815":"ndqa8vpm","388,815":"ndqa8vpm","389,815":"ndqa8vpm","390,815":"ndqa8vpm","376,778":"i7njs1cb","377,778":"i7njs1cb","378,778":"i7njs1cb","380,778":"i7njs1cb","381,778":"i7njs1cb","382,778":"i7njs1cb","383,778":"i7njs1cb","384,778":"i7njs1cb","386,778":"i7njs1cb","387,778":"i7njs1cb","388,778":"i7njs1cb","389,778":"i7njs1cb","385,778":"i7njs1cb","387,787":"i7njs1cb","387,788":"i7njs1cb","377,787":"i7njs1cb","377,788":"i7njs1cb","378,788":"i7njs1cb","379,788":"i7njs1cb","380,788":"i7njs1cb","381,788":"i7njs1cb","382,788":"i7njs1cb","383,788":"i7njs1cb","384,788":"i7njs1cb","385,788":"i7njs1cb","386,788":"i7njs1cb","386,787":"i7njs1cb","385,787":"i7njs1cb","384,787":"i7njs1cb","383,787":"i7njs1cb","382,787":"i7njs1cb","381,787":"i7njs1cb","380,787":"i7njs1cb","379,787":"i7njs1cb","378,787":"i7njs1cb","411,814":"ttci1nf0","410,814":"ttci1nf0","409,814":"ttci1nf0"},"positions":{"5icqcvh4":{"x":412,"y":833},"wppbuce7":{"x":404,"y":793},"ugs4zcvm":{"x":370,"y":811},"k0xggels":{"x":371,"y":800},"7e9n285w":{"x":381,"y":808},"ndqa8vpm":{"x":394,"y":805},"i7njs1cb":{"x":382,"y":783},"je7225jm":{"x":396,"y":775},"w7er63b8":{"x":394,"y":798},"vnt9pv02":{"x":405,"y":777},"c6t48y9p":{"x":416,"y":804},"yqcasrlz":{"x":416,"y":819},"3jnkclf9":{"x":403,"y":809},"ttci1nf0":{"x":408,"y":821}}}}]}</script>
+<script id="embedded-state" type="application/json">{"members":[{"id":"5icqcvh4","name":"肥後菊池武光","color":"#834ac9"},{"id":"ndqa8vpm","name":"Pマン","color":"#c94a4a"},{"id":"wppbuce7","name":"巴","color":"#f849d8"},{"id":"7e9n285w","name":"ホルモン男","color":"#0400f5"},{"id":"ugs4zcvm","name":"りくな","color":"#51fe06"},{"id":"w7er63b8","name":"とみ","color":"#fcff2e"},{"id":"3jnkclf9","name":"どらみ","color":"#2efcff"},{"id":"c6t48y9p","name":"瀧","color":"#a12eff"},{"id":"yqcasrlz","name":"あいにゃん","color":"#fe2f2f"},{"id":"ttci1nf0","name":"臥龍","color":"#ffffff"},{"id":"vnt9pv02","name":"パグ","color":"#a498fb"},{"id":"je7225jm","name":"マヨ","color":"#98fbda"},{"id":"i7njs1cb","name":"あんどぅ","color":"#ffc7cd"},{"id":"k0xggels","name":"ぷ～","color":"#edffc7"}],"lands":[{"id":"78yly7s8","memberId":"5icqcvh4","x1":407,"x2":417,"y1":828,"y2":838},{"id":"bk6vr0ks","memberId":"wppbuce7","x1":401,"x2":408,"y1":785,"y2":802},{"id":"03wz2i81","memberId":"ugs4zcvm","x1":365,"x2":376,"y1":806,"y2":815},{"id":"6l804n29","memberId":"k0xggels","x1":365,"x2":376,"y1":795,"y2":804},{"id":"yv0o3pxz","memberId":"7e9n285w","x1":377,"x2":386,"y1":803,"y2":815},{"id":"tbdgwi9f","memberId":"ndqa8vpm","x1":387,"x2":397,"y1":803,"y2":814},{"id":"8yxkfn3b","memberId":"i7njs1cb","x1":376,"x2":389,"y1":779,"y2":786},{"id":"uhqa279k","memberId":"je7225jm","x1":390,"x2":400,"y1":770,"y2":780},{"id":"xua8fqtj","memberId":"w7er63b8","x1":388,"x2":400,"y1":793,"y2":802},{"id":"p9xwwb55","memberId":"vnt9pv02","x1":401,"x2":408,"y1":770,"y2":784},{"id":"ycbwn97o","memberId":"c6t48y9p","x1":409,"x2":423,"y1":801,"y2":808},{"id":"1r03rvqi","memberId":"yqcasrlz","x1":412,"x2":419,"y1":813,"y2":827},{"id":"hhaajg0x","memberId":"ttci1nf0","x1":403,"x2":411,"y1":815,"y2":827},{"id":"14germx0","memberId":"3jnkclf9","x1":398,"x2":408,"y1":803,"y2":814}],"freeformCells":{"365,805":"ugs4zcvm","366,805":"k0xggels","367,805":"k0xggels","368,805":"k0xggels","369,805":"k0xggels","370,805":"k0xggels","371,805":"k0xggels","372,805":"k0xggels","373,805":"k0xggels","374,805":"k0xggels","375,805":"k0xggels","376,805":"k0xggels","366,794":"k0xggels","367,794":"k0xggels","368,794":"k0xggels","369,794":"k0xggels","370,794":"k0xggels","371,794":"k0xggels","372,794":"k0xggels","373,794":"k0xggels","374,794":"k0xggels","375,794":"k0xggels","376,794":"k0xggels","387,815":"ndqa8vpm","388,815":"ndqa8vpm","389,815":"ndqa8vpm","390,815":"ndqa8vpm","376,778":"i7njs1cb","377,778":"i7njs1cb","378,778":"i7njs1cb","380,778":"i7njs1cb","381,778":"i7njs1cb","382,778":"i7njs1cb","383,778":"i7njs1cb","384,778":"i7njs1cb","386,778":"i7njs1cb","387,778":"i7njs1cb","388,778":"i7njs1cb","389,778":"i7njs1cb","385,778":"i7njs1cb","387,787":"i7njs1cb","387,788":"i7njs1cb","377,787":"i7njs1cb","377,788":"i7njs1cb","378,788":"i7njs1cb","379,788":"i7njs1cb","380,788":"i7njs1cb","381,788":"i7njs1cb","382,788":"i7njs1cb","383,788":"i7njs1cb","384,788":"i7njs1cb","385,788":"i7njs1cb","386,788":"i7njs1cb","386,787":"i7njs1cb","385,787":"i7njs1cb","384,787":"i7njs1cb","383,787":"i7njs1cb","382,787":"i7njs1cb","381,787":"i7njs1cb","380,787":"i7njs1cb","379,787":"i7njs1cb","378,787":"i7njs1cb","411,814":"ttci1nf0","410,814":"ttci1nf0","409,814":"ttci1nf0"},"positions":{"5icqcvh4":{"x":412,"y":833},"wppbuce7":{"x":404,"y":793},"ugs4zcvm":{"x":370,"y":811},"k0xggels":{"x":371,"y":800},"7e9n285w":{"x":381,"y":808},"ndqa8vpm":{"x":394,"y":805},"i7njs1cb":{"x":382,"y":783},"je7225jm":{"x":396,"y":775},"w7er63b8":{"x":394,"y":798},"vnt9pv02":{"x":405,"y":777},"c6t48y9p":{"x":416,"y":804},"yqcasrlz":{"x":416,"y":819},"3jnkclf9":{"x":403,"y":809},"ttci1nf0":{"x":408,"y":821}},"markedCells":{},"selectedMemberId":null,"snapshots":[{"id":"1dc33qsp","name":"保存 2026/09/01 12:33","savedAt":"2026-09-01T03:33:15.601Z","data":{"members":[{"id":"5icqcvh4","name":"肥後菊池武光","color":"#834ac9"},{"id":"ndqa8vpm","name":"Pマン","color":"#c94a4a"},{"id":"wppbuce7","name":"巴","color":"#f849d8"},{"id":"7e9n285w","name":"ホルモン男","color":"#0400f5"},{"id":"ugs4zcvm","name":"りくな","color":"#51fe06"},{"id":"w7er63b8","name":"とみ","color":"#fcff2e"},{"id":"3jnkclf9","name":"どらみ","color":"#2efcff"},{"id":"c6t48y9p","name":"瀧","color":"#a12eff"},{"id":"yqcasrlz","name":"あいにゃん","color":"#fe2f2f"},{"id":"ttci1nf0","name":"臥龍","color":"#ffffff"},{"id":"vnt9pv02","name":"パグ","color":"#a498fb"},{"id":"je7225jm","name":"マヨ","color":"#98fbda"},{"id":"i7njs1cb","name":"あんどぅ","color":"#ffc7cd"},{"id":"k0xggels","name":"ぷ～","color":"#edffc7"}],"lands":[{"id":"78yly7s8","memberId":"5icqcvh4","x1":407,"x2":417,"y1":828,"y2":838},{"id":"bk6vr0ks","memberId":"wppbuce7","x1":401,"x2":408,"y1":785,"y2":802},{"id":"03wz2i81","memberId":"ugs4zcvm","x1":365,"x2":376,"y1":806,"y2":815},{"id":"6l804n29","memberId":"k0xggels","x1":365,"x2":376,"y1":795,"y2":804},{"id":"yv0o3pxz","memberId":"7e9n285w","x1":377,"x2":386,"y1":803,"y2":815},{"id":"tbdgwi9f","memberId":"ndqa8vpm","x1":387,"x2":397,"y1":803,"y2":814},{"id":"8yxkfn3b","memberId":"i7njs1cb","x1":376,"x2":389,"y1":779,"y2":786},{"id":"uhqa279k","memberId":"je7225jm","x1":390,"x2":400,"y1":770,"y2":780},{"id":"xua8fqtj","memberId":"w7er63b8","x1":388,"x2":400,"y1":793,"y2":802},{"id":"p9xwwb55","memberId":"vnt9pv02","x1":401,"x2":408,"y1":770,"y2":784},{"id":"ycbwn97o","memberId":"c6t48y9p","x1":409,"x2":423,"y1":801,"y2":808},{"id":"1r03rvqi","memberId":"yqcasrlz","x1":412,"x2":419,"y1":813,"y2":827},{"id":"hhaajg0x","memberId":"ttci1nf0","x1":403,"x2":411,"y1":815,"y2":827},{"id":"14germx0","memberId":"3jnkclf9","x1":398,"x2":408,"y1":803,"y2":814}],"freeformCells":{"365,805":"ugs4zcvm","366,805":"k0xggels","367,805":"k0xggels","368,805":"k0xggels","369,805":"k0xggels","370,805":"k0xggels","371,805":"k0xggels","372,805":"k0xggels","373,805":"k0xggels","374,805":"k0xggels","375,805":"k0xggels","376,805":"k0xggels","366,794":"k0xggels","367,794":"k0xggels","368,794":"k0xggels","369,794":"k0xggels","370,794":"k0xggels","371,794":"k0xggels","372,794":"k0xggels","373,794":"k0xggels","374,794":"k0xggels","375,794":"k0xggels","376,794":"k0xggels","387,815":"ndqa8vpm","388,815":"ndqa8vpm","389,815":"ndqa8vpm","390,815":"ndqa8vpm","376,778":"i7njs1cb","377,778":"i7njs1cb","378,778":"i7njs1cb","380,778":"i7njs1cb","381,778":"i7njs1cb","382,778":"i7njs1cb","383,778":"i7njs1cb","384,778":"i7njs1cb","386,778":"i7njs1cb","387,778":"i7njs1cb","388,778":"i7njs1cb","389,778":"i7njs1cb","385,778":"i7njs1cb","387,787":"i7njs1cb","387,788":"i7njs1cb","377,787":"i7njs1cb","377,788":"i7njs1cb","378,788":"i7njs1cb","379,788":"i7njs1cb","380,788":"i7njs1cb","381,788":"i7njs1cb","382,788":"i7njs1cb","383,788":"i7njs1cb","384,788":"i7njs1cb","385,788":"i7njs1cb","386,788":"i7njs1cb","386,787":"i7njs1cb","385,787":"i7njs1cb","384,787":"i7njs1cb","383,787":"i7njs1cb","382,787":"i7njs1cb","381,787":"i7njs1cb","380,787":"i7njs1cb","379,787":"i7njs1cb","378,787":"i7njs1cb","411,814":"ttci1nf0","410,814":"ttci1nf0","409,814":"ttci1nf0"},"positions":{"5icqcvh4":{"x":412,"y":833},"wppbuce7":{"x":404,"y":793},"ugs4zcvm":{"x":370,"y":811},"k0xggels":{"x":371,"y":800},"7e9n285w":{"x":381,"y":808},"ndqa8vpm":{"x":394,"y":805},"i7njs1cb":{"x":382,"y":783},"je7225jm":{"x":396,"y":775},"w7er63b8":{"x":394,"y":798},"vnt9pv02":{"x":405,"y":777},"c6t48y9p":{"x":416,"y":804},"yqcasrlz":{"x":416,"y":819},"3jnkclf9":{"x":403,"y":809},"ttci1nf0":{"x":408,"y":821}},"markedCells":{}}}]}</script>
 
 <script>
 (function(){
@@ -459,6 +472,7 @@
     lands: [],     // {id, memberId, x1, y1, x2, y2}  (inclusive cell coords, 矩形の土地)
     freeformCells: {}, // "x,y" -> memberId  (自由形状の土地セル)
     positions: {}, // memberId -> {x, y}
+    markedCells: {}, // "x,y" -> true  (侵蝕マークなど、任意のマスに付ける✕印)
     selectedMemberId: null,
     snapshots: [] // {id, name, savedAt, data:{members,lands,freeformCells,positions}}
   };
@@ -484,7 +498,8 @@
       members: state.members,
       lands: state.lands,
       freeformCells: state.freeformCells,
-      positions: state.positions
+      positions: state.positions,
+      markedCells: state.markedCells
     }));
     if (history.length > MAX_HISTORY) history.shift();
   }
@@ -495,6 +510,7 @@
     state.lands = snap.lands;
     state.freeformCells = snap.freeformCells;
     state.positions = snap.positions;
+    state.markedCells = snap.markedCells || {};
     if (state.selectedMemberId && !state.members.some(m => m.id === state.selectedMemberId)) {
       state.selectedMemberId = null;
     }
@@ -542,7 +558,9 @@
       lands: state.lands,
       freeformCells: state.freeformCells,
       positions: state.positions,
-      selectedMemberId: state.selectedMemberId
+      markedCells: state.markedCells,
+      selectedMemberId: state.selectedMemberId,
+      snapshots: state.snapshots
     });
     if (HAS_SHARED_STORAGE) {
       try { await window.storage.set(STORAGE_KEY, payload, true); }
@@ -550,6 +568,19 @@
     } else {
       try { localStorage.setItem(STORAGE_KEY, payload); } catch (e) { /* ignore */ }
     }
+  }
+
+  // ---------------- サイドバー折りたたみ ----------------
+  {
+    const sidebarEl = document.getElementById("sidebar");
+    const toggleBtn = document.getElementById("sidebarToggle");
+    let collapsed = true;
+    toggleBtn.addEventListener("click", () => {
+      collapsed = !collapsed;
+      sidebarEl.classList.toggle("collapsed", collapsed);
+      toggleBtn.textContent = collapsed ? "▶" : "◀";
+      setTimeout(() => resizeCanvas(), 210);
+    });
   }
 
   // ---------------- Canvas / viewport ----------------
@@ -901,6 +932,28 @@
       }
     }
 
+    // 侵蝕マーク（✕印）
+    {
+      ctx.strokeStyle = "#ff4d4d";
+      ctx.lineWidth = Math.max(1.5, Math.min(3, cellPx * 0.09));
+      for (let gx = x0; gx <= x1; gx++) {
+        for (let gy = y0; gy <= y1; gy++) {
+          const key = gx + "," + gy;
+          if (!state.markedCells[key]) continue;
+          const p1 = worldToScreen(gx, gy);
+          const p2 = worldToScreen(gx + 1, gy);
+          const p3 = worldToScreen(gx + 1, gy + 1);
+          const p4 = worldToScreen(gx, gy + 1);
+          const inset = 0.18;
+          const lerp = (a, b, t) => ({ x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t });
+          const a1 = lerp(p1, p3, inset), a2 = lerp(p1, p3, 1 - inset);
+          const b1 = lerp(p2, p4, inset), b2 = lerp(p2, p4, 1 - inset);
+          ctx.beginPath(); ctx.moveTo(a1.x, a1.y); ctx.lineTo(a2.x, a2.y); ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(b1.x, b1.y); ctx.lineTo(b2.x, b2.y); ctx.stroke();
+        }
+      }
+    }
+
     // drag-select preview (land creation)
     if (dragSelect) {
       const x1 = Math.min(dragSelect.x0, dragSelect.x1);
@@ -975,6 +1028,7 @@
   let dragSelect = null; // {x0,y0,x1,y1} in cell coords, land-creation drag
   let pendingLandRect = null;
   let freeformPaint = null; // {action:'add'|'remove', memberId}
+  let markPaint = null; // {action:'add'|'remove'}
 
   function applyFreeformPaint(x, y) {
     const key = x + "," + y;
@@ -987,6 +1041,15 @@
       state.freeformCells[key] = freeformPaint.memberId;
     } else if (state.freeformCells[key] === freeformPaint.memberId) {
       delete state.freeformCells[key];
+    }
+  }
+
+  function applyMarkPaint(x, y) {
+    const key = x + "," + y;
+    if (markPaint.action === "add") {
+      state.markedCells[key] = true;
+    } else {
+      delete state.markedCells[key];
     }
   }
 
@@ -1017,6 +1080,16 @@
       save(); draw(); renderMemberList();
       return;
     }
+    if (mode === "mark" && e.button === 0) {
+      const c = screenToWorldCell(sx, sy);
+      const key = c.x + "," + c.y;
+      const alreadyMarked = !!state.markedCells[key];
+      pushHistory();
+      markPaint = { action: alreadyMarked ? "remove" : "add" };
+      applyMarkPaint(c.x, c.y);
+      save(); draw();
+      return;
+    }
     // pan (view mode, or middle/right drag anywhere)
     isPanning = true;
     panStart = { x: e.clientX, y: e.clientY };
@@ -1040,6 +1113,11 @@
       draw();
       return;
     }
+    if (markPaint) {
+      applyMarkPaint(c.x, c.y);
+      draw();
+      return;
+    }
     if (isPanning) {
       view.offsetX = viewStart.x + (e.clientX - panStart.x);
       view.offsetY = viewStart.y + (e.clientY - panStart.y);
@@ -1052,6 +1130,10 @@
     if (freeformPaint) {
       freeformPaint = null;
       save(); draw(); renderLandList(); renderMemberList();
+    }
+    if (markPaint) {
+      markPaint = null;
+      save(); draw();
     }
     if (dragSelect) {
       const x1 = Math.min(dragSelect.x0, dragSelect.x1);
@@ -1137,9 +1219,10 @@
       document.querySelectorAll(".mode-btn").forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
       mode = btn.dataset.mode;
-      canvas.classList.remove("mode-land", "mode-place");
+      canvas.classList.remove("mode-land", "mode-place", "mode-mark");
       if (mode === "land") canvas.classList.add("mode-land");
       if (mode === "place") canvas.classList.add("mode-place");
+      if (mode === "mark") canvas.classList.add("mode-mark");
       updateHint();
     });
   });
@@ -1147,7 +1230,8 @@
     const hint = document.getElementById("modeHint");
     if (mode === "land") hint.innerHTML = "地図上をドラッグして矩形の土地を割り当てます。<b>Shift+クリック（ドラッグ可）</b>でマス目を1つずつ追加/削除し、自由形状の土地を作れます。";
     else if (mode === "place") hint.innerHTML = "サイドバーでメンバーを選択し、地図上のマスをクリックして現在地を配置します。";
-    else hint.innerHTML = "ドラッグで地図を移動、ホイールでズームできます。<b>土地作成</b> / <b>配置</b>モードで編集します。";
+    else if (mode === "mark") hint.innerHTML = "地図上のマスをクリック（ドラッグ可）すると✕印を付けられます。もう一度クリックすると消えます。侵蝕箇所の記録などに使えます。";
+    else hint.innerHTML = "ドラッグで地図を移動、ホイールでズームできます。<b>土地作成</b> / <b>配置</b> / <b>印</b>モードで編集します。";
   }
   function flashHint(msg) {
     const hint = document.getElementById("modeHint");
@@ -1346,7 +1430,7 @@
       try {
         const parsed = JSON.parse(reader.result);
         pushHistory();
-        state = Object.assign({ members: [], lands: [], freeformCells: {}, positions: {}, selectedMemberId: null, snapshots: [] }, parsed);
+        state = Object.assign({ members: [], lands: [], freeformCells: {}, positions: {}, markedCells: {}, selectedMemberId: null, snapshots: [] }, parsed);
         save(); renderMemberList(); renderLandList(); renderSnapshotList(); draw();
       } catch(err) {
         alert("読み込みに失敗しました。JSON形式を確認してください。");
@@ -1371,7 +1455,8 @@
         members: JSON.parse(JSON.stringify(state.members)),
         lands: JSON.parse(JSON.stringify(state.lands)),
         freeformCells: JSON.parse(JSON.stringify(state.freeformCells)),
-        positions: JSON.parse(JSON.stringify(state.positions))
+        positions: JSON.parse(JSON.stringify(state.positions)),
+        markedCells: JSON.parse(JSON.stringify(state.markedCells))
       }
     };
     if (!state.snapshots) state.snapshots = [];
@@ -1390,6 +1475,7 @@
     state.lands = JSON.parse(JSON.stringify(snap.data.lands));
     state.freeformCells = JSON.parse(JSON.stringify(snap.data.freeformCells));
     state.positions = JSON.parse(JSON.stringify(snap.data.positions));
+    state.markedCells = JSON.parse(JSON.stringify(snap.data.markedCells || {}));
     state.selectedMemberId = null;
     save(); draw(); renderMemberList(); renderLandList();
   }
@@ -1454,6 +1540,7 @@
       lands: state.lands,
       freeformCells: state.freeformCells,
       positions: state.positions,
+      markedCells: state.markedCells,
       selectedMemberId: null,
       snapshots: list
     };
