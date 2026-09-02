@@ -188,6 +188,7 @@
   canvas.mode-place { cursor: cell; }
   canvas.mode-mark { cursor: not-allowed; }
   canvas.mode-memo { cursor: pointer; }
+  canvas.mode-mountain { cursor: pointer; }
 
   #hud {
     position: absolute; top: 10px; left: 12px; font-size: 11.5px; color: var(--text-dim);
@@ -256,6 +257,7 @@
       <div class="mode-btn" data-mode="place">配置</div>
       <div class="mode-btn" data-mode="mark">印</div>
       <div class="mode-btn" data-mode="memo">メモ</div>
+      <div class="mode-btn" data-mode="mountain">山</div>
     </div>
 
     <label id="freeformToggleWrap" style="display:none;">
@@ -292,6 +294,11 @@
     <div class="section">
       <h2>メモ</h2>
       <div id="memoList"></div>
+    </div>
+
+    <div class="section">
+      <h2>山</h2>
+      <div id="mountainList"></div>
     </div>
 
     <div class="section">
@@ -355,6 +362,7 @@
     positions: {}, // memberId -> {x, y}
     markedCells: {}, // "x,y" -> true  (侵蝕マークなど、任意のマスに付ける✕印)
     memos: [],     // {id, x, y, text}  (自由に置けるメモ、1マスにつき1件)
+    mountains: [], // {id, x, y}  (山アイコン、1マスにつき1件)
     selectedMemberId: null,
     snapshots: [] // {id, name, savedAt, data:{members,lands,freeformCells,positions}}
   };
@@ -382,7 +390,8 @@
       freeformCells: state.freeformCells,
       positions: state.positions,
       markedCells: state.markedCells,
-      memos: state.memos
+      memos: state.memos,
+      mountains: state.mountains
     }));
     if (history.length > MAX_HISTORY) history.shift();
   }
@@ -395,10 +404,11 @@
     state.positions = snap.positions;
     state.markedCells = snap.markedCells || {};
     state.memos = snap.memos || [];
+    state.mountains = snap.mountains || [];
     if (state.selectedMemberId && !state.members.some(m => m.id === state.selectedMemberId)) {
       state.selectedMemberId = null;
     }
-    save(); draw(); renderMemberList(); renderLandList(); renderMemoList();
+    save(); draw(); renderMemberList(); renderLandList(); renderMemoList(); renderMountainList();
   }
   window.addEventListener("keydown", (e) => {
     const tag = (document.activeElement && document.activeElement.tagName) || "";
@@ -444,6 +454,7 @@
       positions: state.positions,
       markedCells: state.markedCells,
       memos: state.memos,
+      mountains: state.mountains,
       selectedMemberId: state.selectedMemberId,
       snapshots: state.snapshots
     });
@@ -970,7 +981,88 @@
       }
     });
 
+    // 山アイコン
+    (state.mountains || []).forEach(mtn => {
+      const center = worldToScreen(mtn.x + 0.5, mtn.y + 0.5);
+      if (center.x < -30 || center.y < -30 || center.x > cw + 30 || center.y > ch + 30) return;
+      const size = Math.max(10, Math.min(70, cellPx * 0.96));
+
+      if (mtn.id === selectedMountainId) {
+        ctx.beginPath();
+        ctx.arc(center.x, center.y, size * 0.56 + 5, 0, Math.PI * 2);
+        ctx.setLineDash([3, 3]);
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      drawMountainIcon(center.x, center.y, size);
+    });
+
     ctx.restore();
+  }
+
+  // 山アイコンの描画（富士山風：末広がりの裾野＋ギザギザの雪冠）
+  function drawMountainIcon(cx, cy, size) {
+    const w = size * 0.96, h = size * 0.62;
+    const topY = cy - h * 0.5;
+    const baseY = cy + h * 0.5;
+    const leftX = cx - w / 2;
+    const rightX = cx + w / 2;
+
+    // 山体（グラデーションで少し立体感を）
+    const bodyGrad = ctx.createLinearGradient(cx, topY, cx, baseY);
+    bodyGrad.addColorStop(0, "#7d8b9a");
+    bodyGrad.addColorStop(1, "#4f5b64");
+    ctx.beginPath();
+    ctx.moveTo(cx, topY);
+    ctx.lineTo(rightX, baseY);
+    ctx.lineTo(leftX, baseY);
+    ctx.closePath();
+    ctx.fillStyle = bodyGrad;
+    ctx.fill();
+    ctx.strokeStyle = "#14181a";
+    ctx.lineWidth = Math.max(1, size * 0.025);
+    ctx.stroke();
+
+    // 雪冠：頂上からの高さ割合(t)ごとに裾のラインをギザギザにずらして富士山らしい縞模様に
+    const snowT = 0.46; // 頂上から雪冠が占める高さの割合
+    const snowHalfW = (w / 2) * snowT;
+    const snowBaseY = topY + h * snowT;
+    const jags = [
+      { t: 0.00, dy: 0.00 },
+      { t: 0.22, dy: 0.10 },
+      { t: 0.42, dy: -0.06 },
+      { t: 0.62, dy: 0.14 },
+      { t: 0.82, dy: 0.02 },
+      { t: 1.00, dy: 0.09 }
+    ];
+    ctx.beginPath();
+    ctx.moveTo(cx, topY);
+    jags.forEach(p => {
+      ctx.lineTo(cx + snowHalfW * p.t, snowBaseY + h * p.dy);
+    });
+    for (let i = jags.length - 1; i >= 0; i--) {
+      const p = jags[i];
+      if (p.t === 0) continue;
+      ctx.lineTo(cx - snowHalfW * p.t, snowBaseY + h * p.dy);
+    }
+    ctx.closePath();
+    ctx.fillStyle = "#f2ede0";
+    ctx.fill();
+
+    // 雪冠から裾へ伸びる縞（雪渓）を1本ずつ軽くあしらう
+    ctx.strokeStyle = "rgba(242,237,224,.55)";
+    ctx.lineWidth = Math.max(0.8, size * 0.02);
+    ctx.beginPath();
+    ctx.moveTo(cx + snowHalfW * 0.62, snowBaseY + h * 0.14);
+    ctx.lineTo(cx + w * 0.30, baseY);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(cx - snowHalfW * 0.42, snowBaseY - h * 0.06);
+    ctx.lineTo(cx - w * 0.22, baseY);
+    ctx.stroke();
   }
 
   function isOutsideOwnLand(memberId) {
@@ -994,6 +1086,9 @@
   let selectedMemoId = null; // ダブルクリック/ダブルタップで選択中のメモ（移動先待ち、保存はしない）
   let memoClickTimer = null; // シングル/ダブルクリック判定用タイマー
   let lastMemoTapId = null;
+  let selectedMountainId = null; // ダブルクリック/ダブルタップで選択中の山（移動先待ち、保存はしない）
+  let mountainClickTimer = null;
+  let lastMountainTapId = null;
 
   function applyFreeformPaint(x, y) {
     const key = x + "," + y;
@@ -1131,6 +1226,63 @@
       save(); draw(); renderMemoList();
       return;
     }
+    if (mode === "mountain") {
+      const c = screenToWorldCell(sx, sy);
+      const existing = (state.mountains || []).find(mm => mm.x === c.x && mm.y === c.y);
+
+      // 移動先を選ぶ段階（ダブルクリック/ダブルタップで選択済みの山がある場合）
+      if (selectedMountainId) {
+        if (existing && existing.id === selectedMountainId) {
+          // 選択中の山を再度タップ → 選択解除
+          selectedMountainId = null;
+          updateHint(); draw();
+          return;
+        }
+        if (existing) {
+          flashHint("そのマスには既に山があります");
+          return;
+        }
+        const mtn = state.mountains.find(mm => mm.id === selectedMountainId);
+        selectedMountainId = null;
+        if (mtn) {
+          pushHistory();
+          mtn.x = c.x; mtn.y = c.y;
+          save(); draw(); renderMountainList();
+        }
+        updateHint();
+        return;
+      }
+
+      if (existing) {
+        if (mountainClickTimer && lastMountainTapId === existing.id) {
+          // ダブルクリック/ダブルタップ → 移動対象として選択
+          clearTimeout(mountainClickTimer);
+          mountainClickTimer = null;
+          lastMountainTapId = null;
+          selectedMountainId = existing.id;
+          updateHint(); draw();
+          return;
+        }
+        // シングルクリック候補：一定時間待って、ダブルクリックが来なければ削除する
+        lastMountainTapId = existing.id;
+        const mountainId = existing.id;
+        mountainClickTimer = setTimeout(() => {
+          mountainClickTimer = null;
+          lastMountainTapId = null;
+          pushHistory();
+          state.mountains = state.mountains.filter(mm => mm.id !== mountainId);
+          save(); draw(); renderMountainList();
+        }, 320);
+        return;
+      }
+
+      // 空きマス：山を配置
+      pushHistory();
+      if (!state.mountains) state.mountains = [];
+      state.mountains.push({ id: uid(), x: c.x, y: c.y });
+      save(); draw(); renderMountainList();
+      return;
+    }
     // pan (view mode)
     isPanning = true;
     panStart = { x: clientX, y: clientY };
@@ -1228,6 +1380,7 @@
       // ピンチズーム開始（進行中の単指操作はキャンセル）
       isPanning = false; dragSelect = null; freeformPaint = null; markPaint = null;
       if (memoClickTimer) { clearTimeout(memoClickTimer); memoClickTimer = null; lastMemoTapId = null; }
+      if (mountainClickTimer) { clearTimeout(mountainClickTimer); mountainClickTimer = null; lastMountainTapId = null; }
       canvas.classList.remove("panning");
       const rect = canvas.getBoundingClientRect();
       pinch = {
@@ -1273,6 +1426,7 @@
     pinch = null;
     isPanning = false; dragSelect = null; freeformPaint = null; markPaint = null;
       if (memoClickTimer) { clearTimeout(memoClickTimer); memoClickTimer = null; lastMemoTapId = null; }
+      if (mountainClickTimer) { clearTimeout(mountainClickTimer); mountainClickTimer = null; lastMountainTapId = null; }
     canvas.classList.remove("panning");
   });
 
@@ -1348,14 +1502,19 @@
       document.querySelectorAll(".mode-btn").forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
       mode = btn.dataset.mode;
-      canvas.classList.remove("mode-land", "mode-place", "mode-mark", "mode-memo");
+      canvas.classList.remove("mode-land", "mode-place", "mode-mark", "mode-memo", "mode-mountain");
       if (mode === "land") canvas.classList.add("mode-land");
       if (mode === "place") canvas.classList.add("mode-place");
       if (mode === "mark") canvas.classList.add("mode-mark");
       if (mode === "memo") canvas.classList.add("mode-memo");
+      if (mode === "mountain") canvas.classList.add("mode-mountain");
       if (mode !== "memo") {
         selectedMemoId = null;
         if (memoClickTimer) { clearTimeout(memoClickTimer); memoClickTimer = null; lastMemoTapId = null; }
+      }
+      if (mode !== "mountain") {
+        selectedMountainId = null;
+        if (mountainClickTimer) { clearTimeout(mountainClickTimer); mountainClickTimer = null; lastMountainTapId = null; }
       }
       updateHint();
       draw();
@@ -1372,7 +1531,11 @@
       if (selectedMemoId) hint.innerHTML = "<b>移動先のマス</b>をタップ/クリックしてください。選択中のメモを再度タップすると選択解除されます。";
       else hint.innerHTML = "地図上のマスをタップ/クリックしてメモを追加します（1マスに1件）。既にメモがあるマスは<b>タップで編集</b>、<b>ダブルタップ/ダブルクリックで選択</b>すると、次にタップしたマスへ移動できます。";
     }
-    else hint.innerHTML = "指でなぞる/ドラッグで地図を移動、ピンチ操作/ホイールでズームできます。<b>土地作成</b> / <b>配置</b> / <b>印</b> / <b>メモ</b>モードで編集します。";
+    else if (mode === "mountain") {
+      if (selectedMountainId) hint.innerHTML = "<b>移動先のマス</b>をタップ/クリックしてください。選択中の山を再度タップすると選択解除されます。";
+      else hint.innerHTML = "地図上のマスをタップ/クリックして山アイコンを配置します（1マスに1件）。既にある山を<b>タップすると削除</b>、<b>ダブルタップ/ダブルクリックで選択</b>すると、次にタップしたマスへ移動できます。";
+    }
+    else hint.innerHTML = "指でなぞる/ドラッグで地図を移動、ピンチ操作/ホイールでズームできます。<b>土地作成</b> / <b>配置</b> / <b>印</b> / <b>メモ</b> / <b>山</b>モードで編集します。";
   }
   function flashHint(msg) {
     const hint = document.getElementById("modeHint");
@@ -1612,6 +1775,34 @@
     });
   }
 
+  function renderMountainList() {
+    const listEl = document.getElementById("mountainList");
+    if (!listEl) return;
+    listEl.innerHTML = "";
+    const mountains = state.mountains || [];
+    if (mountains.length === 0) {
+      listEl.innerHTML = '<div style="font-size:11.5px; color:var(--text-dim); padding:2px 2px;">まだ山はありません（<b>山</b>モードで地図をタップして配置）</div>';
+      return;
+    }
+    mountains.forEach(mtn => {
+      const row = document.createElement("div");
+      row.className = "land-row";
+      row.innerHTML = `
+        <span class="swatch" style="background:#7c8a8f"></span>
+        <span class="coord" style="cursor:pointer">(${mtn.x},${mtn.y})</span>
+        <span class="del" title="削除">✕</span>
+      `;
+      row.querySelector(".coord").addEventListener("click", () => centerOnCell(mtn.x, mtn.y));
+      row.querySelector(".del").addEventListener("click", (e) => {
+        e.stopPropagation();
+        pushHistory();
+        state.mountains = state.mountains.filter(mm => mm.id !== mtn.id);
+        save(); draw(); renderMountainList();
+      });
+      listEl.appendChild(row);
+    });
+  }
+
   function escapeHtml(s) {
     return s.replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   }
@@ -1634,8 +1825,8 @@
       try {
         const parsed = JSON.parse(reader.result);
         pushHistory();
-        state = Object.assign({ members: [], lands: [], freeformCells: {}, positions: {}, markedCells: {}, memos: [], selectedMemberId: null, snapshots: [] }, parsed);
-        save(); renderMemberList(); renderLandList(); renderSnapshotList(); renderMemoList(); draw();
+        state = Object.assign({ members: [], lands: [], freeformCells: {}, positions: {}, markedCells: {}, memos: [], mountains: [], selectedMemberId: null, snapshots: [] }, parsed);
+        save(); renderMemberList(); renderLandList(); renderSnapshotList(); renderMemoList(); renderMountainList(); draw();
       } catch(err) {
         alert("読み込みに失敗しました。JSON形式を確認してください。");
       }
@@ -1661,7 +1852,8 @@
         freeformCells: JSON.parse(JSON.stringify(state.freeformCells)),
         positions: JSON.parse(JSON.stringify(state.positions)),
         markedCells: JSON.parse(JSON.stringify(state.markedCells)),
-        memos: JSON.parse(JSON.stringify(state.memos || []))
+        memos: JSON.parse(JSON.stringify(state.memos || [])),
+        mountains: JSON.parse(JSON.stringify(state.mountains || []))
       }
     };
     if (!state.snapshots) state.snapshots = [];
@@ -1682,8 +1874,9 @@
     state.positions = JSON.parse(JSON.stringify(snap.data.positions));
     state.markedCells = JSON.parse(JSON.stringify(snap.data.markedCells || {}));
     state.memos = JSON.parse(JSON.stringify(snap.data.memos || []));
+    state.mountains = JSON.parse(JSON.stringify(snap.data.mountains || []));
     state.selectedMemberId = null;
-    save(); draw(); renderMemberList(); renderLandList(); renderMemoList();
+    save(); draw(); renderMemberList(); renderLandList(); renderMemoList(); renderMountainList();
   }
 
   function renameSnapshot(id) {
@@ -1748,6 +1941,7 @@
       positions: state.positions,
       markedCells: state.markedCells,
       memos: state.memos,
+      mountains: state.mountains,
       selectedMemberId: null,
       snapshots: list
     };
@@ -1794,6 +1988,7 @@
     renderLandList();
     renderSnapshotList();
     renderMemoList();
+    renderMountainList();
     updateHint();
     resizeCanvas();
   })();
