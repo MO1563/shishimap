@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="ja"><head>
+<html lang="ja">
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>領地管理マップ - 獅子の如く</title>
@@ -186,6 +187,7 @@
   canvas.mode-land { cursor: crosshair; }
   canvas.mode-place { cursor: cell; }
   canvas.mode-mark { cursor: not-allowed; }
+  canvas.mode-memo { cursor: text; }
 
   #hud {
     position: absolute; top: 10px; left: 12px; font-size: 11.5px; color: var(--text-dim);
@@ -242,7 +244,7 @@
 </head>
 <body>
 <div id="app">
-  <div id="sidebar" class="">
+  <div id="sidebar" class="collapsed">
     <div class="brand">
       <h1>領地管理マップ</h1>
       <p>一族の配置と割り当て地の可視化</p>
@@ -253,9 +255,10 @@
       <div class="mode-btn" data-mode="land">土地作成</div>
       <div class="mode-btn" data-mode="place">配置</div>
       <div class="mode-btn" data-mode="mark">印</div>
+      <div class="mode-btn" data-mode="memo">メモ</div>
     </div>
 
-    <label id="freeformToggleWrap" style="display: none;">
+    <label id="freeformToggleWrap" style="display:none;">
       <input type="checkbox" id="freeformToggle">
       自由形状で1マスずつ追加/削除する（スマホの場合はこちらを使用）
     </label>
@@ -267,188 +270,13 @@
         <input type="color" id="memberColor" value="#c9a24b">
         <button id="addMemberBtn">追加</button>
       </div>
-      <div id="memberList"><div class="member-row">
-        <input type="color" class="swatch-input" value="#fafafa" title="タップして色を変更">
-        <span class="name">肥後菊池武光</span>
-        <span class="status ok">領内</span>
-        <span class="clearpos" title="配置を解除">⌖✕</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" data-id="5icqcvh4" title="削除">✕</span>
-      </div><div class="member-row">
-        <input type="color" class="swatch-input" value="#ff6beb" title="タップして色を変更">
-        <span class="name">Pマン</span>
-        <span class="status ok">領内</span>
-        <span class="clearpos" title="配置を解除">⌖✕</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" data-id="ndqa8vpm" title="削除">✕</span>
-      </div><div class="member-row">
-        <input type="color" class="swatch-input" value="#ffffff" title="タップして色を変更">
-        <span class="name">巴</span>
-        <span class="status ok">領内</span>
-        <span class="clearpos" title="配置を解除">⌖✕</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" data-id="wppbuce7" title="削除">✕</span>
-      </div><div class="member-row">
-        <input type="color" class="swatch-input" value="#ffffff" title="タップして色を変更">
-        <span class="name">ホルモン男</span>
-        <span class="status ok">領内</span>
-        <span class="clearpos" title="配置を解除">⌖✕</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" data-id="7e9n285w" title="削除">✕</span>
-      </div><div class="member-row">
-        <input type="color" class="swatch-input" value="#ffffff" title="タップして色を変更">
-        <span class="name">りくな</span>
-        <span class="status ok">領内</span>
-        <span class="clearpos" title="配置を解除">⌖✕</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" data-id="ugs4zcvm" title="削除">✕</span>
-      </div><div class="member-row">
-        <input type="color" class="swatch-input" value="#ffffff" title="タップして色を変更">
-        <span class="name">とみ</span>
-        <span class="status ok">領内</span>
-        <span class="clearpos" title="配置を解除">⌖✕</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" data-id="w7er63b8" title="削除">✕</span>
-      </div><div class="member-row">
-        <input type="color" class="swatch-input" value="#ffffff" title="タップして色を変更">
-        <span class="name">どらみ</span>
-        <span class="status ok">領内</span>
-        <span class="clearpos" title="配置を解除">⌖✕</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" data-id="3jnkclf9" title="削除">✕</span>
-      </div><div class="member-row">
-        <input type="color" class="swatch-input" value="#ffffff" title="タップして色を変更">
-        <span class="name">瀧</span>
-        <span class="status ok">領内</span>
-        <span class="clearpos" title="配置を解除">⌖✕</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" data-id="c6t48y9p" title="削除">✕</span>
-      </div><div class="member-row">
-        <input type="color" class="swatch-input" value="#ffffff" title="タップして色を変更">
-        <span class="name">あいにゃん</span>
-        <span class="status ok">領内</span>
-        <span class="clearpos" title="配置を解除">⌖✕</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" data-id="yqcasrlz" title="削除">✕</span>
-      </div><div class="member-row">
-        <input type="color" class="swatch-input" value="#ffffff" title="タップして色を変更">
-        <span class="name">臥龍</span>
-        <span class="status ok">領内</span>
-        <span class="clearpos" title="配置を解除">⌖✕</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" data-id="ttci1nf0" title="削除">✕</span>
-      </div><div class="member-row">
-        <input type="color" class="swatch-input" value="#ffffff" title="タップして色を変更">
-        <span class="name">パグ</span>
-        <span class="status ok">領内</span>
-        <span class="clearpos" title="配置を解除">⌖✕</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" data-id="vnt9pv02" title="削除">✕</span>
-      </div><div class="member-row">
-        <input type="color" class="swatch-input" value="#ffffff" title="タップして色を変更">
-        <span class="name">マヨ</span>
-        <span class="status ok">領内</span>
-        <span class="clearpos" title="配置を解除">⌖✕</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" data-id="je7225jm" title="削除">✕</span>
-      </div><div class="member-row">
-        <input type="color" class="swatch-input" value="#ffffff" title="タップして色を変更">
-        <span class="name">あんどぅ</span>
-        <span class="status ok">領内</span>
-        <span class="clearpos" title="配置を解除">⌖✕</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" data-id="i7njs1cb" title="削除">✕</span>
-      </div><div class="member-row">
-        <input type="color" class="swatch-input" value="#ffffff" title="タップして色を変更">
-        <span class="name">ぷ～</span>
-        <span class="status ok">領内</span>
-        <span class="clearpos" title="配置を解除">⌖✕</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" data-id="k0xggels" title="削除">✕</span>
-      </div><div class="member-row">
-        <input type="color" class="swatch-input" value="#ffffff" title="タップして色を変更">
-        <span class="name">くろこぶ</span>
-        <span class="status ok">領内</span>
-        <span class="clearpos" title="配置を解除">⌖✕</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" data-id="dfgr0mua" title="削除">✕</span>
-      </div><div class="member-row">
-        <input type="color" class="swatch-input" value="#ffffff" title="タップして色を変更">
-        <span class="name">ユッチ</span>
-        <span class="status ok">領内</span>
-        <span class="clearpos" title="配置を解除">⌖✕</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" data-id="pljqjpea" title="削除">✕</span>
-      </div><div class="member-row">
-        <input type="color" class="swatch-input" value="#ffffff" title="タップして色を変更">
-        <span class="name">ちゅん</span>
-        <span class="status none">未配置</span>
-        
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" data-id="oe1hkwgy" title="削除">✕</span>
-      </div><div class="member-row">
-        <input type="color" class="swatch-input" value="#ffffff" title="タップして色を変更">
-        <span class="name">一瞬で灰</span>
-        <span class="status ok">領内</span>
-        <span class="clearpos" title="配置を解除">⌖✕</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" data-id="hfhu1fk1" title="削除">✕</span>
-      </div><div class="member-row">
-        <input type="color" class="swatch-input" value="#ffffff" title="タップして色を変更">
-        <span class="name">摎</span>
-        <span class="status ok">領内</span>
-        <span class="clearpos" title="配置を解除">⌖✕</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" data-id="5u8wgf4q" title="削除">✕</span>
-      </div><div class="member-row">
-        <input type="color" class="swatch-input" value="#ffffff" title="タップして色を変更">
-        <span class="name">ぴこ</span>
-        <span class="status ok">領内</span>
-        <span class="clearpos" title="配置を解除">⌖✕</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" data-id="8wqyt1bc" title="削除">✕</span>
-      </div><div class="member-row">
-        <input type="color" class="swatch-input" value="#ffffff" title="タップして色を変更">
-        <span class="name">まるちゃ～ん</span>
-        <span class="status ok">領内</span>
-        <span class="clearpos" title="配置を解除">⌖✕</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" data-id="wfu8uqfn" title="削除">✕</span>
-      </div><div class="member-row">
-        <input type="color" class="swatch-input" value="#ffffff" title="タップして色を変更">
-        <span class="name">綾野剛</span>
-        <span class="status ok">領内</span>
-        <span class="clearpos" title="配置を解除">⌖✕</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" data-id="mybg4ua3" title="削除">✕</span>
-      </div><div class="member-row">
-        <input type="color" class="swatch-input" value="#ff0000" title="タップして色を変更">
-        <span class="name">空きA</span>
-        <span class="status ok">領内</span>
-        <span class="clearpos" title="配置を解除">⌖✕</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" data-id="jkah7vm5" title="削除">✕</span>
-      </div><div class="member-row">
-        <input type="color" class="swatch-input" value="#ff0000" title="タップして色を変更">
-        <span class="name">空きC</span>
-        <span class="status ok">領内</span>
-        <span class="clearpos" title="配置を解除">⌖✕</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" data-id="lpqiju2e" title="削除">✕</span>
-      </div><div class="member-row selected">
-        <input type="color" class="swatch-input" value="#ffffff" title="タップして色を変更">
-        <span class="name">平原哲</span>
-        <span class="status ok">領内</span>
-        <span class="clearpos" title="配置を解除">⌖✕</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" data-id="graz2tw5" title="削除">✕</span>
-      </div></div>
+      <div id="memberList"></div>
     </div>
 
     <div class="section">
       <h2>割り当て済みの土地</h2>
       <div class="land-add">
-        <select id="landAddMember"><option value="5icqcvh4">肥後菊池武光</option><option value="ndqa8vpm">Pマン</option><option value="wppbuce7">巴</option><option value="7e9n285w">ホルモン男</option><option value="ugs4zcvm">りくな</option><option value="w7er63b8">とみ</option><option value="3jnkclf9">どらみ</option><option value="c6t48y9p">瀧</option><option value="yqcasrlz">あいにゃん</option><option value="ttci1nf0">臥龍</option><option value="vnt9pv02">パグ</option><option value="je7225jm">マヨ</option><option value="i7njs1cb">あんどぅ</option><option value="k0xggels">ぷ～</option><option value="dfgr0mua">くろこぶ</option><option value="pljqjpea">ユッチ</option><option value="oe1hkwgy">ちゅん</option><option value="hfhu1fk1">一瞬で灰</option><option value="5u8wgf4q">摎</option><option value="8wqyt1bc">ぴこ</option><option value="wfu8uqfn">まるちゃ～ん</option><option value="mybg4ua3">綾野剛</option><option value="jkah7vm5">空きA</option><option value="lpqiju2e">空きC</option><option value="graz2tw5">平原哲</option></select>
+        <select id="landAddMember"></select>
         <div class="coord-inputs">
           <input type="number" id="landX1" placeholder="X1">
           <input type="number" id="landY1" placeholder="Y1">
@@ -458,144 +286,23 @@
         </div>
         <button id="addLandBtn">土地を追加</button>
       </div>
-      <div id="landList"><div class="land-row">
-        <span class="swatch" style="background:#fafafa"></span>
-        <span class="coord">肥後菊池武光: (407,828)–(417,838)</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" title="削除">✕</span>
-      </div><div class="land-row">
-        <span class="swatch" style="background:#ffffff"></span>
-        <span class="coord">巴: (401,785)–(408,802)</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" title="削除">✕</span>
-      </div><div class="land-row">
-        <span class="swatch" style="background:#ffffff"></span>
-        <span class="coord">りくな: (365,806)–(376,815)</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" title="削除">✕</span>
-      </div><div class="land-row">
-        <span class="swatch" style="background:#ffffff"></span>
-        <span class="coord">ぷ～: (365,795)–(376,804)</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" title="削除">✕</span>
-      </div><div class="land-row">
-        <span class="swatch" style="background:#ffffff"></span>
-        <span class="coord">ホルモン男: (377,803)–(386,815)</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" title="削除">✕</span>
-      </div><div class="land-row">
-        <span class="swatch" style="background:#ff6beb"></span>
-        <span class="coord">Pマン: (387,803)–(397,814)</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" title="削除">✕</span>
-      </div><div class="land-row">
-        <span class="swatch" style="background:#ffffff"></span>
-        <span class="coord">あんどぅ: (376,779)–(389,786)</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" title="削除">✕</span>
-      </div><div class="land-row">
-        <span class="swatch" style="background:#ffffff"></span>
-        <span class="coord">マヨ: (390,770)–(400,780)</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" title="削除">✕</span>
-      </div><div class="land-row">
-        <span class="swatch" style="background:#ffffff"></span>
-        <span class="coord">とみ: (388,793)–(400,802)</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" title="削除">✕</span>
-      </div><div class="land-row">
-        <span class="swatch" style="background:#ffffff"></span>
-        <span class="coord">パグ: (401,770)–(408,784)</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" title="削除">✕</span>
-      </div><div class="land-row">
-        <span class="swatch" style="background:#ffffff"></span>
-        <span class="coord">瀧: (409,801)–(423,808)</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" title="削除">✕</span>
-      </div><div class="land-row">
-        <span class="swatch" style="background:#ffffff"></span>
-        <span class="coord">あいにゃん: (412,813)–(419,827)</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" title="削除">✕</span>
-      </div><div class="land-row">
-        <span class="swatch" style="background:#ffffff"></span>
-        <span class="coord">臥龍: (403,815)–(411,827)</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" title="削除">✕</span>
-      </div><div class="land-row">
-        <span class="swatch" style="background:#ffffff"></span>
-        <span class="coord">どらみ: (398,803)–(408,814)</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" title="削除">✕</span>
-      </div><div class="land-row">
-        <span class="swatch" style="background:#ffffff"></span>
-        <span class="coord">摎: (352,916)–(360,929)</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" title="削除">✕</span>
-      </div><div class="land-row">
-        <span class="swatch" style="background:#ffffff"></span>
-        <span class="coord">一瞬で灰: (355,897)–(361,915)</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" title="削除">✕</span>
-      </div><div class="land-row">
-        <span class="swatch" style="background:#ffffff"></span>
-        <span class="coord">くろこぶ: (362,908)–(372,918)</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" title="削除">✕</span>
-      </div><div class="land-row">
-        <span class="swatch" style="background:#ffffff"></span>
-        <span class="coord">ユッチ: (384,908)–(394,918)</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" title="削除">✕</span>
-      </div><div class="land-row">
-        <span class="swatch" style="background:#ffffff"></span>
-        <span class="coord">まるちゃ～ん: (261,854)–(270,864)</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" title="削除">✕</span>
-      </div><div class="land-row">
-        <span class="swatch" style="background:#ffffff"></span>
-        <span class="coord">ぴこ: (391,815)–(402,827)</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" title="削除">✕</span>
-      </div><div class="land-row">
-        <span class="swatch" style="background:#ffffff"></span>
-        <span class="coord">綾野剛: (407,919)–(417,929)</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" title="削除">✕</span>
-      </div><div class="land-row">
-        <span class="swatch" style="background:#ff0000"></span>
-        <span class="coord">空きA: (362,897)–(372,907)</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" title="削除">✕</span>
-      </div><div class="land-row">
-        <span class="swatch" style="background:#ff0000"></span>
-        <span class="coord">空きC: (373,908)–(383,918)</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" title="削除">✕</span>
-      </div><div class="land-row">
-        <span class="swatch" style="background:#ffffff"></span>
-        <span class="coord">平原哲: (298,924)–(307,936)</span>
-        <span class="rename" title="名前を変更">✎</span>
-        <span class="del" title="削除">✕</span>
-      </div></div>
+      <div id="landList"></div>
+    </div>
+
+    <div class="section">
+      <h2>メモ</h2>
+      <div id="memoList"></div>
     </div>
 
     <div class="section">
       <h2>スナップショット保存</h2>
       <button id="saveSnapshotBtn" class="snapshot-save-btn">名前をつけて保存</button>
-      <div id="snapshotList"><div class="snapshot-row">
-        <div class="info">
-          <span class="sname">保存 2026/09/02 16:21</span>
-          <span class="sdate">2026/09/02 16:21</span>
-        </div>
-        <span class="icon load" title="このスナップショットを読み込む">⇩</span>
-        <span class="icon rename" title="名前を変更">✎</span>
-        <span class="icon del" title="削除">✕</span>
-      </div></div>
+      <div id="snapshotList"></div>
     </div>
 
-    <div class="hint" id="modeHint">指でなぞる/ドラッグで地図を移動、ピンチ操作/ホイールでズームできます。<b>土地作成</b> / <b>配置</b> / <b>印</b>モードで編集します。</div>
+    <div class="hint" id="modeHint">
+      メンバーを選択してから、<b>土地作成</b>モードでドラッグして矩形の土地を割り当てます。<b>配置</b>モードではマスをクリックして現在地を置きます。他メンバーの土地とは重ねられません。<b>Ctrl+Z</b>で元に戻せます。
+    </div>
 
     <div class="footer-actions">
       <button id="exportBtn">JSON書き出し</button>
@@ -607,15 +314,15 @@
     </div>
   </div>
 
-  <div id="sidebarBackdrop" class="show"></div>
+  <div id="sidebarBackdrop"></div>
 
   <div id="canvasWrap">
-    <button id="sidebarToggle" title="パネルの表示/非表示">◀</button>
-    <canvas id="mapCanvas" width="1545" height="869" style="width: 1236px; height: 695.2px;" class=""></canvas>
-    <div id="hud">x: 298, y: 681</div>
-    <div id="assignBar" class="">
+    <button id="sidebarToggle" title="パネルの表示/非表示">▶</button>
+    <canvas id="mapCanvas"></canvas>
+    <div id="hud">x: 0, y: 0</div>
+    <div id="assignBar">
       <span>この土地を割り当てる:</span>
-      <select id="assignSelect"><option value="5icqcvh4">肥後菊池武光</option><option value="ndqa8vpm">Pマン</option><option value="wppbuce7">巴</option><option value="7e9n285w">ホルモン男</option><option value="ugs4zcvm">りくな</option><option value="w7er63b8">とみ</option><option value="3jnkclf9">どらみ</option><option value="c6t48y9p">瀧</option><option value="yqcasrlz">あいにゃん</option><option value="ttci1nf0">臥龍</option><option value="vnt9pv02">パグ</option><option value="je7225jm">マヨ</option><option value="i7njs1cb">あんどぅ</option><option value="k0xggels">ぷ～</option><option value="dfgr0mua">くろこぶ</option><option value="pljqjpea">ユッチ</option><option value="oe1hkwgy">ちゅん</option><option value="hfhu1fk1">一瞬で灰</option><option value="5u8wgf4q">摎</option><option value="8wqyt1bc">ぴこ</option><option value="wfu8uqfn">まるちゃ～ん</option><option value="mybg4ua3">綾野剛</option><option value="jkah7vm5">空きA</option><option value="lpqiju2e">空きC</option><option value="eechc63l">平原哲</option></select>
+      <select id="assignSelect"></select>
       <button class="confirm" id="assignConfirm">割り当て</button>
       <button class="cancel" id="assignCancel">取消</button>
     </div>
@@ -628,7 +335,7 @@
 </div>
 
 <!-- GitHub公開用に書き出す際、ここにスナップショット等の初期データがJSONとして埋め込まれる -->
-<script id="embedded-state" type="application/json">{"members":[{"id":"5icqcvh4","name":"肥後菊池武光","color":"#fafafa"},{"id":"ndqa8vpm","name":"Pマン","color":"#ff6beb"},{"id":"wppbuce7","name":"巴","color":"#ffffff"},{"id":"7e9n285w","name":"ホルモン男","color":"#ffffff"},{"id":"ugs4zcvm","name":"りくな","color":"#ffffff"},{"id":"w7er63b8","name":"とみ","color":"#ffffff"},{"id":"3jnkclf9","name":"どらみ","color":"#ffffff"},{"id":"c6t48y9p","name":"瀧","color":"#ffffff"},{"id":"yqcasrlz","name":"あいにゃん","color":"#ffffff"},{"id":"ttci1nf0","name":"臥龍","color":"#ffffff"},{"id":"vnt9pv02","name":"パグ","color":"#ffffff"},{"id":"je7225jm","name":"マヨ","color":"#ffffff"},{"id":"i7njs1cb","name":"あんどぅ","color":"#ffffff"},{"id":"k0xggels","name":"ぷ～","color":"#ffffff"},{"id":"dfgr0mua","name":"くろこぶ","color":"#ffffff"},{"id":"pljqjpea","name":"ユッチ","color":"#ffffff"},{"id":"oe1hkwgy","name":"ちゅん","color":"#ffffff"},{"id":"hfhu1fk1","name":"一瞬で灰","color":"#ffffff"},{"id":"5u8wgf4q","name":"摎","color":"#ffffff"},{"id":"8wqyt1bc","name":"ぴこ","color":"#ffffff"},{"id":"wfu8uqfn","name":"まるちゃ～ん","color":"#ffffff"},{"id":"mybg4ua3","name":"綾野剛","color":"#ffffff"},{"id":"jkah7vm5","name":"空きA","color":"#ff0000"},{"id":"lpqiju2e","name":"空きC","color":"#ff0000"},{"id":"graz2tw5","name":"平原哲","color":"#ffffff"}],"lands":[{"id":"78yly7s8","memberId":"5icqcvh4","x1":407,"x2":417,"y1":828,"y2":838},{"id":"bk6vr0ks","memberId":"wppbuce7","x1":401,"x2":408,"y1":785,"y2":802},{"id":"03wz2i81","memberId":"ugs4zcvm","x1":365,"x2":376,"y1":806,"y2":815},{"id":"6l804n29","memberId":"k0xggels","x1":365,"x2":376,"y1":795,"y2":804},{"id":"yv0o3pxz","memberId":"7e9n285w","x1":377,"x2":386,"y1":803,"y2":815},{"id":"tbdgwi9f","memberId":"ndqa8vpm","x1":387,"x2":397,"y1":803,"y2":814},{"id":"8yxkfn3b","memberId":"i7njs1cb","x1":376,"x2":389,"y1":779,"y2":786},{"id":"uhqa279k","memberId":"je7225jm","x1":390,"x2":400,"y1":770,"y2":780},{"id":"xua8fqtj","memberId":"w7er63b8","x1":388,"x2":400,"y1":793,"y2":802},{"id":"p9xwwb55","memberId":"vnt9pv02","x1":401,"x2":408,"y1":770,"y2":784},{"id":"ycbwn97o","memberId":"c6t48y9p","x1":409,"x2":423,"y1":801,"y2":808},{"id":"1r03rvqi","memberId":"yqcasrlz","x1":412,"x2":419,"y1":813,"y2":827},{"id":"hhaajg0x","memberId":"ttci1nf0","x1":403,"x2":411,"y1":815,"y2":827},{"id":"14germx0","memberId":"3jnkclf9","x1":398,"x2":408,"y1":803,"y2":814},{"id":"q3z7dnwk","memberId":"5u8wgf4q","x1":352,"x2":360,"y1":916,"y2":929},{"id":"rseq0cak","memberId":"hfhu1fk1","x1":355,"x2":361,"y1":897,"y2":915},{"id":"3zkgx0ku","memberId":"dfgr0mua","x1":362,"x2":372,"y1":908,"y2":918},{"id":"y5ijmy7c","memberId":"pljqjpea","x1":384,"x2":394,"y1":908,"y2":918},{"id":"5ssjylo8","memberId":"wfu8uqfn","x1":261,"x2":270,"y1":854,"y2":864},{"id":"h0x2j15d","memberId":"8wqyt1bc","x1":391,"x2":402,"y1":815,"y2":827},{"id":"nsbj5hj5","memberId":"mybg4ua3","x1":407,"x2":417,"y1":919,"y2":929},{"id":"8gdo1own","memberId":"jkah7vm5","x1":362,"x2":372,"y1":897,"y2":907},{"id":"i11298x1","memberId":"lpqiju2e","x1":373,"x2":383,"y1":908,"y2":918},{"id":"vgofh0pm","memberId":"graz2tw5","x1":298,"x2":307,"y1":924,"y2":936}],"freeformCells":{"365,805":"ugs4zcvm","366,805":"k0xggels","367,805":"k0xggels","368,805":"k0xggels","369,805":"k0xggels","370,805":"k0xggels","371,805":"k0xggels","372,805":"k0xggels","373,805":"k0xggels","374,805":"k0xggels","375,805":"k0xggels","376,805":"k0xggels","366,794":"k0xggels","367,794":"k0xggels","368,794":"k0xggels","369,794":"k0xggels","370,794":"k0xggels","371,794":"k0xggels","372,794":"k0xggels","373,794":"k0xggels","374,794":"k0xggels","375,794":"k0xggels","376,794":"k0xggels","387,815":"ndqa8vpm","388,815":"ndqa8vpm","389,815":"ndqa8vpm","390,815":"ndqa8vpm","376,778":"i7njs1cb","377,778":"i7njs1cb","378,778":"i7njs1cb","380,778":"i7njs1cb","381,778":"i7njs1cb","382,778":"i7njs1cb","383,778":"i7njs1cb","384,778":"i7njs1cb","386,778":"i7njs1cb","387,778":"i7njs1cb","388,778":"i7njs1cb","389,778":"i7njs1cb","385,778":"i7njs1cb","387,787":"i7njs1cb","387,788":"i7njs1cb","377,787":"i7njs1cb","377,788":"i7njs1cb","378,788":"i7njs1cb","379,788":"i7njs1cb","380,788":"i7njs1cb","381,788":"i7njs1cb","382,788":"i7njs1cb","383,788":"i7njs1cb","384,788":"i7njs1cb","385,788":"i7njs1cb","386,788":"i7njs1cb","386,787":"i7njs1cb","385,787":"i7njs1cb","384,787":"i7njs1cb","383,787":"i7njs1cb","382,787":"i7njs1cb","381,787":"i7njs1cb","380,787":"i7njs1cb","379,787":"i7njs1cb","378,787":"i7njs1cb","411,814":"ttci1nf0","410,814":"ttci1nf0","409,814":"ttci1nf0","361,916":"dfgr0mua","361,917":"dfgr0mua","361,918":"dfgr0mua","260,858":"wfu8uqfn","260,859":"wfu8uqfn","260,860":"wfu8uqfn","260,861":"wfu8uqfn","260,862":"wfu8uqfn","260,863":"wfu8uqfn","260,864":"wfu8uqfn","271,854":"wfu8uqfn","271,855":"wfu8uqfn","271,856":"wfu8uqfn","271,857":"wfu8uqfn","303,937":"graz2tw5","303,938":"graz2tw5","302,938":"graz2tw5","301,938":"graz2tw5","300,938":"graz2tw5","299,938":"graz2tw5","298,938":"graz2tw5","298,937":"graz2tw5","299,937":"graz2tw5","300,937":"graz2tw5","301,937":"graz2tw5","302,937":"graz2tw5","297,932":"graz2tw5","297,931":"graz2tw5"},"positions":{"5icqcvh4":{"x":411,"y":833},"wppbuce7":{"x":406,"y":792},"ugs4zcvm":{"x":372,"y":809},"k0xggels":{"x":369,"y":799},"7e9n285w":{"x":383,"y":810},"ndqa8vpm":{"x":395,"y":805},"i7njs1cb":{"x":381,"y":784},"je7225jm":{"x":397,"y":774},"w7er63b8":{"x":391,"y":797},"vnt9pv02":{"x":405,"y":779},"c6t48y9p":{"x":414,"y":805},"yqcasrlz":{"x":415,"y":820},"3jnkclf9":{"x":400,"y":809},"ttci1nf0":{"x":409,"y":825},"5u8wgf4q":{"x":356,"y":921},"hfhu1fk1":{"x":356,"y":906},"dfgr0mua":{"x":367,"y":913},"pljqjpea":{"x":389,"y":913},"wfu8uqfn":{"x":265,"y":861},"8wqyt1bc":{"x":393,"y":823},"mybg4ua3":{"x":412,"y":924},"jkah7vm5":{"x":367,"y":902},"lpqiju2e":{"x":378,"y":913},"graz2tw5":{"x":301,"y":934}},"markedCells":{"407,830":true,"407,831":true,"407,832":true,"365,806":true,"365,808":true,"365,814":true,"365,812":true,"365,811":true,"410,801":true,"411,801":true,"412,801":true,"398,770":true},"selectedMemberId":null,"snapshots":[{"id":"loytip5v","name":"保存 2026/09/02 16:21","savedAt":"2026-09-02T07:21:18.922Z","data":{"members":[{"id":"5icqcvh4","name":"肥後菊池武光","color":"#fafafa"},{"id":"ndqa8vpm","name":"Pマン","color":"#ff6beb"},{"id":"wppbuce7","name":"巴","color":"#ffffff"},{"id":"7e9n285w","name":"ホルモン男","color":"#ffffff"},{"id":"ugs4zcvm","name":"りくな","color":"#ffffff"},{"id":"w7er63b8","name":"とみ","color":"#ffffff"},{"id":"3jnkclf9","name":"どらみ","color":"#ffffff"},{"id":"c6t48y9p","name":"瀧","color":"#ffffff"},{"id":"yqcasrlz","name":"あいにゃん","color":"#ffffff"},{"id":"ttci1nf0","name":"臥龍","color":"#ffffff"},{"id":"vnt9pv02","name":"パグ","color":"#ffffff"},{"id":"je7225jm","name":"マヨ","color":"#ffffff"},{"id":"i7njs1cb","name":"あんどぅ","color":"#ffffff"},{"id":"k0xggels","name":"ぷ～","color":"#ffffff"},{"id":"dfgr0mua","name":"くろこぶ","color":"#ffffff"},{"id":"pljqjpea","name":"ユッチ","color":"#ffffff"},{"id":"oe1hkwgy","name":"ちゅん","color":"#ffffff"},{"id":"hfhu1fk1","name":"一瞬で灰","color":"#ffffff"},{"id":"5u8wgf4q","name":"摎","color":"#ffffff"},{"id":"8wqyt1bc","name":"ぴこ","color":"#ffffff"},{"id":"wfu8uqfn","name":"まるちゃ～ん","color":"#ffffff"},{"id":"mybg4ua3","name":"綾野剛","color":"#ffffff"},{"id":"jkah7vm5","name":"空きA","color":"#ff0000"},{"id":"lpqiju2e","name":"空きC","color":"#ff0000"},{"id":"graz2tw5","name":"平原哲","color":"#ffffff"}],"lands":[{"id":"78yly7s8","memberId":"5icqcvh4","x1":407,"x2":417,"y1":828,"y2":838},{"id":"bk6vr0ks","memberId":"wppbuce7","x1":401,"x2":408,"y1":785,"y2":802},{"id":"03wz2i81","memberId":"ugs4zcvm","x1":365,"x2":376,"y1":806,"y2":815},{"id":"6l804n29","memberId":"k0xggels","x1":365,"x2":376,"y1":795,"y2":804},{"id":"yv0o3pxz","memberId":"7e9n285w","x1":377,"x2":386,"y1":803,"y2":815},{"id":"tbdgwi9f","memberId":"ndqa8vpm","x1":387,"x2":397,"y1":803,"y2":814},{"id":"8yxkfn3b","memberId":"i7njs1cb","x1":376,"x2":389,"y1":779,"y2":786},{"id":"uhqa279k","memberId":"je7225jm","x1":390,"x2":400,"y1":770,"y2":780},{"id":"xua8fqtj","memberId":"w7er63b8","x1":388,"x2":400,"y1":793,"y2":802},{"id":"p9xwwb55","memberId":"vnt9pv02","x1":401,"x2":408,"y1":770,"y2":784},{"id":"ycbwn97o","memberId":"c6t48y9p","x1":409,"x2":423,"y1":801,"y2":808},{"id":"1r03rvqi","memberId":"yqcasrlz","x1":412,"x2":419,"y1":813,"y2":827},{"id":"hhaajg0x","memberId":"ttci1nf0","x1":403,"x2":411,"y1":815,"y2":827},{"id":"14germx0","memberId":"3jnkclf9","x1":398,"x2":408,"y1":803,"y2":814},{"id":"q3z7dnwk","memberId":"5u8wgf4q","x1":352,"x2":360,"y1":916,"y2":929},{"id":"rseq0cak","memberId":"hfhu1fk1","x1":355,"x2":361,"y1":897,"y2":915},{"id":"3zkgx0ku","memberId":"dfgr0mua","x1":362,"x2":372,"y1":908,"y2":918},{"id":"y5ijmy7c","memberId":"pljqjpea","x1":384,"x2":394,"y1":908,"y2":918},{"id":"5ssjylo8","memberId":"wfu8uqfn","x1":261,"x2":270,"y1":854,"y2":864},{"id":"h0x2j15d","memberId":"8wqyt1bc","x1":391,"x2":402,"y1":815,"y2":827},{"id":"nsbj5hj5","memberId":"mybg4ua3","x1":407,"x2":417,"y1":919,"y2":929},{"id":"8gdo1own","memberId":"jkah7vm5","x1":362,"x2":372,"y1":897,"y2":907},{"id":"i11298x1","memberId":"lpqiju2e","x1":373,"x2":383,"y1":908,"y2":918},{"id":"vgofh0pm","memberId":"graz2tw5","x1":298,"x2":307,"y1":924,"y2":936}],"freeformCells":{"365,805":"ugs4zcvm","366,805":"k0xggels","367,805":"k0xggels","368,805":"k0xggels","369,805":"k0xggels","370,805":"k0xggels","371,805":"k0xggels","372,805":"k0xggels","373,805":"k0xggels","374,805":"k0xggels","375,805":"k0xggels","376,805":"k0xggels","366,794":"k0xggels","367,794":"k0xggels","368,794":"k0xggels","369,794":"k0xggels","370,794":"k0xggels","371,794":"k0xggels","372,794":"k0xggels","373,794":"k0xggels","374,794":"k0xggels","375,794":"k0xggels","376,794":"k0xggels","387,815":"ndqa8vpm","388,815":"ndqa8vpm","389,815":"ndqa8vpm","390,815":"ndqa8vpm","376,778":"i7njs1cb","377,778":"i7njs1cb","378,778":"i7njs1cb","380,778":"i7njs1cb","381,778":"i7njs1cb","382,778":"i7njs1cb","383,778":"i7njs1cb","384,778":"i7njs1cb","386,778":"i7njs1cb","387,778":"i7njs1cb","388,778":"i7njs1cb","389,778":"i7njs1cb","385,778":"i7njs1cb","387,787":"i7njs1cb","387,788":"i7njs1cb","377,787":"i7njs1cb","377,788":"i7njs1cb","378,788":"i7njs1cb","379,788":"i7njs1cb","380,788":"i7njs1cb","381,788":"i7njs1cb","382,788":"i7njs1cb","383,788":"i7njs1cb","384,788":"i7njs1cb","385,788":"i7njs1cb","386,788":"i7njs1cb","386,787":"i7njs1cb","385,787":"i7njs1cb","384,787":"i7njs1cb","383,787":"i7njs1cb","382,787":"i7njs1cb","381,787":"i7njs1cb","380,787":"i7njs1cb","379,787":"i7njs1cb","378,787":"i7njs1cb","411,814":"ttci1nf0","410,814":"ttci1nf0","409,814":"ttci1nf0","361,916":"dfgr0mua","361,917":"dfgr0mua","361,918":"dfgr0mua","260,858":"wfu8uqfn","260,859":"wfu8uqfn","260,860":"wfu8uqfn","260,861":"wfu8uqfn","260,862":"wfu8uqfn","260,863":"wfu8uqfn","260,864":"wfu8uqfn","271,854":"wfu8uqfn","271,855":"wfu8uqfn","271,856":"wfu8uqfn","271,857":"wfu8uqfn","303,937":"graz2tw5","303,938":"graz2tw5","302,938":"graz2tw5","301,938":"graz2tw5","300,938":"graz2tw5","299,938":"graz2tw5","298,938":"graz2tw5","298,937":"graz2tw5","299,937":"graz2tw5","300,937":"graz2tw5","301,937":"graz2tw5","302,937":"graz2tw5","297,932":"graz2tw5","297,931":"graz2tw5"},"positions":{"5icqcvh4":{"x":411,"y":833},"wppbuce7":{"x":406,"y":792},"ugs4zcvm":{"x":372,"y":809},"k0xggels":{"x":369,"y":799},"7e9n285w":{"x":383,"y":810},"ndqa8vpm":{"x":395,"y":805},"i7njs1cb":{"x":381,"y":784},"je7225jm":{"x":397,"y":774},"w7er63b8":{"x":391,"y":797},"vnt9pv02":{"x":405,"y":779},"c6t48y9p":{"x":414,"y":805},"yqcasrlz":{"x":415,"y":820},"3jnkclf9":{"x":400,"y":809},"ttci1nf0":{"x":409,"y":825},"5u8wgf4q":{"x":356,"y":921},"hfhu1fk1":{"x":356,"y":906},"dfgr0mua":{"x":367,"y":913},"pljqjpea":{"x":389,"y":913},"wfu8uqfn":{"x":265,"y":861},"8wqyt1bc":{"x":393,"y":823},"mybg4ua3":{"x":412,"y":924},"jkah7vm5":{"x":367,"y":902},"lpqiju2e":{"x":378,"y":913},"graz2tw5":{"x":301,"y":934}},"markedCells":{"407,830":true,"407,831":true,"407,832":true,"365,806":true,"365,808":true,"365,814":true,"365,812":true,"365,811":true,"410,801":true,"411,801":true,"412,801":true,"398,770":true}}}]}</script>
+<script id="embedded-state" type="application/json">{}</script>
 
 <script>
 (function(){
@@ -647,6 +354,7 @@
     freeformCells: {}, // "x,y" -> memberId  (自由形状の土地セル)
     positions: {}, // memberId -> {x, y}
     markedCells: {}, // "x,y" -> true  (侵蝕マークなど、任意のマスに付ける✕印)
+    memos: [],     // {id, x, y, text}  (自由に置けるメモ、1マスにつき1件)
     selectedMemberId: null,
     snapshots: [] // {id, name, savedAt, data:{members,lands,freeformCells,positions}}
   };
@@ -673,7 +381,8 @@
       lands: state.lands,
       freeformCells: state.freeformCells,
       positions: state.positions,
-      markedCells: state.markedCells
+      markedCells: state.markedCells,
+      memos: state.memos
     }));
     if (history.length > MAX_HISTORY) history.shift();
   }
@@ -685,10 +394,11 @@
     state.freeformCells = snap.freeformCells;
     state.positions = snap.positions;
     state.markedCells = snap.markedCells || {};
+    state.memos = snap.memos || [];
     if (state.selectedMemberId && !state.members.some(m => m.id === state.selectedMemberId)) {
       state.selectedMemberId = null;
     }
-    save(); draw(); renderMemberList(); renderLandList();
+    save(); draw(); renderMemberList(); renderLandList(); renderMemoList();
   }
   window.addEventListener("keydown", (e) => {
     const tag = (document.activeElement && document.activeElement.tagName) || "";
@@ -733,6 +443,7 @@
       freeformCells: state.freeformCells,
       positions: state.positions,
       markedCells: state.markedCells,
+      memos: state.memos,
       selectedMemberId: state.selectedMemberId,
       snapshots: state.snapshots
     });
@@ -1217,6 +928,38 @@
       }
     });
 
+    // メモ
+    (state.memos || []).forEach(memo => {
+      const center = worldToScreen(memo.x + 0.5, memo.y + 0.5);
+      if (center.x < -30 || center.y < -30 || center.x > cw + 30 || center.y > ch + 30) return;
+      const r = Math.max(6, Math.min(10, cellPx * 0.34));
+
+      ctx.beginPath();
+      ctx.arc(center.x, center.y, r, 0, Math.PI * 2);
+      ctx.fillStyle = "#c9a24b";
+      ctx.fill();
+      ctx.strokeStyle = "#14181a";
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.font = `bold ${Math.max(8, Math.min(11, r * 1.1))}px sans-serif`;
+      ctx.fillStyle = "#14181a";
+      ctx.fillText("M", center.x, center.y + 0.5);
+      ctx.textBaseline = "alphabetic";
+
+      if (cellPx > 10) {
+        const preview = memo.text.length > 14 ? memo.text.slice(0, 14) + "…" : memo.text;
+        ctx.font = "10px sans-serif";
+        const tw = ctx.measureText(preview).width;
+        ctx.fillStyle = "rgba(20,24,26,.85)";
+        ctx.fillRect(center.x - tw / 2 - 3, center.y + r + 4, tw + 6, 13);
+        ctx.fillStyle = "#e7e2d3";
+        ctx.fillText(preview, center.x, center.y + r + 13);
+      }
+    });
+
     ctx.restore();
   }
 
@@ -1302,6 +1045,32 @@
       markPaint = { action: alreadyMarked ? "remove" : "add" };
       applyMarkPaint(c.x, c.y);
       save(); draw();
+      return;
+    }
+    if (mode === "memo") {
+      const c = screenToWorldCell(sx, sy);
+      const existing = (state.memos || []).find(mm => mm.x === c.x && mm.y === c.y);
+      if (existing) {
+        const newText = prompt("メモを編集します（空にしてOKで削除）", existing.text);
+        if (newText === null) return;
+        const trimmed = newText.trim();
+        pushHistory();
+        if (!trimmed) {
+          state.memos = state.memos.filter(mm => mm.id !== existing.id);
+        } else {
+          existing.text = trimmed;
+        }
+        save(); draw(); renderMemoList();
+      } else {
+        const text = prompt("このマスにメモを追加します。内容を入力してください:");
+        if (text === null) return;
+        const trimmed = text.trim();
+        if (!trimmed) return;
+        pushHistory();
+        if (!state.memos) state.memos = [];
+        state.memos.push({ id: uid(), x: c.x, y: c.y, text: trimmed });
+        save(); draw(); renderMemoList();
+      }
       return;
     }
     // pan (view mode)
@@ -1519,10 +1288,11 @@
       document.querySelectorAll(".mode-btn").forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
       mode = btn.dataset.mode;
-      canvas.classList.remove("mode-land", "mode-place", "mode-mark");
+      canvas.classList.remove("mode-land", "mode-place", "mode-mark", "mode-memo");
       if (mode === "land") canvas.classList.add("mode-land");
       if (mode === "place") canvas.classList.add("mode-place");
       if (mode === "mark") canvas.classList.add("mode-mark");
+      if (mode === "memo") canvas.classList.add("mode-memo");
       updateHint();
     });
   });
@@ -1533,7 +1303,8 @@
     if (mode === "land") hint.innerHTML = "地図上をドラッグ（スマホは指でなぞる）して矩形の土地を割り当てます。<b>Shift+クリック</b>、またはチェックボックスをONにして操作すると、マス目を1つずつ追加/削除して自由形状の土地を作れます。";
     else if (mode === "place") hint.innerHTML = "サイドバーでメンバーを選択し、地図上のマスをタップ/クリックして現在地を配置します。";
     else if (mode === "mark") hint.innerHTML = "地図上のマスをタップ/クリック（なぞって複数可）すると✕印を付けられます。もう一度同じ操作で消えます。侵蝕箇所の記録などに使えます。";
-    else hint.innerHTML = "指でなぞる/ドラッグで地図を移動、ピンチ操作/ホイールでズームできます。<b>土地作成</b> / <b>配置</b> / <b>印</b>モードで編集します。";
+    else if (mode === "memo") hint.innerHTML = "地図上のマスをタップ/クリックしてメモを追加します（1マスに1件）。既にメモがあるマスをタップすると編集・削除できます。";
+    else hint.innerHTML = "指でなぞる/ドラッグで地図を移動、ピンチ操作/ホイールでズームできます。<b>土地作成</b> / <b>配置</b> / <b>印</b> / <b>メモ</b>モードで編集します。";
   }
   function flashHint(msg) {
     const hint = document.getElementById("modeHint");
@@ -1722,6 +1493,57 @@
     });
   }
 
+  function centerOnCell(x, y) {
+    const cw = canvas.width / dpr, ch = canvas.height / dpr;
+    const center = worldToScreen(x + 0.5, y + 0.5);
+    view.offsetX += cw / 2 - center.x;
+    view.offsetY += ch / 2 - center.y;
+    draw();
+  }
+
+  function renderMemoList() {
+    const listEl = document.getElementById("memoList");
+    if (!listEl) return;
+    listEl.innerHTML = "";
+    const memos = state.memos || [];
+    if (memos.length === 0) {
+      listEl.innerHTML = '<div style="font-size:11.5px; color:var(--text-dim); padding:2px 2px;">まだメモはありません（<b>メモ</b>モードで地図をタップして追加）</div>';
+      return;
+    }
+    memos.forEach(memo => {
+      const row = document.createElement("div");
+      row.className = "land-row";
+      const preview = memo.text.length > 20 ? memo.text.slice(0, 20) + "…" : memo.text;
+      row.innerHTML = `
+        <span class="swatch" style="background:#c9a24b"></span>
+        <span class="coord" style="cursor:pointer" title="${escapeHtml(memo.text)}">(${memo.x},${memo.y}) ${escapeHtml(preview)}</span>
+        <span class="rename" title="編集">✎</span>
+        <span class="del" title="削除">✕</span>
+      `;
+      row.querySelector(".coord").addEventListener("click", () => centerOnCell(memo.x, memo.y));
+      row.querySelector(".rename").addEventListener("click", (e) => {
+        e.stopPropagation();
+        const newText = prompt("メモを編集します（空にしてOKで削除）", memo.text);
+        if (newText === null) return;
+        const trimmed = newText.trim();
+        pushHistory();
+        if (!trimmed) {
+          state.memos = state.memos.filter(mm => mm.id !== memo.id);
+        } else {
+          memo.text = trimmed;
+        }
+        save(); draw(); renderMemoList();
+      });
+      row.querySelector(".del").addEventListener("click", (e) => {
+        e.stopPropagation();
+        pushHistory();
+        state.memos = state.memos.filter(mm => mm.id !== memo.id);
+        save(); draw(); renderMemoList();
+      });
+      listEl.appendChild(row);
+    });
+  }
+
   function escapeHtml(s) {
     return s.replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   }
@@ -1744,8 +1566,8 @@
       try {
         const parsed = JSON.parse(reader.result);
         pushHistory();
-        state = Object.assign({ members: [], lands: [], freeformCells: {}, positions: {}, markedCells: {}, selectedMemberId: null, snapshots: [] }, parsed);
-        save(); renderMemberList(); renderLandList(); renderSnapshotList(); draw();
+        state = Object.assign({ members: [], lands: [], freeformCells: {}, positions: {}, markedCells: {}, memos: [], selectedMemberId: null, snapshots: [] }, parsed);
+        save(); renderMemberList(); renderLandList(); renderSnapshotList(); renderMemoList(); draw();
       } catch(err) {
         alert("読み込みに失敗しました。JSON形式を確認してください。");
       }
@@ -1770,7 +1592,8 @@
         lands: JSON.parse(JSON.stringify(state.lands)),
         freeformCells: JSON.parse(JSON.stringify(state.freeformCells)),
         positions: JSON.parse(JSON.stringify(state.positions)),
-        markedCells: JSON.parse(JSON.stringify(state.markedCells))
+        markedCells: JSON.parse(JSON.stringify(state.markedCells)),
+        memos: JSON.parse(JSON.stringify(state.memos || []))
       }
     };
     if (!state.snapshots) state.snapshots = [];
@@ -1790,8 +1613,9 @@
     state.freeformCells = JSON.parse(JSON.stringify(snap.data.freeformCells));
     state.positions = JSON.parse(JSON.stringify(snap.data.positions));
     state.markedCells = JSON.parse(JSON.stringify(snap.data.markedCells || {}));
+    state.memos = JSON.parse(JSON.stringify(snap.data.memos || []));
     state.selectedMemberId = null;
-    save(); draw(); renderMemberList(); renderLandList();
+    save(); draw(); renderMemberList(); renderLandList(); renderMemoList();
   }
 
   function renameSnapshot(id) {
@@ -1855,6 +1679,7 @@
       freeformCells: state.freeformCells,
       positions: state.positions,
       markedCells: state.markedCells,
+      memos: state.memos,
       selectedMemberId: null,
       snapshots: list
     };
@@ -1900,11 +1725,11 @@
     renderMemberList();
     renderLandList();
     renderSnapshotList();
+    renderMemoList();
     updateHint();
     resizeCanvas();
   })();
 })();
 </script>
-
-
-</body></html>
+</body>
+</html>
