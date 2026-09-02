@@ -91,6 +91,7 @@
   .accordion-section:not(.is-open) .accordion-content,
   .accordion-section:not(.is-open) .accordion-resize-handle { display: none; }
   .accordion-content #memberList,
+  .accordion-content #landList,
   .accordion-content #memoList,
   .accordion-content #mountainList,
   .accordion-content #snapshotList { flex: 1 1 auto; min-height: 0; max-height: none; }
@@ -470,8 +471,8 @@
       </div></div>
     </div><div class="accordion-resize-handle" title="ドラッグして表示高さを調整" aria-label="メンバーの表示高さを調整"></div></div>
 
-    <div class="section">
-      <h2>割り当て済みの土地</h2>
+    <div class="section accordion-section">
+      <button type="button" class="accordion-toggle" aria-expanded="false">割り当て済みの土地</button><div class="accordion-content" style="height: 280px;">
       <div class="land-add">
         <select id="landAddMember"><option value="5icqcvh4">肥後菊池武光</option><option value="ndqa8vpm">Pマン</option><option value="wppbuce7">巴</option><option value="7e9n285w">ホルモン男</option><option value="ugs4zcvm">りくな</option><option value="w7er63b8">とみ</option><option value="3jnkclf9">どらみ</option><option value="c6t48y9p">瀧</option><option value="yqcasrlz">あいにゃん</option><option value="ttci1nf0">臥龍</option><option value="vnt9pv02">パグ</option><option value="je7225jm">マヨ</option><option value="i7njs1cb">あんどぅ</option><option value="k0xggels">ぷ～</option><option value="dfgr0mua">くろこぶ</option><option value="pljqjpea">ユッチ</option><option value="oe1hkwgy">ちゅん</option><option value="hfhu1fk1">一瞬で灰</option><option value="5u8wgf4q">摎</option><option value="8wqyt1bc">ぴこ</option><option value="wfu8uqfn">まるちゃ～ん</option><option value="mybg4ua3">綾野剛</option><option value="jkah7vm5">空きA</option><option value="lpqiju2e">空きC</option><option value="graz2tw5">平原哲</option></select>
         <div class="coord-inputs">
@@ -604,7 +605,7 @@
         <span class="rename" title="名前を変更">✎</span>
         <span class="del" title="削除">✕</span>
       </div></div>
-    </div>
+    </div><div class="accordion-resize-handle" title="ドラッグして表示高さを調整" aria-label="割り当て済みの土地の表示高さを調整"></div></div>
 
     <div class="section accordion-section">
       <button type="button" class="accordion-toggle" aria-expanded="false">メモ</button><div class="accordion-content" style="height: 180px;">
@@ -2777,69 +2778,61 @@
 
   // ---------------- 操作パネルのアコーディオン ----------------
   function setupPanelAccordions() {
-    const defaults = { "メンバー": 300, "メモ": 180, "山": 220, "スナップショット保存": 250 };
+    const defaultHeights = { "メンバー": 300, "割り当て済みの土地": 280, "メモ": 180, "山": 220, "スナップショット保存": 250 };
     const preferenceKey = "shishi_land_panel_layout_v1";
     let preferences = {};
     try { preferences = JSON.parse(localStorage.getItem(preferenceKey) || "{}"); } catch (e) { preferences = {}; }
 
-    document.querySelectorAll("#sidebar .section > h2").forEach(heading => {
-      const title = heading.textContent.trim();
-      if (!(title in defaults)) return;
-
-      const section = heading.parentElement;
-      const toggle = document.createElement("button");
-      toggle.type = "button";
-      toggle.className = "accordion-toggle";
-      toggle.textContent = title;
-      toggle.setAttribute("aria-expanded", "true");
-      heading.replaceWith(toggle);
-
-      const content = document.createElement("div");
-      content.className = "accordion-content";
-      while (toggle.nextSibling) content.appendChild(toggle.nextSibling);
-      const handle = document.createElement("div");
-      handle.className = "accordion-resize-handle";
-      handle.title = "ドラッグして表示高さを調整";
-      handle.setAttribute("aria-label", title + "の表示高さを調整");
-      section.append(content, handle);
-      section.classList.add("accordion-section", "is-open");
+    document.querySelectorAll("#sidebar .accordion-toggle").forEach(toggle => {
+      const section = toggle.closest(".section");
+      const content = toggle.nextElementSibling;
+      if (!section || !content || !content.classList.contains("accordion-content")) return;
+      const handle = section.querySelector(".accordion-resize-handle");
+      const title = toggle.textContent.trim();
 
       const saved = preferences[title] || {};
-      if (saved.open === false) {
-        section.classList.remove("is-open");
-        toggle.setAttribute("aria-expanded", "false");
-      }
-      content.style.height = Math.max(64, saved.height || defaults[title]) + "px";
+      const isOpen = saved.open !== false; // 保存されていなければ既定で開いた状態にする
+      section.classList.toggle("is-open", isOpen);
+      toggle.setAttribute("aria-expanded", String(isOpen));
+
+      const defaultHeight = defaultHeights[title] || 220;
+      content.style.height = Math.max(64, saved.height || defaultHeight) + "px";
 
       const store = () => {
-        preferences[title] = { open: section.classList.contains("is-open"), height: parseInt(content.style.height, 10) || defaults[title] };
+        preferences[title] = {
+          open: section.classList.contains("is-open"),
+          height: parseInt(content.style.height, 10) || defaultHeight
+        };
         try { localStorage.setItem(preferenceKey, JSON.stringify(preferences)); } catch (e) { /* 保存できない環境では今回の表示だけ反映 */ }
       };
+
       toggle.addEventListener("click", () => {
         const open = section.classList.toggle("is-open");
         toggle.setAttribute("aria-expanded", String(open));
         store();
       });
 
-      handle.addEventListener("pointerdown", (event) => {
-        event.preventDefault();
-        const startY = event.clientY;
-        const startHeight = content.getBoundingClientRect().height;
-        handle.setPointerCapture(event.pointerId);
-        const resize = move => {
-          const height = Math.max(64, Math.min(720, startHeight + move.clientY - startY));
-          content.style.height = Math.round(height) + "px";
-        };
-        const finish = () => {
-          handle.removeEventListener("pointermove", resize);
-          handle.removeEventListener("pointerup", finish);
-          handle.removeEventListener("pointercancel", finish);
-          store();
-        };
-        handle.addEventListener("pointermove", resize);
-        handle.addEventListener("pointerup", finish);
-        handle.addEventListener("pointercancel", finish);
-      });
+      if (handle) {
+        handle.addEventListener("pointerdown", (event) => {
+          event.preventDefault();
+          const startY = event.clientY;
+          const startHeight = content.getBoundingClientRect().height;
+          handle.setPointerCapture(event.pointerId);
+          const resize = move => {
+            const height = Math.max(64, Math.min(720, startHeight + move.clientY - startY));
+            content.style.height = Math.round(height) + "px";
+          };
+          const finish = () => {
+            handle.removeEventListener("pointermove", resize);
+            handle.removeEventListener("pointerup", finish);
+            handle.removeEventListener("pointercancel", finish);
+            store();
+          };
+          handle.addEventListener("pointermove", resize);
+          handle.addEventListener("pointerup", finish);
+          handle.addEventListener("pointercancel", finish);
+        });
+      }
     });
   }
 
