@@ -136,8 +136,14 @@
   }
   .member-row.selected { border-color: var(--accent-2); background: #2c2419; }
   .swatch { width: 13px; height: 13px; border-radius: 3px; flex-shrink: 0; }
-  .member-row .swatch { cursor: pointer; }
-  .member-row .swatch:hover { outline: 2px solid var(--accent-2); outline-offset: 1px; }
+  .swatch-input {
+    width: 18px; height: 18px; flex-shrink: 0; padding: 0; border: none; border-radius: 4px;
+    background: none; cursor: pointer; -webkit-appearance: none; appearance: none;
+  }
+  .swatch-input::-webkit-color-swatch-wrapper { padding: 0; border-radius: 4px; }
+  .swatch-input::-webkit-color-swatch { border: 1px solid var(--line); border-radius: 4px; }
+  .swatch-input::-moz-color-swatch { border: 1px solid var(--line); border-radius: 4px; }
+  .swatch-input:hover { outline: 2px solid var(--accent-2); outline-offset: 1px; }
   .member-row .name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .member-row .status { font-size: 10.5px; padding: 1px 6px; border-radius: 4px; white-space: nowrap; }
   .status.ok { color: var(--ok); }
@@ -1269,8 +1275,7 @@
       else statusHtml = `<span class="status none">土地未割当</span>`;
 
       row.innerHTML = `
-        <span class="swatch" style="background:${m.color}" title="クリックして色を変更"></span>
-        <input type="color" class="colorPicker" value="${m.color}" style="position:absolute; width:0; height:0; opacity:0; pointer-events:none;">
+        <input type="color" class="swatch-input" value="${m.color}" title="タップして色を変更">
         <span class="name">${escapeHtml(m.name)}</span>
         ${statusHtml}
         ${pos ? `<span class="clearpos" title="配置を解除">⌖✕</span>` : ""}
@@ -1278,15 +1283,12 @@
         <span class="del" data-id="${m.id}" title="削除">✕</span>
       `;
       row.addEventListener("click", (e) => {
-        if (e.target.classList.contains("del") || e.target.classList.contains("rename") || e.target.classList.contains("clearpos") || e.target.classList.contains("swatch") || e.target.classList.contains("colorPicker")) return;
+        if (e.target.classList.contains("del") || e.target.classList.contains("rename") || e.target.classList.contains("clearpos") || e.target.classList.contains("swatch-input")) return;
         state.selectedMemberId = m.id;
         save(); renderMemberList();
       });
-      const colorPicker = row.querySelector(".colorPicker");
-      row.querySelector(".swatch").addEventListener("click", (e) => {
-        e.stopPropagation();
-        colorPicker.click();
-      });
+      const colorPicker = row.querySelector(".swatch-input");
+      colorPicker.addEventListener("click", (e) => { e.stopPropagation(); });
       let colorHistoryPushed = false;
       colorPicker.addEventListener("input", (e) => {
         if (!colorHistoryPushed) { pushHistory(); colorHistoryPushed = true; }
