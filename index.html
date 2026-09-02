@@ -1549,6 +1549,25 @@
       }
     }
 
+    // 山アイコン（座標ラベルやコマより先に描画して、各種ラベルを前面に保つ）
+    (state.mountains || []).forEach(mtn => {
+      const center = worldToScreen(mtn.x + 0.5, mtn.y + 0.5);
+      if (center.x < -30 || center.y < -30 || center.x > cw + 30 || center.y > ch + 30) return;
+      const size = Math.max(10, Math.min(70, cellPx * 0.96));
+
+      if (mtn.id === selectedMountainId) {
+        ctx.beginPath();
+        ctx.arc(center.x, center.y, size * 0.56 + 5, 0, Math.PI * 2);
+        ctx.setLineDash([3, 3]);
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      drawMountainIcon(center.x, center.y, size);
+    });
+
     // 土地の輪郭上の全ての角(頂点)に座標ラベルを表示（矩形・自由形状どちらも対象、境界が合体した場所は角として扱わない）
     // コマの座標が表示される大きさ(cellPx > 8)と同じ閾値にする
     if (cellPx > 8) {
@@ -1731,25 +1750,6 @@
         ctx.fillStyle = "#e7e2d3";
         ctx.fillText(preview, center.x, center.y + r + 13);
       }
-    });
-
-    // 山アイコン
-    (state.mountains || []).forEach(mtn => {
-      const center = worldToScreen(mtn.x + 0.5, mtn.y + 0.5);
-      if (center.x < -30 || center.y < -30 || center.x > cw + 30 || center.y > ch + 30) return;
-      const size = Math.max(10, Math.min(70, cellPx * 0.96));
-
-      if (mtn.id === selectedMountainId) {
-        ctx.beginPath();
-        ctx.arc(center.x, center.y, size * 0.56 + 5, 0, Math.PI * 2);
-        ctx.setLineDash([3, 3]);
-        ctx.strokeStyle = "#ffffff";
-        ctx.lineWidth = 2;
-        ctx.stroke();
-        ctx.setLineDash([]);
-      }
-
-      drawMountainIcon(center.x, center.y, size);
     });
 
     ctx.restore();
