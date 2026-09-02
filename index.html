@@ -136,6 +136,8 @@
   }
   .member-row.selected { border-color: var(--accent-2); background: #2c2419; }
   .swatch { width: 13px; height: 13px; border-radius: 3px; flex-shrink: 0; }
+  .member-row .swatch { cursor: pointer; }
+  .member-row .swatch:hover { outline: 2px solid var(--accent-2); outline-offset: 1px; }
   .member-row .name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .member-row .status { font-size: 10.5px; padding: 1px 6px; border-radius: 4px; white-space: nowrap; }
   .status.ok { color: var(--ok); }
@@ -641,15 +643,19 @@
     const y0 = Math.min.apply(null, cornerYs) - 1, y1 = Math.max.apply(null, cornerYs) + 1;
 
     // grid lines only if cells are big enough to be legible (回転を考慮し、各線をワールド座標の両端から描画)
-    if (cellPx > 3) {
+    // 背景マスは「大枠(実効範囲)の内側」だけに制限し、その範囲内は画面に映っている分をすべて描画する
+    const gridBounds = computeEffectiveBounds();
+    const gx0 = Math.max(x0, gridBounds.x1), gx1 = Math.min(x1, gridBounds.x2 + 1);
+    const gy0 = Math.max(y0, gridBounds.y1), gy1 = Math.min(y1, gridBounds.y2 + 1);
+    if (cellPx > 3 && gx0 <= gx1 && gy0 <= gy1) {
       ctx.lineWidth = 1;
-      for (let gx = x0; gx <= x1; gx++) {
-        const a = worldToScreen(gx, y0), b = worldToScreen(gx, y1);
+      for (let gx = gx0; gx <= gx1; gx++) {
+        const a = worldToScreen(gx, gy0), b = worldToScreen(gx, gy1);
         ctx.strokeStyle = (gx % 10 === 0) ? "#3a4547" : "#2a3234";
         ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
       }
-      for (let gy = y0; gy <= y1; gy++) {
-        const a = worldToScreen(x0, gy), b = worldToScreen(x1, gy);
+      for (let gy = gy0; gy <= gy1; gy++) {
+        const a = worldToScreen(gx0, gy), b = worldToScreen(gx1, gy);
         ctx.strokeStyle = (gy % 10 === 0) ? "#3a4547" : "#2a3234";
         ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
       }
@@ -1263,7 +1269,8 @@
       else statusHtml = `<span class="status none">土地未割当</span>`;
 
       row.innerHTML = `
-        <span class="swatch" style="background:${m.color}"></span>
+        <span class="swatch" style="background:${m.color}" title="クリックして色を変更"></span>
+        <input type="color" class="colorPicker" value="${m.color}" style="position:absolute; width:0; height:0; opacity:0; pointer-events:none;">
         <span class="name">${escapeHtml(m.name)}</span>
         ${statusHtml}
         ${pos ? `<span class="clearpos" title="配置を解除">⌖✕</span>` : ""}
@@ -1271,9 +1278,24 @@
         <span class="del" data-id="${m.id}" title="削除">✕</span>
       `;
       row.addEventListener("click", (e) => {
-        if (e.target.classList.contains("del") || e.target.classList.contains("rename") || e.target.classList.contains("clearpos")) return;
+        if (e.target.classList.contains("del") || e.target.classList.contains("rename") || e.target.classList.contains("clearpos") || e.target.classList.contains("swatch") || e.target.classList.contains("colorPicker")) return;
         state.selectedMemberId = m.id;
         save(); renderMemberList();
+      });
+      const colorPicker = row.querySelector(".colorPicker");
+      row.querySelector(".swatch").addEventListener("click", (e) => {
+        e.stopPropagation();
+        colorPicker.click();
+      });
+      let colorHistoryPushed = false;
+      colorPicker.addEventListener("input", (e) => {
+        if (!colorHistoryPushed) { pushHistory(); colorHistoryPushed = true; }
+        m.color = e.target.value;
+        draw();
+      });
+      colorPicker.addEventListener("change", () => {
+        colorHistoryPushed = false;
+        save(); renderMemberList(); renderLandList();
       });
       row.querySelector(".rename").addEventListener("click", (e) => {
         e.stopPropagation();
