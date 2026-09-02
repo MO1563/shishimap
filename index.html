@@ -78,6 +78,27 @@
     font-size: 11px; text-transform: none; color: var(--text-dim);
     margin: 0 0 8px; font-weight: 600; letter-spacing: .03em;
   }
+  .section.accordion-section { overflow: visible; }
+  .accordion-toggle {
+    display: flex; align-items: center; justify-content: space-between; width: 100%;
+    margin: 0 0 8px; padding: 0; border: 0; background: transparent; color: var(--text-dim);
+    font: inherit; font-size: 11px; font-weight: 600; letter-spacing: .03em; cursor: pointer; text-align: left;
+  }
+  .accordion-toggle::after { content: "▾"; font-size: 14px; line-height: 1; transition: transform .16s ease; }
+  .accordion-section:not(.is-open) .accordion-toggle { margin-bottom: 0; }
+  .accordion-section:not(.is-open) .accordion-toggle::after { transform: rotate(-90deg); }
+  .accordion-content { display: flex; flex-direction: column; min-height: 64px; overflow: auto; }
+  .accordion-section:not(.is-open) .accordion-content,
+  .accordion-section:not(.is-open) .accordion-resize-handle { display: none; }
+  .accordion-content #memberList,
+  .accordion-content #memoList,
+  .accordion-content #mountainList,
+  .accordion-content #snapshotList { flex: 1 1 auto; min-height: 0; max-height: none; }
+  .accordion-resize-handle {
+    height: 9px; margin-top: 5px; border-radius: 5px; cursor: ns-resize; touch-action: none;
+    background: linear-gradient(transparent 3px, var(--line) 3px, var(--line) 5px, transparent 5px);
+  }
+  .accordion-resize-handle:hover { background: linear-gradient(transparent 3px, var(--accent-2) 3px, var(--accent-2) 5px, transparent 5px); }
 
   .member-add { display: flex; gap: 6px; margin-bottom: 10px; }
   .member-add input[type=text] {
@@ -1666,6 +1687,7 @@
     }
 
     // members (pins)
+    const usableCellCounts = getUsableCellCounts();
     state.members.forEach(m => {
       const pos = state.positions[m.id];
       if (!pos) return;
@@ -1693,7 +1715,7 @@
       if (cellPx > 8) {
         ctx.textAlign = "center";
         ctx.font = "bold 10px sans-serif";
-        const nameLabel = m.name;
+        const nameLabel = `${m.name}（${usableCellCounts[m.id] || 0}マス）`;
         let tw = ctx.measureText(nameLabel).width;
         ctx.fillStyle = "rgba(20,24,26,.8)";
         ctx.fillRect(center.x - tw / 2 - 3, center.y - r - 17, tw + 6, 13);
@@ -1999,7 +2021,7 @@
         if (mtn) {
           pushHistory();
           mtn.x = c.x; mtn.y = c.y;
-          save(); draw(); renderMountainList();
+          save(); draw(); renderMountainList(); renderMemberList();
         }
         updateHint();
         return;
@@ -2023,7 +2045,7 @@
           lastMountainTapId = null;
           pushHistory();
           state.mountains = state.mountains.filter(mm => mm.id !== mountainId);
-          save(); draw(); renderMountainList();
+          save(); draw(); renderMountainList(); renderMemberList();
         }, 320);
         return;
       }
@@ -2032,7 +2054,7 @@
       pushHistory();
       if (!state.mountains) state.mountains = [];
       state.mountains.push({ id: uid(), x: c.x, y: c.y });
-      save(); draw(); renderMountainList();
+      save(); draw(); renderMountainList(); renderMemberList();
       return;
     }
     // pan (view mode)
@@ -2388,6 +2410,28 @@
     });
   }
 
+  // 領地セルを重複なく数え、領地内にある山のセルを差し引く。
+  function getUsableCellCounts() {
+    const ownerByCell = {};
+    state.lands.forEach(land => {
+      for (let x = land.x1; x <= land.x2; x++) {
+        for (let y = land.y1; y <= land.y2; y++) {
+          const key = x + "," + y;
+          if (!(key in ownerByCell)) ownerByCell[key] = land.memberId;
+        }
+      }
+    });
+    Object.keys(state.freeformCells).forEach(key => { ownerByCell[key] = state.freeformCells[key]; });
+
+    const counts = {};
+    Object.values(ownerByCell).forEach(memberId => { counts[memberId] = (counts[memberId] || 0) + 1; });
+    (state.mountains || []).forEach(mountain => {
+      const ownerId = ownerByCell[mountain.x + "," + mountain.y];
+      if (ownerId) counts[ownerId]--;
+    });
+    return counts;
+  }
+
   document.getElementById("addLandBtn").onclick = () => {
     const memberSel = document.getElementById("landAddMember");
     const memberId = memberSel.value;
@@ -2549,7 +2593,7 @@
         e.stopPropagation();
         pushHistory();
         state.mountains = state.mountains.filter(mm => mm.id !== mtn.id);
-        save(); draw(); renderMountainList();
+        save(); draw(); renderMountainList(); renderMemberList();
       });
       listEl.appendChild(row);
     });
@@ -2713,6 +2757,74 @@
     URL.revokeObjectURL(url);
   };
 
+  // ---------------- 操作パネルのアコーディオン ----------------
+  function setupPanelAccordions() {
+    const defaults = { "メンバー": 300, "メモ": 180, "山": 220, "スナップショット保存": 250 };
+    const preferenceKey = "shishi_land_panel_layout_v1";
+    let preferences = {};
+    try { preferences = JSON.parse(localStorage.getItem(preferenceKey) || "{}"); } catch (e) { preferences = {}; }
+
+    document.querySelectorAll("#sidebar .section > h2").forEach(heading => {
+      const title = heading.textContent.trim();
+      if (!(title in defaults)) return;
+
+      const section = heading.parentElement;
+      const toggle = document.createElement("button");
+      toggle.type = "button";
+      toggle.className = "accordion-toggle";
+      toggle.textContent = title;
+      toggle.setAttribute("aria-expanded", "true");
+      heading.replaceWith(toggle);
+
+      const content = document.createElement("div");
+      content.className = "accordion-content";
+      while (toggle.nextSibling) content.appendChild(toggle.nextSibling);
+      const handle = document.createElement("div");
+      handle.className = "accordion-resize-handle";
+      handle.title = "ドラッグして表示高さを調整";
+      handle.setAttribute("aria-label", title + "の表示高さを調整");
+      section.append(content, handle);
+      section.classList.add("accordion-section", "is-open");
+
+      const saved = preferences[title] || {};
+      if (saved.open === false) {
+        section.classList.remove("is-open");
+        toggle.setAttribute("aria-expanded", "false");
+      }
+      content.style.height = Math.max(64, saved.height || defaults[title]) + "px";
+
+      const store = () => {
+        preferences[title] = { open: section.classList.contains("is-open"), height: parseInt(content.style.height, 10) || defaults[title] };
+        try { localStorage.setItem(preferenceKey, JSON.stringify(preferences)); } catch (e) { /* 保存できない環境では今回の表示だけ反映 */ }
+      };
+      toggle.addEventListener("click", () => {
+        const open = section.classList.toggle("is-open");
+        toggle.setAttribute("aria-expanded", String(open));
+        store();
+      });
+
+      handle.addEventListener("pointerdown", (event) => {
+        event.preventDefault();
+        const startY = event.clientY;
+        const startHeight = content.getBoundingClientRect().height;
+        handle.setPointerCapture(event.pointerId);
+        const resize = move => {
+          const height = Math.max(64, Math.min(720, startHeight + move.clientY - startY));
+          content.style.height = Math.round(height) + "px";
+        };
+        const finish = () => {
+          handle.removeEventListener("pointermove", resize);
+          handle.removeEventListener("pointerup", finish);
+          handle.removeEventListener("pointercancel", finish);
+          store();
+        };
+        handle.addEventListener("pointermove", resize);
+        handle.addEventListener("pointerup", finish);
+        handle.addEventListener("pointercancel", finish);
+      });
+    });
+  }
+
   // ---------------- Init ----------------
   (async function init() {
     // GitHub公開用に書き出された場合、ここに埋め込まれたスナップショット/データを初期値として読み込む
@@ -2736,6 +2848,7 @@
       console.error("初期読み込みに失敗しました", e);
     }
 
+    setupPanelAccordions();
     renderMemberList();
     renderLandList();
     renderSnapshotList();
