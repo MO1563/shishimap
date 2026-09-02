@@ -187,7 +187,7 @@
   canvas.mode-land { cursor: crosshair; }
   canvas.mode-place { cursor: cell; }
   canvas.mode-mark { cursor: not-allowed; }
-  canvas.mode-memo { cursor: text; }
+  canvas.mode-memo { cursor: pointer; }
 
   #hud {
     position: absolute; top: 10px; left: 12px; font-size: 11.5px; color: var(--text-dim);
@@ -981,6 +981,7 @@
   let pendingLandRect = null;
   let freeformPaint = null; // {action:'add'|'remove', memberId}
   let markPaint = null; // {action:'add'|'remove'}
+  let memoDrag = null; // {id, moved, historyPushed} - メモのドラッグ移動 / タップ編集の判定用
 
   function applyFreeformPaint(x, y) {
     const key = x + "," + y;
@@ -1051,26 +1052,18 @@
       const c = screenToWorldCell(sx, sy);
       const existing = (state.memos || []).find(mm => mm.x === c.x && mm.y === c.y);
       if (existing) {
-        const newText = prompt("メモを編集します（空にしてOKで削除）", existing.text);
-        if (newText === null) return;
-        const trimmed = newText.trim();
-        pushHistory();
-        if (!trimmed) {
-          state.memos = state.memos.filter(mm => mm.id !== existing.id);
-        } else {
-          existing.text = trimmed;
-        }
-        save(); draw(); renderMemoList();
-      } else {
-        const text = prompt("このマスにメモを追加します。内容を入力してください:");
-        if (text === null) return;
-        const trimmed = text.trim();
-        if (!trimmed) return;
-        pushHistory();
-        if (!state.memos) state.memos = [];
-        state.memos.push({ id: uid(), x: c.x, y: c.y, text: trimmed });
-        save(); draw(); renderMemoList();
+        // 既存メモの上：タップなら編集ダイアログ、ドラッグならマスを移動
+        memoDrag = { id: existing.id, moved: false, historyPushed: false };
+        return;
       }
+      const text = prompt("このマスにメモを追加します。内容を入力してください:");
+      if (text === null) return;
+      const trimmed = text.trim();
+      if (!trimmed) return;
+      pushHistory();
+      if (!state.memos) state.memos = [];
+      state.memos.push({ id: uid(), x: c.x, y: c.y, text: trimmed });
+      save(); draw(); renderMemoList();
       return;
     }
     // pan (view mode)
@@ -1101,6 +1094,21 @@
       draw();
       return;
     }
+    if (memoDrag) {
+      const memo = (state.memos || []).find(mm => mm.id === memoDrag.id);
+      if (memo && (memo.x !== c.x || memo.y !== c.y)) {
+        const occupied = state.memos.some(mm => mm.id !== memoDrag.id && mm.x === c.x && mm.y === c.y);
+        if (occupied) {
+          if (!memoDrag.warned) { flashHint("そのマスには既に別のメモがあります"); memoDrag.warned = true; }
+        } else {
+          if (!memoDrag.historyPushed) { pushHistory(); memoDrag.historyPushed = true; }
+          memo.x = c.x; memo.y = c.y;
+          memoDrag.moved = true;
+          draw();
+        }
+      }
+      return;
+    }
     if (isPanning) {
       view.offsetX = viewStart.x + (clientX - panStart.x);
       view.offsetY = viewStart.y + (clientY - panStart.y);
@@ -1117,6 +1125,29 @@
     if (markPaint) {
       markPaint = null;
       save(); draw();
+    }
+    if (memoDrag) {
+      const info = memoDrag;
+      memoDrag = null;
+      const memo = (state.memos || []).find(mm => mm.id === info.id);
+      if (info.moved) {
+        save(); draw(); renderMemoList();
+      } else if (memo) {
+        // ドラッグせずにタップだけした場合は編集ダイアログを開く
+        const newText = prompt("メモを編集します（空にしてOKで削除）", memo.text);
+        if (newText !== null) {
+          const trimmed = newText.trim();
+          if (trimmed !== memo.text) {
+            if (!info.historyPushed) pushHistory();
+            if (!trimmed) {
+              state.memos = state.memos.filter(mm => mm.id !== memo.id);
+            } else {
+              memo.text = trimmed;
+            }
+            save(); draw(); renderMemoList();
+          }
+        }
+      }
     }
     if (dragSelect) {
       finalizeDragSelect();
@@ -1168,7 +1199,7 @@
     e.preventDefault();
     if (e.touches.length === 2) {
       // ピンチズーム開始（進行中の単指操作はキャンセル）
-      isPanning = false; dragSelect = null; freeformPaint = null; markPaint = null;
+      isPanning = false; dragSelect = null; freeformPaint = null; markPaint = null; memoDrag = null;
       canvas.classList.remove("panning");
       const rect = canvas.getBoundingClientRect();
       pinch = {
@@ -1212,7 +1243,7 @@
   }, { passive: false });
   canvas.addEventListener("touchcancel", (e) => {
     pinch = null;
-    isPanning = false; dragSelect = null; freeformPaint = null; markPaint = null;
+    isPanning = false; dragSelect = null; freeformPaint = null; markPaint = null; memoDrag = null;
     canvas.classList.remove("panning");
   });
 
@@ -1303,7 +1334,7 @@
     if (mode === "land") hint.innerHTML = "地図上をドラッグ（スマホは指でなぞる）して矩形の土地を割り当てます。<b>Shift+クリック</b>、またはチェックボックスをONにして操作すると、マス目を1つずつ追加/削除して自由形状の土地を作れます。";
     else if (mode === "place") hint.innerHTML = "サイドバーでメンバーを選択し、地図上のマスをタップ/クリックして現在地を配置します。";
     else if (mode === "mark") hint.innerHTML = "地図上のマスをタップ/クリック（なぞって複数可）すると✕印を付けられます。もう一度同じ操作で消えます。侵蝕箇所の記録などに使えます。";
-    else if (mode === "memo") hint.innerHTML = "地図上のマスをタップ/クリックしてメモを追加します（1マスに1件）。既にメモがあるマスをタップすると編集・削除できます。";
+    else if (mode === "memo") hint.innerHTML = "地図上のマスをタップ/クリックしてメモを追加します（1マスに1件）。既にメモがあるマスは<b>タップで編集</b>、<b>ドラッグで別のマスへ移動</b>できます。";
     else hint.innerHTML = "指でなぞる/ドラッグで地図を移動、ピンチ操作/ホイールでズームできます。<b>土地作成</b> / <b>配置</b> / <b>印</b> / <b>メモ</b>モードで編集します。";
   }
   function flashHint(msg) {
