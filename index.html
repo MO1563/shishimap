@@ -34,9 +34,17 @@
     border-right: 1px solid var(--line);
     display: flex; flex-direction: column;
     overflow: hidden;
+    position: relative;
     transition: width .2s ease, min-width .2s ease, border-color .2s ease, transform .2s ease;
   }
+  #sidebar.resizing { transition: none; }
   #sidebar.collapsed { width: 0; min-width: 0; border-right-color: transparent; }
+  #sidebarResizeHandle {
+    position: absolute; top: 0; right: -3px; width: 7px; height: 100%;
+    cursor: ew-resize; z-index: 15; background: transparent;
+  }
+  #sidebarResizeHandle:hover, #sidebarResizeHandle.active { background: var(--accent-2); opacity: .45; }
+  #sidebar.collapsed #sidebarResizeHandle { display: none; }
   #sidebarToggle {
     position: absolute; left: 0; top: 50%; transform: translate(-50%, -50%);
     width: 20px; height: 44px; border-radius: 5px;
@@ -308,6 +316,7 @@
 <body>
 <div id="app">
   <div id="sidebar" class="">
+    <div id="sidebarResizeHandle" title="ドラッグして横幅を調整"></div>
     <div class="brand">
       <h1>領地管理マップ</h1>
       <p>一族の配置と割り当て地の可視化</p>
@@ -3010,6 +3019,62 @@
     });
   }
 
+  // ---------------- サイドバー横幅のドラッグ調整 ----------------
+  function setupSidebarResize() {
+    const sidebar = document.getElementById("sidebar");
+    const handle = document.getElementById("sidebarResizeHandle");
+    if (!sidebar || !handle) return;
+    const WIDTH_KEY = "shishi_land_sidebar_width_v1";
+    const MIN_WIDTH = 260;
+    const isMobileOverlay = () => window.innerWidth <= 720;
+    const maxWidth = () => Math.max(MIN_WIDTH, Math.min(720, window.innerWidth - 120));
+
+    function applySavedWidth() {
+      // スマホ幅（オーバーレイ表示）では常にCSS側のレスポンシブ幅を優先する
+      if (isMobileOverlay()) { sidebar.style.width = ""; sidebar.style.minWidth = ""; return; }
+      let saved = null;
+      try { saved = parseInt(localStorage.getItem(WIDTH_KEY), 10); } catch (e) { saved = null; }
+      if (saved && !isNaN(saved)) {
+        const w = Math.max(MIN_WIDTH, Math.min(maxWidth(), saved));
+        sidebar.style.width = w + "px";
+        sidebar.style.minWidth = w + "px";
+      }
+    }
+    applySavedWidth();
+    window.addEventListener("resize", applySavedWidth);
+
+    handle.addEventListener("pointerdown", (event) => {
+      if (isMobileOverlay()) return; // モバイルのオーバーレイ幅は固定のまま
+      event.preventDefault();
+      const startX = event.clientX;
+      const startWidth = sidebar.getBoundingClientRect().width;
+      sidebar.classList.add("resizing");
+      handle.classList.add("active");
+      handle.setPointerCapture(event.pointerId);
+
+      const move = (e) => {
+        const w = Math.max(MIN_WIDTH, Math.min(maxWidth(), startWidth + (e.clientX - startX)));
+        sidebar.style.width = w + "px";
+        sidebar.style.minWidth = w + "px";
+      };
+      const finish = () => {
+        handle.removeEventListener("pointermove", move);
+        handle.removeEventListener("pointerup", finish);
+        handle.removeEventListener("pointercancel", finish);
+        sidebar.classList.remove("resizing");
+        handle.classList.remove("active");
+        const finalWidth = parseInt(sidebar.style.width, 10);
+        if (finalWidth) {
+          try { localStorage.setItem(WIDTH_KEY, String(finalWidth)); } catch (e) { /* 保存できない環境では今回の表示だけ反映 */ }
+        }
+        resizeCanvas();
+      };
+      handle.addEventListener("pointermove", move);
+      handle.addEventListener("pointerup", finish);
+      handle.addEventListener("pointercancel", finish);
+    });
+  }
+
   // ---------------- Init ----------------
   (async function init() {
     // GitHub公開用に書き出された場合、ここに埋め込まれたスナップショット/データを初期値として読み込む
@@ -3034,6 +3099,7 @@
     }
 
     setupPanelAccordions();
+    setupSidebarResize();
     renderMemberList();
     renderLandList();
     renderSnapshotList();
