@@ -1565,10 +1565,10 @@
 
       const centerPt = { x: (bMinX + bMaxX) / 2, y: (bMinY + bMaxY) / 2 };
 
-      drawWorldRect(land.x1, land.y1, land.x2 + 1, land.y2 + 1, { fill: m.color + "33" });
+      drawWorldRect(land.x1, land.y1, land.x2 + 1, land.y2 + 1, { fill: getMemberDisplayColor(m) + "33" });
 
       // 境界線: 隣のセルが別所有者/未所有の辺だけ描画（自由形状セルと接する部分はつなぎ目なく合体させる）
-      ctx.strokeStyle = m.color;
+      ctx.strokeStyle = getMemberDisplayColor(m);
       ctx.lineWidth = 2;
       for (let gx = land.x1; gx <= land.x2; gx++) {
         if (cellOwner(gx, land.y1 - 1) !== land.memberId) {
@@ -1610,11 +1610,11 @@
           ctx.beginPath();
           ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.lineTo(p3.x, p3.y); ctx.lineTo(p4.x, p4.y);
           ctx.closePath();
-          ctx.fillStyle = m.color + "40";
+          ctx.fillStyle = getMemberDisplayColor(m) + "40";
           ctx.fill();
 
           // 隣接セルが別所有者/未所有なら境界線として描画（矩形の土地とも一体化させる）
-          ctx.strokeStyle = m.color;
+          ctx.strokeStyle = getMemberDisplayColor(m);
           ctx.lineWidth = 2;
           const edges = [
             { nx: gx, ny: gy - 1, a: p1, b: p2 },
@@ -1731,7 +1731,7 @@
             const tw = ctx.measureText(label).width;
             ctx.fillStyle = "rgba(20,24,26,.8)";
             ctx.fillRect(lx - tw / 2 - 2, ly - 6, tw + 4, 11);
-            ctx.fillStyle = m.color;
+            ctx.fillStyle = getMemberDisplayColor(m);
             ctx.fillText(label, lx, ly + 3);
             stack++;
           });
@@ -1758,6 +1758,7 @@
 
       const outside = isOutsideOwnLand(m.id);
       const r = Math.max(5, Math.min(9, cellPx * 0.32));
+      const displayColor = getMemberDisplayColor(m);
 
       if (outside) {
         ctx.beginPath();
@@ -1768,7 +1769,7 @@
       }
       ctx.beginPath();
       ctx.arc(center.x, center.y, r, 0, Math.PI * 2);
-      ctx.fillStyle = m.color;
+      ctx.fillStyle = displayColor;
       ctx.fill();
       ctx.strokeStyle = "#14181a";
       ctx.lineWidth = 1.5;
@@ -1785,7 +1786,7 @@
         const nameBoxTopY = nameBoxBottomY - 13;
         ctx.fillStyle = "rgba(20,24,26,.8)";
         ctx.fillRect(center.x - tw / 2 - 3, nameBoxTopY, tw + 6, 13);
-        ctx.fillStyle = "#e7e2d3";
+        ctx.fillStyle = displayColor;
         ctx.fillText(nameLabel, center.x, nameBoxBottomY - 3);
 
         if (myGroup) {
@@ -1805,7 +1806,7 @@
         tw = ctx.measureText(coordLabel).width;
         ctx.fillStyle = "rgba(20,24,26,.8)";
         ctx.fillRect(center.x - tw / 2 - 3, center.y + r + 4, tw + 6, 12);
-        ctx.fillStyle = "#c9a24b";
+        ctx.fillStyle = displayColor;
         ctx.fillText(coordLabel, center.x, center.y + r + 13);
       }
     });
@@ -1915,6 +1916,15 @@
     ctx.moveTo(cx - snowHalfW * 0.42, snowBaseY - h * 0.06);
     ctx.lineTo(cx - w * 0.22, baseY);
     ctx.stroke();
+  }
+
+  // メンバーの表示色：一族に所属していればその一族の色、未所属なら本人の色
+  function getMemberDisplayColor(m) {
+    if (m.groupId) {
+      const g = (state.groups || []).find(x => x.id === m.groupId);
+      if (g && g.color) return g.color;
+    }
+    return m.color;
   }
 
   function isOutsideOwnLand(memberId) {
@@ -2484,7 +2494,7 @@
       groupSelect.addEventListener("change", (e) => {
         pushHistory();
         m.groupId = e.target.value || null;
-        save(); renderMemberList();
+        save(); renderMemberList(); renderLandList(); draw();
       });
       row.querySelector(".rename").addEventListener("click", (e) => {
         e.stopPropagation();
@@ -2554,10 +2564,11 @@
         if (!groupColorHistoryPushed) { pushHistory(); groupColorHistoryPushed = true; }
         g.color = e.target.value;
         header.querySelector(".group-name").style.color = g.color;
+        draw();
       });
       colorInput.addEventListener("change", () => {
         groupColorHistoryPushed = false;
-        save(); renderMemberList();
+        save(); renderMemberList(); renderLandList();
       });
       header.querySelector(".group-rename").addEventListener("click", () => {
         const newName = prompt("新しい一族名を入力してください", g.name);
@@ -2573,7 +2584,7 @@
         pushHistory();
         state.groups = state.groups.filter(x => x.id !== g.id);
         state.members.forEach(m => { if (m.groupId === g.id) m.groupId = null; });
-        save(); renderMemberList();
+        save(); renderMemberList(); renderLandList(); draw();
       });
       section.appendChild(header);
       members.forEach(m => section.appendChild(makeMemberRow(m)));
@@ -2681,7 +2692,7 @@
       row.className = "land-row";
       const label = l.name ? `${escapeHtml(l.name)} ・ ${m ? escapeHtml(m.name) : "?"}` : (m ? escapeHtml(m.name) : "?");
       row.innerHTML = `
-        <span class="swatch" style="background:${m ? m.color : '#666'}"></span>
+        <span class="swatch" style="background:${m ? getMemberDisplayColor(m) : '#666'}"></span>
         <span class="coord">${label}: (${l.x1},${l.y1})–(${l.x2},${l.y2})</span>
         <span class="rename" title="名前を変更">✎</span>
         <span class="del" title="削除">✕</span>
