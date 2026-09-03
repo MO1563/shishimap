@@ -174,6 +174,8 @@
   #memberList { max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; }
 
   .land-add { margin-bottom: 10px; display: flex; flex-direction: column; gap: 6px; }
+  .land-add-select-row { display: flex; gap: 6px; }
+  .land-add-select-row select { flex: 1; min-width: 0; width: auto; }
   .land-add select {
     width: 100%; padding: 6px 8px; font-size: 13px;
     background: var(--panel-2); border: 1px solid var(--line); border-radius: 5px; color: var(--text);
@@ -536,7 +538,10 @@
     <div class="section accordion-section">
       <button type="button" class="accordion-toggle" aria-expanded="false">割り当て済みの土地</button><div class="accordion-content" style="height: 280px;">
       <div class="land-add">
-        <select id="landAddMember"><option value="5icqcvh4">肥後菊池武光</option><option value="ndqa8vpm">Pマン</option><option value="wppbuce7">巴</option><option value="7e9n285w">ホルモン男</option><option value="ugs4zcvm">りくな</option><option value="w7er63b8">とみ</option><option value="3jnkclf9">どらみ</option><option value="c6t48y9p">瀧</option><option value="yqcasrlz">あいにゃん</option><option value="ttci1nf0">臥龍</option><option value="vnt9pv02">パグ</option><option value="je7225jm">マヨ</option><option value="i7njs1cb">あんどぅ</option><option value="k0xggels">ぷ～</option><option value="dfgr0mua">くろこぶ</option><option value="pljqjpea">ユッチ</option><option value="oe1hkwgy">ちゅん</option><option value="hfhu1fk1">一瞬で灰</option><option value="5u8wgf4q">摎</option><option value="8wqyt1bc">ぴこ</option><option value="wfu8uqfn">まるちゃ～ん</option><option value="mybg4ua3">綾野剛</option><option value="jkah7vm5">空きA</option><option value="lpqiju2e">空きC</option><option value="graz2tw5">平原哲</option></select>
+        <div class="land-add-select-row">
+          <select id="landAddGroup"></select>
+          <select id="landAddMember"></select>
+        </div>
         <div class="coord-inputs">
           <input type="number" id="landX1" placeholder="X1">
           <input type="number" id="landY1" placeholder="Y1">
@@ -2699,49 +2704,55 @@
   };
 
   function renderLandAddMemberOptions() {
-    const sel = document.getElementById("landAddMember");
-    const prevValue = sel.value;
-    sel.innerHTML = "";
+    const groupSel = document.getElementById("landAddGroup");
+    const memberSel = document.getElementById("landAddMember");
+    const prevGroupValue = groupSel.value;
+    const prevMemberValue = memberSel.value;
 
-    if (!state.groups || state.groups.length === 0) {
-      state.members.forEach(m => {
+    // 一族選択（左側）
+    groupSel.innerHTML = "";
+    const allOpt = document.createElement("option");
+    allOpt.value = ""; allOpt.textContent = "すべて";
+    groupSel.appendChild(allOpt);
+    (state.groups || []).forEach(g => {
+      const opt = document.createElement("option");
+      opt.value = g.id; opt.textContent = g.name;
+      groupSel.appendChild(opt);
+    });
+    const noneOpt = document.createElement("option");
+    noneOpt.value = "__none__"; noneOpt.textContent = "未分類";
+    groupSel.appendChild(noneOpt);
+
+    // 一族選択の初期値を決める（前回の選択 > 現在選択中メンバーの一族 > すべて）
+    let groupValue = "";
+    if ([...groupSel.options].some(o => o.value === prevGroupValue)) {
+      groupValue = prevGroupValue;
+    } else if (state.selectedMemberId) {
+      const selMember = state.members.find(m => m.id === state.selectedMemberId);
+      if (selMember) groupValue = selMember.groupId || "__none__";
+    }
+    groupSel.value = groupValue;
+
+    function refreshMemberOptions() {
+      const gv = groupSel.value;
+      const prevValue = memberSel.value || prevMemberValue;
+      memberSel.innerHTML = "";
+      const filtered = state.members.filter(m => {
+        if (gv === "") return true;
+        if (gv === "__none__") return !m.groupId;
+        return m.groupId === gv;
+      });
+      filtered.forEach(m => {
         const opt = document.createElement("option");
         opt.value = m.id; opt.textContent = m.name;
-        sel.appendChild(opt);
+        memberSel.appendChild(opt);
       });
-    } else {
-      const byGroup = {};
-      state.members.forEach(m => {
-        const key = m.groupId || "__none__";
-        (byGroup[key] = byGroup[key] || []).push(m);
-      });
-      state.groups.forEach(g => {
-        const members = byGroup[g.id] || [];
-        if (members.length === 0) return;
-        const optgroup = document.createElement("optgroup");
-        optgroup.label = g.name;
-        members.forEach(m => {
-          const opt = document.createElement("option");
-          opt.value = m.id; opt.textContent = m.name;
-          optgroup.appendChild(opt);
-        });
-        sel.appendChild(optgroup);
-      });
-      const noneMembers = byGroup["__none__"] || [];
-      if (noneMembers.length > 0) {
-        const optgroup = document.createElement("optgroup");
-        optgroup.label = "未分類";
-        noneMembers.forEach(m => {
-          const opt = document.createElement("option");
-          opt.value = m.id; opt.textContent = m.name;
-          optgroup.appendChild(opt);
-        });
-        sel.appendChild(optgroup);
-      }
+      if (filtered.some(m => m.id === prevValue)) memberSel.value = prevValue;
+      else if (state.selectedMemberId && filtered.some(m => m.id === state.selectedMemberId)) memberSel.value = state.selectedMemberId;
     }
 
-    if (state.members.some(m => m.id === prevValue)) sel.value = prevValue;
-    else if (state.selectedMemberId) sel.value = state.selectedMemberId;
+    groupSel.onchange = refreshMemberOptions;
+    refreshMemberOptions();
   }
 
   function renderLandList() {
