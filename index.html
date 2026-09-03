@@ -120,6 +120,9 @@
     flex: 1; min-width: 0; padding: 6px 8px; font-size: 13px;
     background: var(--panel-2); border: 1px solid var(--line); border-radius: 5px; color: var(--text);
   }
+  .group-add input[type=color] {
+    width: 32px; height: 30px; padding: 0; border: 1px solid var(--line); border-radius: 5px; background: none; cursor: pointer;
+  }
   .group-add button {
     padding: 6px 10px; font-size: 13px; background: var(--accent-2); color: #14181a;
     border: none; border-radius: 5px; cursor: pointer; white-space: nowrap;
@@ -132,6 +135,12 @@
     font-size: 11.5px; font-weight: bold; color: var(--accent-2); border-bottom: 1px solid var(--line);
   }
   .member-group-header.ungrouped { color: var(--text-dim); }
+  .member-group-header .group-color-input {
+    width: 13px; height: 13px; padding: 0; border: none; border-radius: 3px; background: none; cursor: pointer;
+    -webkit-appearance: none; appearance: none; flex-shrink: 0;
+  }
+  .member-group-header .group-color-input::-webkit-color-swatch-wrapper { padding: 0; border-radius: 3px; }
+  .member-group-header .group-color-input::-webkit-color-swatch { border: 1px solid var(--line); border-radius: 3px; }
   .member-group-header .group-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .member-group-header .group-count { font-weight: normal; color: var(--text-dim); }
   .member-group-header .group-rename, .member-group-header .group-del {
@@ -142,9 +151,10 @@
   .member-group-header .group-del:hover { color: var(--warn); }
   .member-group .member-row { margin-bottom: 4px; }
   .member-row .group-select {
-    font-size: 10.5px; padding: 2px 3px; background: var(--panel); border: 1px solid var(--line);
-    border-radius: 4px; color: var(--text-dim); max-width: 72px; flex-shrink: 0; cursor: pointer;
+    font-size: 10px; padding: 2px 2px; background: var(--panel); border: 1px solid var(--line);
+    border-radius: 4px; color: var(--text-dim); width: 58px; max-width: 58px; flex-shrink: 0; cursor: pointer;
   }
+
 
   #memberList { max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; }
 
@@ -196,7 +206,7 @@
   .swatch-input::-webkit-color-swatch { border: 1px solid var(--line); border-radius: 4px; }
   .swatch-input::-moz-color-swatch { border: 1px solid var(--line); border-radius: 4px; }
   .swatch-input:hover { outline: 2px solid var(--accent-2); outline-offset: 1px; }
-  .member-row .name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .member-row .name { flex: 1 1 0; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .member-row .status { font-size: 10.5px; padding: 1px 6px; border-radius: 4px; white-space: nowrap; }
   .status.ok { color: var(--ok); }
   .status.warn { color: #fff; background: var(--warn); }
@@ -326,6 +336,7 @@
       </div>
       <div class="group-add">
         <input type="text" id="groupNameInput" placeholder="グループ名">
+        <input type="color" id="groupColorInput" value="#8ab4d8">
         <button id="addGroupBtn">グループ追加</button>
       </div>
       <div id="memberList"><div class="member-row">
@@ -1756,13 +1767,29 @@
 
       if (cellPx > 8) {
         ctx.textAlign = "center";
+        const myGroup = m.groupId ? (state.groups || []).find(g => g.id === m.groupId) : null;
+
         ctx.font = "bold 10px sans-serif";
         const nameLabel = `${m.name}（${usableCellCounts[m.id] || 0}マス）`;
         let tw = ctx.measureText(nameLabel).width;
+        const nameBoxBottomY = center.y - r - 4;
+        const nameBoxTopY = nameBoxBottomY - 13;
         ctx.fillStyle = "rgba(20,24,26,.8)";
-        ctx.fillRect(center.x - tw / 2 - 3, center.y - r - 17, tw + 6, 13);
+        ctx.fillRect(center.x - tw / 2 - 3, nameBoxTopY, tw + 6, 13);
         ctx.fillStyle = "#e7e2d3";
-        ctx.fillText(nameLabel, center.x, center.y - r - 7);
+        ctx.fillText(nameLabel, center.x, nameBoxBottomY - 3);
+
+        if (myGroup) {
+          ctx.font = "bold 9px sans-serif";
+          const groupLabel = myGroup.name;
+          const gtw = ctx.measureText(groupLabel).width;
+          const groupBoxBottomY = nameBoxTopY - 2;
+          const groupBoxTopY = groupBoxBottomY - 12;
+          ctx.fillStyle = "rgba(20,24,26,.8)";
+          ctx.fillRect(center.x - gtw / 2 - 3, groupBoxTopY, gtw + 6, 12);
+          ctx.fillStyle = myGroup.color || "#8ab4d8";
+          ctx.fillText(groupLabel, center.x, groupBoxBottomY - 3);
+        }
 
         const coordLabel = `(${pos.x}, ${pos.y})`;
         ctx.font = "9px sans-serif";
@@ -2380,14 +2407,20 @@
     save(); renderMemberList(); renderLandList(); draw();
   }
 
+  const GROUP_COLOR_PALETTE = ["#8ab4d8", "#c9a24b", "#7fbf7f", "#d98a8a", "#b18ad8", "#d8b48a", "#8ad8c9", "#d88ac0"];
+  let groupColorCycle = 0;
+
   function addGroup() {
     const nameInput = document.getElementById("groupNameInput");
+    const colorInput = document.getElementById("groupColorInput");
     const name = nameInput.value.trim();
     if (!name) return;
     pushHistory();
     if (!state.groups) state.groups = [];
-    state.groups.push({ id: uid(), name });
+    state.groups.push({ id: uid(), name, color: colorInput.value });
     nameInput.value = "";
+    groupColorCycle = (groupColorCycle + 1) % GROUP_COLOR_PALETTE.length;
+    colorInput.value = GROUP_COLOR_PALETTE[groupColorCycle];
     save(); renderMemberList();
   }
 
@@ -2492,17 +2525,31 @@
     }
 
     state.groups.forEach(g => {
+      if (!g.color) g.color = "#8ab4d8";
       const members = byGroup[g.id] || [];
       const section = document.createElement("div");
       section.className = "member-group";
       const header = document.createElement("div");
       header.className = "member-group-header";
       header.innerHTML = `
-        <span class="group-name">${escapeHtml(g.name)}</span>
+        <input type="color" class="group-color-input" value="${g.color}" title="タップして色を変更">
+        <span class="group-name" style="color:${g.color}">${escapeHtml(g.name)}</span>
         <span class="group-count">(${members.length})</span>
         <span class="group-rename" title="グループ名を変更">✎</span>
         <span class="group-del" title="グループを削除">✕</span>
       `;
+      const colorInput = header.querySelector(".group-color-input");
+      colorInput.addEventListener("click", (e) => { e.stopPropagation(); });
+      let groupColorHistoryPushed = false;
+      colorInput.addEventListener("input", (e) => {
+        if (!groupColorHistoryPushed) { pushHistory(); groupColorHistoryPushed = true; }
+        g.color = e.target.value;
+        header.querySelector(".group-name").style.color = g.color;
+      });
+      colorInput.addEventListener("change", () => {
+        groupColorHistoryPushed = false;
+        save(); renderMemberList();
+      });
       header.querySelector(".group-rename").addEventListener("click", () => {
         const newName = prompt("新しいグループ名を入力してください", g.name);
         if (newName === null) return;
