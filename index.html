@@ -1211,6 +1211,20 @@
   };
 
   // 指定した矩形範囲が、既存の土地(矩形・自由形状、所有者問わず)と重なるか判定
+  // ---------------- 城（固定の名所、内側には何も配置できない） ----------------
+  const CASTLES = [
+    { name: "雑賀城", x1: 413, y1: 782, x2: 419, y2: 788 },
+    { name: "二条城", x1: 317, y1: 877, x2: 323, y2: 883 },
+    { name: "後瀬山", x1: 217, y1: 857, x2: 223, y2: 863 },
+    { name: "伊賀城", x1: 385, y1: 946, x2: 391, y2: 952 }
+  ];
+  function isCastleCell(x, y) {
+    return CASTLES.some(c => x >= c.x1 && x <= c.x2 && y >= c.y1 && y <= c.y2);
+  }
+  function rectOverlapsCastle(x1, y1, x2, y2) {
+    return CASTLES.some(c => x1 <= c.x2 && x2 >= c.x1 && y1 <= c.y2 && y2 >= c.y1);
+  }
+
   function rectOverlapsAny(x1, y1, x2, y2) {
     for (const l of state.lands) {
       if (x1 <= l.x2 && x2 >= l.x1 && y1 <= l.y2 && y2 >= l.y1) return true;
@@ -1557,6 +1571,38 @@
         ctx.fillText(label, c.pt.x, c.pt.y - 6);
       });
     }
+
+    // 城（固定の名所。内側には土地・コマ・メモ・山・印などを配置できない）
+    CASTLES.forEach(c => {
+      const p1 = worldToScreen(c.x1, c.y1);
+      const p2 = worldToScreen(c.x2 + 1, c.y1);
+      const p3 = worldToScreen(c.x2 + 1, c.y2 + 1);
+      const p4 = worldToScreen(c.x1, c.y2 + 1);
+      const allX = [p1.x, p2.x, p3.x, p4.x], allY = [p1.y, p2.y, p3.y, p4.y];
+      const bMinX = Math.min(...allX), bMaxX = Math.max(...allX);
+      const bMinY = Math.min(...allY), bMaxY = Math.max(...allY);
+      if (bMaxX < -40 || bMaxY < -40 || bMinX > cw + 40 || bMinY > ch + 40) return;
+
+      drawWorldRect(c.x1, c.y1, c.x2 + 1, c.y2 + 1, {
+        fill: "rgba(120,30,30,.22)",
+        stroke: "#a83232",
+        lineWidth: Math.max(3, Math.min(6, cellPx * 0.22))
+      });
+
+      const centerWX = (c.x1 + c.x2 + 1) / 2, centerWY = (c.y1 + c.y2 + 1) / 2;
+      const center = worldToScreen(centerWX, centerWY);
+      const fontSize = Math.max(12, Math.min(26, cellPx * 1.3));
+      ctx.font = `bold ${fontSize}px sans-serif`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.lineJoin = "round";
+      ctx.lineWidth = Math.max(3, fontSize * 0.22);
+      ctx.strokeStyle = "rgba(20,10,10,.9)";
+      ctx.strokeText(c.name, center.x, center.y);
+      ctx.fillStyle = "#f2d9a8";
+      ctx.fillText(c.name, center.x, center.y);
+      ctx.textBaseline = "alphabetic";
+    });
 
     // lands
     const memberById = {};
@@ -1967,6 +2013,10 @@
   function applyFreeformPaint(x, y) {
     const key = x + "," + y;
     if (freeformPaint.action === "add") {
+      if (isCastleCell(x, y)) {
+        if (!freeformPaint.warned) { flashHint("城の範囲には土地を割り当てられません"); freeformPaint.warned = true; }
+        return;
+      }
       const existingOwner = cellOwner(x, y);
       if (existingOwner && existingOwner !== freeformPaint.memberId) {
         if (!freeformPaint.warned) { flashHint("他のメンバーの土地には設置できません"); freeformPaint.warned = true; }
@@ -1981,6 +2031,10 @@
   function applyMarkPaint(x, y) {
     const key = x + "," + y;
     if (markPaint.action === "add") {
+      if (isCastleCell(x, y)) {
+        if (!markPaint.warned) { flashHint("城の範囲には印を付けられません"); markPaint.warned = true; }
+        return;
+      }
       state.markedCells[key] = true;
     } else {
       delete state.markedCells[key];
@@ -2014,6 +2068,7 @@
     if (mode === "place") {
       if (!state.selectedMemberId) { flashHint("先にメンバーを選択してください"); return; }
       const c = screenToWorldCell(sx, sy);
+      if (isCastleCell(c.x, c.y)) { flashHint("城の範囲には配置できません"); return; }
       pushHistory();
       state.positions[state.selectedMemberId] = { x: c.x, y: c.y };
       save(); draw(); renderMemberList();
@@ -2043,6 +2098,10 @@
         }
         if (existing) {
           flashHint("そのマスには既に別のメモがあります");
+          return;
+        }
+        if (isCastleCell(c.x, c.y)) {
+          flashHint("城の範囲には配置できません");
           return;
         }
         const memo = state.memos.find(mm => mm.id === selectedMemoId);
@@ -2090,6 +2149,7 @@
       }
 
       // 空きマス：新規メモを追加
+      if (isCastleCell(c.x, c.y)) { flashHint("城の範囲には配置できません"); return; }
       const text = prompt("このマスにメモを追加します。内容を入力してください:");
       if (text === null) return;
       const trimmed = text.trim();
@@ -2114,6 +2174,10 @@
         }
         if (existing) {
           flashHint("そのマスには既に山があります");
+          return;
+        }
+        if (isCastleCell(c.x, c.y)) {
+          flashHint("城の範囲には配置できません");
           return;
         }
         const mtn = state.mountains.find(mm => mm.id === selectedMountainId);
@@ -2151,6 +2215,7 @@
       }
 
       // 空きマス：山を配置
+      if (isCastleCell(c.x, c.y)) { flashHint("城の範囲には配置できません"); return; }
       pushHistory();
       if (!state.mountains) state.mountains = [];
       state.mountains.push({ id: uid(), x: c.x, y: c.y });
@@ -2351,6 +2416,13 @@
     if (!pendingLandRect || !assignSelect.value) return;
     const memberId = assignSelect.value;
     const { x1, y1, x2, y2 } = pendingLandRect;
+    if (rectOverlapsCastle(x1, y1, x2, y2)) {
+      flashHint("城の範囲には土地を割り当てられません");
+      pendingLandRect = null;
+      assignBar.classList.remove("show");
+      draw();
+      return;
+    }
     if (rectOverlapsAny(x1, y1, x2, y2)) {
       flashHint("既存の土地と重なっています");
       pendingLandRect = null;
@@ -2682,6 +2754,10 @@
 
     const rx1 = Math.min(nx1, nx2), rx2 = Math.max(nx1, nx2);
     const ry1 = Math.min(ny1, ny2), ry2 = Math.max(ny1, ny2);
+    if (rectOverlapsCastle(rx1, ry1, rx2, ry2)) {
+      flashHint("城の範囲には土地を割り当てられません");
+      return;
+    }
     if (rectOverlapsAny(rx1, ry1, rx2, ry2)) {
       flashHint("既存の土地と重なっています");
       return;
