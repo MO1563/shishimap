@@ -3027,12 +3027,11 @@
     const groupById = {};
     (state.groups || []).forEach(g => { groupById[g.id] = g; });
     const escapeCsv = value => `"${String(value).replace(/"/g, '""')}"`;
-    const rows = [["メンバー名", "所属一族名", "主城座標"]];
+    const rows = [["メンバー名", "所属一族名", "主城X座標", "主城Y座標"]];
     state.members.forEach(member => {
       const groupName = member.groupId && groupById[member.groupId] ? groupById[member.groupId].name : "";
       const pos = state.positions[member.id];
-      const castleCoord = pos ? `(${pos.x}, ${pos.y})` : "";
-      rows.push([member.name, groupName, castleCoord]);
+      rows.push([member.name, groupName, pos ? pos.x : "", pos ? pos.y : ""]);
     });
     const csv = "\uFEFF" + rows.map(row => row.map(escapeCsv).join(",")).join("\r\n");
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
@@ -3080,29 +3079,40 @@
     const rows = parseCSV(text);
     if (rows.length === 0) { alert("CSVにデータがありません。"); return; }
 
-    // ヘッダー行を判定（新フォーマット: メンバー名,所属一族名,主城座標 / 旧フォーマット: 番号,ハンドルネーム,主城座標,有効マス数）
+    // ヘッダー行を判定
+    // 新フォーマット(X/Y列分割): メンバー名,所属一族名,主城X座標,主城Y座標
+    // 旧フォーマット(座標1列): メンバー名,所属一族名,主城座標
+    // さらに古い旧フォーマット: 番号,ハンドルネーム,主城座標,有効マス数
     let dataRows = rows;
-    let format = "new";
-    const header0 = (rows[0][0] || "").trim();
-    if (header0 === "メンバー名") { dataRows = rows.slice(1); format = "new"; }
-    else if (header0 === "番号") { dataRows = rows.slice(1); format = "old"; }
+    let format = "combined";
+    const header = rows[0].map(v => (v || "").trim());
+    if (header[0] === "メンバー名" && header[2] === "主城X座標") { dataRows = rows.slice(1); format = "xy"; }
+    else if (header[0] === "メンバー名") { dataRows = rows.slice(1); format = "combined"; }
+    else if (header[0] === "番号") { dataRows = rows.slice(1); format = "old"; }
 
     const parsed = [];
     const errors = [];
     dataRows.forEach((cols, i) => {
       const rowNum = i + (dataRows.length === rows.length ? 1 : 2);
       if (cols.every(c => c.trim() === "")) return;
-      let name, groupName, coordStr;
+      let name, groupName, pos;
       if (format === "old") {
-        name = cols[1]; groupName = ""; coordStr = cols[2];
+        name = (cols[1] || "").trim();
+        groupName = "";
+        pos = parseCastleCoord((cols[2] || "").trim());
+      } else if (format === "xy") {
+        name = (cols[0] || "").trim();
+        groupName = (cols[1] || "").trim();
+        const xStr = (cols[2] || "").trim(), yStr = (cols[3] || "").trim();
+        if (!xStr && !yStr) pos = null;
+        else if (/^-?\d+$/.test(xStr) && /^-?\d+$/.test(yStr)) pos = { x: parseInt(xStr, 10), y: parseInt(yStr, 10) };
+        else pos = undefined;
       } else {
-        name = cols[0]; groupName = cols[1]; coordStr = cols[2];
+        name = (cols[0] || "").trim();
+        groupName = (cols[1] || "").trim();
+        pos = parseCastleCoord((cols[2] || "").trim());
       }
-      name = (name || "").trim();
-      groupName = (groupName || "").trim();
-      coordStr = (coordStr || "").trim();
       if (!name) { errors.push(`${rowNum}行目: メンバー名が空です`); return; }
-      const pos = parseCastleCoord(coordStr);
       if (pos === undefined) { errors.push(`${rowNum}行目: 主城座標の形式が正しくありません（例: 413,782）`); return; }
       parsed.push({ rowNum, name, groupName, pos });
     });
