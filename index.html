@@ -352,7 +352,7 @@
 </head>
 <body>
 <div id="app">
-  <div id="sidebar" class="">
+  <div id="sidebar" class="" style="--sidebar-width: 518px;">
     <div id="sidebarResizeHandle" title="ドラッグして横幅を調整"></div>
     <div class="brand">
       <h1>領地管理マップ</h1>
@@ -372,7 +372,7 @@
       <label for="clanFilterBtn">地図に表示する一族</label>
       <button type="button" id="clanFilterBtn"><span class="label">すべて表示</span><span class="arrow">▾</span></button>
     </div>
-    <div id="clanFilterPanel" style="display:none;"></div>
+    <div id="clanFilterPanel" style="display:none;"><label class="clan-filter-option"><input type="checkbox" value="da82x2vu"><span class="swatch" style="background:#ffffff"></span><span>モミーズ</span></label><div class="clan-filter-divider"></div><label class="clan-filter-option"><input type="checkbox" value="__none__"><span class="swatch" style="background:#666"></span><span>未分類</span></label></div>
 
     <label id="freeformToggleWrap" style="display:none;">
       <input type="checkbox" id="freeformToggle">
@@ -391,10 +391,18 @@
         <input type="color" id="groupColorInput" value="#8ab4d8">
         <button id="addGroupBtn">一族追加</button>
       </div>
-      <div id="memberList"><div class="member-row">
+      <div id="memberList"><div class="member-group"><div class="member-group-header">
+        <input type="color" class="group-color-input" value="#ffffff" title="タップして色を変更">
+        <span class="group-name" style="color:#ffffff">モミーズ</span>
+        <span class="group-toggle" title="メンバー一覧の開閉">▾</span>
+        <span class="group-count">(25)</span>
+        <span class="group-rename" title="一族名を変更">✎</span>
+        <span class="group-del" title="一族を削除">✕</span>
+      </div><div class="member-row">
         <input type="color" class="swatch-input" value="#fafafa" title="タップして色を変更">
         <span class="name">肥後菊池武光</span>
         <span class="status ok">領内</span>
+        <select class="group-select" title="一族を移動"><option value="">未分類</option><option value="da82x2vu" selected="">モミーズ</option></select>
         <span class="clearpos" title="配置を解除">⌖✕</span>
         <span class="rename" title="名前を変更">✎</span>
         <span class="del" data-id="5icqcvh4" title="削除">✕</span>
@@ -402,13 +410,15 @@
         <input type="color" class="swatch-input" value="#ff6beb" title="タップして色を変更">
         <span class="name">Pマン</span>
         <span class="status ok">領内</span>
+        <select class="group-select" title="一族を移動"><option value="">未分類</option><option value="da82x2vu" selected="">モミーズ</option></select>
         <span class="clearpos" title="配置を解除">⌖✕</span>
         <span class="rename" title="名前を変更">✎</span>
         <span class="del" data-id="ndqa8vpm" title="削除">✕</span>
       </div><div class="member-row">
         <input type="color" class="swatch-input" value="#ffffff" title="タップして色を変更">
-        <span class="name">巴</span>
+        <span class="name">q巴p</span>
         <span class="status ok">領内</span>
+        <select class="group-select" title="一族を移動"><option value="">未分類</option><option value="da82x2vu" selected="">モミーズ</option></select>
         <span class="clearpos" title="配置を解除">⌖✕</span>
         <span class="rename" title="名前を変更">✎</span>
         <span class="del" data-id="wppbuce7" title="削除">✕</span>
@@ -416,6 +426,7 @@
         <input type="color" class="swatch-input" value="#ffffff" title="タップして色を変更">
         <span class="name">ホルモン男</span>
         <span class="status ok">領内</span>
+        <select class="group-select" title="一族を移動"><option value="">未分類</option><option value="da82x2vu" selected="">モミーズ</option></select>
         <span class="clearpos" title="配置を解除">⌖✕</span>
         <span class="rename" title="名前を変更">✎</span>
         <span class="del" data-id="7e9n285w" title="削除">✕</span>
@@ -423,6 +434,7 @@
         <input type="color" class="swatch-input" value="#ffffff" title="タップして色を変更">
         <span class="name">りくな</span>
         <span class="status ok">領内</span>
+        <select class="group-select" title="一族を移動"><option value="">未分類</option><option value="da82x2vu" selected="">モミーズ</option></select>
         <span class="clearpos" title="配置を解除">⌖✕</span>
         <span class="rename" title="名前を変更">✎</span>
         <span class="del" data-id="ugs4zcvm" title="削除">✕</span>
@@ -430,6 +442,7 @@
         <input type="color" class="swatch-input" value="#ffffff" title="タップして色を変更">
         <span class="name">とみ</span>
         <span class="status ok">領内</span>
+        <select class="group-select" title="一族を移動"><option value="">未分類</option><option value="da82x2vu" selected="">モミーズ</option></select>
         <span class="clearpos" title="配置を解除">⌖✕</span>
         <span class="rename" title="名前を変更">✎</span>
         <span class="del" data-id="w7er63b8" title="削除">✕</span>
@@ -437,6 +450,7 @@
         <input type="color" class="swatch-input" value="#ffffff" title="タップして色を変更">
         <span class="name">どらみ</span>
         <span class="status ok">領内</span>
+        <select class="group-select" title="一族を移動"><option value="">未分類</option><option value="da82x2vu" selected="">モミーズ</option></select>
         <span class="clearpos" title="配置を解除">⌖✕</span>
         <span class="rename" title="名前を変更">✎</span>
         <span class="del" data-id="3jnkclf9" title="削除">✕</span>
@@ -444,6 +458,7 @@
         <input type="color" class="swatch-input" value="#ffffff" title="タップして色を変更">
         <span class="name">瀧</span>
         <span class="status ok">領内</span>
+        <select class="group-select" title="一族を移動"><option value="">未分類</option><option value="da82x2vu" selected="">モミーズ</option></select>
         <span class="clearpos" title="配置を解除">⌖✕</span>
         <span class="rename" title="名前を変更">✎</span>
         <span class="del" data-id="c6t48y9p" title="削除">✕</span>
@@ -451,13 +466,15 @@
         <input type="color" class="swatch-input" value="#ffffff" title="タップして色を変更">
         <span class="name">あいにゃん</span>
         <span class="status ok">領内</span>
+        <select class="group-select" title="一族を移動"><option value="">未分類</option><option value="da82x2vu" selected="">モミーズ</option></select>
         <span class="clearpos" title="配置を解除">⌖✕</span>
         <span class="rename" title="名前を変更">✎</span>
         <span class="del" data-id="yqcasrlz" title="削除">✕</span>
       </div><div class="member-row">
         <input type="color" class="swatch-input" value="#ffffff" title="タップして色を変更">
-        <span class="name">臥龍</span>
+        <span class="name">q臥龍p</span>
         <span class="status ok">領内</span>
+        <select class="group-select" title="一族を移動"><option value="">未分類</option><option value="da82x2vu" selected="">モミーズ</option></select>
         <span class="clearpos" title="配置を解除">⌖✕</span>
         <span class="rename" title="名前を変更">✎</span>
         <span class="del" data-id="ttci1nf0" title="削除">✕</span>
@@ -465,13 +482,15 @@
         <input type="color" class="swatch-input" value="#ffffff" title="タップして色を変更">
         <span class="name">パグ</span>
         <span class="status ok">領内</span>
+        <select class="group-select" title="一族を移動"><option value="">未分類</option><option value="da82x2vu" selected="">モミーズ</option></select>
         <span class="clearpos" title="配置を解除">⌖✕</span>
         <span class="rename" title="名前を変更">✎</span>
         <span class="del" data-id="vnt9pv02" title="削除">✕</span>
       </div><div class="member-row">
         <input type="color" class="swatch-input" value="#ffffff" title="タップして色を変更">
-        <span class="name">マヨ</span>
+        <span class="name">網野真夜助</span>
         <span class="status ok">領内</span>
+        <select class="group-select" title="一族を移動"><option value="">未分類</option><option value="da82x2vu" selected="">モミーズ</option></select>
         <span class="clearpos" title="配置を解除">⌖✕</span>
         <span class="rename" title="名前を変更">✎</span>
         <span class="del" data-id="je7225jm" title="削除">✕</span>
@@ -479,13 +498,15 @@
         <input type="color" class="swatch-input" value="#ffffff" title="タップして色を変更">
         <span class="name">あんどぅ</span>
         <span class="status ok">領内</span>
+        <select class="group-select" title="一族を移動"><option value="">未分類</option><option value="da82x2vu" selected="">モミーズ</option></select>
         <span class="clearpos" title="配置を解除">⌖✕</span>
         <span class="rename" title="名前を変更">✎</span>
         <span class="del" data-id="i7njs1cb" title="削除">✕</span>
-      </div><div class="member-row">
+      </div><div class="member-row selected">
         <input type="color" class="swatch-input" value="#ffffff" title="タップして色を変更">
-        <span class="name">ぷ～</span>
+        <span class="name">qぷ～p</span>
         <span class="status ok">領内</span>
+        <select class="group-select" title="一族を移動"><option value="">未分類</option><option value="da82x2vu" selected="">モミーズ</option></select>
         <span class="clearpos" title="配置を解除">⌖✕</span>
         <span class="rename" title="名前を変更">✎</span>
         <span class="del" data-id="k0xggels" title="削除">✕</span>
@@ -493,6 +514,7 @@
         <input type="color" class="swatch-input" value="#ffffff" title="タップして色を変更">
         <span class="name">くろこぶ</span>
         <span class="status ok">領内</span>
+        <select class="group-select" title="一族を移動"><option value="">未分類</option><option value="da82x2vu" selected="">モミーズ</option></select>
         <span class="clearpos" title="配置を解除">⌖✕</span>
         <span class="rename" title="名前を変更">✎</span>
         <span class="del" data-id="dfgr0mua" title="削除">✕</span>
@@ -500,6 +522,7 @@
         <input type="color" class="swatch-input" value="#ffffff" title="タップして色を変更">
         <span class="name">ユッチ</span>
         <span class="status ok">領内</span>
+        <select class="group-select" title="一族を移動"><option value="">未分類</option><option value="da82x2vu" selected="">モミーズ</option></select>
         <span class="clearpos" title="配置を解除">⌖✕</span>
         <span class="rename" title="名前を変更">✎</span>
         <span class="del" data-id="pljqjpea" title="削除">✕</span>
@@ -507,6 +530,7 @@
         <input type="color" class="swatch-input" value="#ffffff" title="タップして色を変更">
         <span class="name">ちゅん</span>
         <span class="status none">未配置</span>
+        <select class="group-select" title="一族を移動"><option value="">未分類</option><option value="da82x2vu" selected="">モミーズ</option></select>
         
         <span class="rename" title="名前を変更">✎</span>
         <span class="del" data-id="oe1hkwgy" title="削除">✕</span>
@@ -514,6 +538,7 @@
         <input type="color" class="swatch-input" value="#ffffff" title="タップして色を変更">
         <span class="name">一瞬で灰</span>
         <span class="status ok">領内</span>
+        <select class="group-select" title="一族を移動"><option value="">未分類</option><option value="da82x2vu" selected="">モミーズ</option></select>
         <span class="clearpos" title="配置を解除">⌖✕</span>
         <span class="rename" title="名前を変更">✎</span>
         <span class="del" data-id="hfhu1fk1" title="削除">✕</span>
@@ -521,6 +546,7 @@
         <input type="color" class="swatch-input" value="#ffffff" title="タップして色を変更">
         <span class="name">摎</span>
         <span class="status ok">領内</span>
+        <select class="group-select" title="一族を移動"><option value="">未分類</option><option value="da82x2vu" selected="">モミーズ</option></select>
         <span class="clearpos" title="配置を解除">⌖✕</span>
         <span class="rename" title="名前を変更">✎</span>
         <span class="del" data-id="5u8wgf4q" title="削除">✕</span>
@@ -528,6 +554,7 @@
         <input type="color" class="swatch-input" value="#ffffff" title="タップして色を変更">
         <span class="name">ぴこ</span>
         <span class="status ok">領内</span>
+        <select class="group-select" title="一族を移動"><option value="">未分類</option><option value="da82x2vu" selected="">モミーズ</option></select>
         <span class="clearpos" title="配置を解除">⌖✕</span>
         <span class="rename" title="名前を変更">✎</span>
         <span class="del" data-id="8wqyt1bc" title="削除">✕</span>
@@ -535,6 +562,7 @@
         <input type="color" class="swatch-input" value="#ffffff" title="タップして色を変更">
         <span class="name">まるちゃ～ん</span>
         <span class="status ok">領内</span>
+        <select class="group-select" title="一族を移動"><option value="">未分類</option><option value="da82x2vu" selected="">モミーズ</option></select>
         <span class="clearpos" title="配置を解除">⌖✕</span>
         <span class="rename" title="名前を変更">✎</span>
         <span class="del" data-id="wfu8uqfn" title="削除">✕</span>
@@ -542,39 +570,43 @@
         <input type="color" class="swatch-input" value="#ffffff" title="タップして色を変更">
         <span class="name">綾野剛</span>
         <span class="status ok">領内</span>
+        <select class="group-select" title="一族を移動"><option value="">未分類</option><option value="da82x2vu" selected="">モミーズ</option></select>
         <span class="clearpos" title="配置を解除">⌖✕</span>
         <span class="rename" title="名前を変更">✎</span>
         <span class="del" data-id="mybg4ua3" title="削除">✕</span>
       </div><div class="member-row">
         <input type="color" class="swatch-input" value="#ff0000" title="タップして色を変更">
-        <span class="name">空きA</span>
+        <span class="name">空き</span>
         <span class="status ok">領内</span>
+        <select class="group-select" title="一族を移動"><option value="">未分類</option><option value="da82x2vu" selected="">モミーズ</option></select>
         <span class="clearpos" title="配置を解除">⌖✕</span>
         <span class="rename" title="名前を変更">✎</span>
         <span class="del" data-id="jkah7vm5" title="削除">✕</span>
       </div><div class="member-row">
-        <input type="color" class="swatch-input" value="#ff0000" title="タップして色を変更">
-        <span class="name">空きC</span>
+        <input type="color" class="swatch-input" value="#ffffff" title="タップして色を変更">
+        <span class="name">ちゅん</span>
         <span class="status ok">領内</span>
+        <select class="group-select" title="一族を移動"><option value="">未分類</option><option value="da82x2vu" selected="">モミーズ</option></select>
         <span class="clearpos" title="配置を解除">⌖✕</span>
         <span class="rename" title="名前を変更">✎</span>
         <span class="del" data-id="lpqiju2e" title="削除">✕</span>
-      </div><div class="member-row selected">
+      </div><div class="member-row">
         <input type="color" class="swatch-input" value="#ffffff" title="タップして色を変更">
         <span class="name">平原哲</span>
         <span class="status ok">領内</span>
+        <select class="group-select" title="一族を移動"><option value="">未分類</option><option value="da82x2vu" selected="">モミーズ</option></select>
         <span class="clearpos" title="配置を解除">⌖✕</span>
         <span class="rename" title="名前を変更">✎</span>
         <span class="del" data-id="graz2tw5" title="削除">✕</span>
-      </div></div>
+      </div></div><div class="member-group"><div class="member-group-header ungrouped"><span class="group-name">未分類</span><span class="group-toggle" title="メンバー一覧の開閉">▾</span><span class="group-count">(0)</span></div></div></div>
     </div><div class="accordion-resize-handle" title="ドラッグして表示高さを調整" aria-label="メンバーの表示高さを調整"></div></div>
 
     <div class="section accordion-section">
       <button type="button" class="accordion-toggle" aria-expanded="false">割り当て済みの土地</button><div class="accordion-content" style="height: 280px;">
       <div class="land-add">
         <div class="land-add-select-row">
-          <select id="landAddGroup"></select>
-          <select id="landAddMember"></select>
+          <select id="landAddGroup"><option value="">すべて</option><option value="da82x2vu">モミーズ</option><option value="__none__">未分類</option></select>
+          <select id="landAddMember"><option value="5icqcvh4">肥後菊池武光</option><option value="ndqa8vpm">Pマン</option><option value="wppbuce7">q巴p</option><option value="7e9n285w">ホルモン男</option><option value="ugs4zcvm">りくな</option><option value="w7er63b8">とみ</option><option value="3jnkclf9">どらみ</option><option value="c6t48y9p">瀧</option><option value="yqcasrlz">あいにゃん</option><option value="ttci1nf0">q臥龍p</option><option value="vnt9pv02">パグ</option><option value="je7225jm">網野真夜助</option><option value="i7njs1cb">あんどぅ</option><option value="k0xggels">qぷ～p</option><option value="dfgr0mua">くろこぶ</option><option value="pljqjpea">ユッチ</option><option value="oe1hkwgy">ちゅん</option><option value="hfhu1fk1">一瞬で灰</option><option value="5u8wgf4q">摎</option><option value="8wqyt1bc">ぴこ</option><option value="wfu8uqfn">まるちゃ～ん</option><option value="mybg4ua3">綾野剛</option><option value="jkah7vm5">空き</option><option value="lpqiju2e">ちゅん</option><option value="graz2tw5">平原哲</option></select>
         </div>
         <div class="coord-inputs">
           <input type="number" id="landX1" placeholder="X1">
@@ -586,13 +618,13 @@
         <button id="addLandBtn">土地を追加</button>
       </div>
       <div id="landList"><div class="land-row">
-        <span class="swatch" style="background:#fafafa"></span>
+        <span class="swatch" style="background:#ffffff"></span>
         <span class="coord">肥後菊池武光: (407,828)–(417,838)</span>
         <span class="rename" title="名前を変更">✎</span>
         <span class="del" title="削除">✕</span>
       </div><div class="land-row">
         <span class="swatch" style="background:#ffffff"></span>
-        <span class="coord">巴: (401,785)–(408,802)</span>
+        <span class="coord">q巴p: (401,785)–(408,802)</span>
         <span class="rename" title="名前を変更">✎</span>
         <span class="del" title="削除">✕</span>
       </div><div class="land-row">
@@ -602,7 +634,7 @@
         <span class="del" title="削除">✕</span>
       </div><div class="land-row">
         <span class="swatch" style="background:#ffffff"></span>
-        <span class="coord">ぷ～: (365,795)–(376,804)</span>
+        <span class="coord">qぷ～p: (365,795)–(376,804)</span>
         <span class="rename" title="名前を変更">✎</span>
         <span class="del" title="削除">✕</span>
       </div><div class="land-row">
@@ -611,7 +643,7 @@
         <span class="rename" title="名前を変更">✎</span>
         <span class="del" title="削除">✕</span>
       </div><div class="land-row">
-        <span class="swatch" style="background:#ff6beb"></span>
+        <span class="swatch" style="background:#ffffff"></span>
         <span class="coord">Pマン: (387,803)–(397,814)</span>
         <span class="rename" title="名前を変更">✎</span>
         <span class="del" title="削除">✕</span>
@@ -622,7 +654,7 @@
         <span class="del" title="削除">✕</span>
       </div><div class="land-row">
         <span class="swatch" style="background:#ffffff"></span>
-        <span class="coord">マヨ: (390,770)–(400,780)</span>
+        <span class="coord">網野真夜助: (390,770)–(400,780)</span>
         <span class="rename" title="名前を変更">✎</span>
         <span class="del" title="削除">✕</span>
       </div><div class="land-row">
@@ -647,7 +679,7 @@
         <span class="del" title="削除">✕</span>
       </div><div class="land-row">
         <span class="swatch" style="background:#ffffff"></span>
-        <span class="coord">臥龍: (403,815)–(411,827)</span>
+        <span class="coord">q臥龍p: (403,815)–(411,827)</span>
         <span class="rename" title="名前を変更">✎</span>
         <span class="del" title="削除">✕</span>
       </div><div class="land-row">
@@ -691,13 +723,13 @@
         <span class="rename" title="名前を変更">✎</span>
         <span class="del" title="削除">✕</span>
       </div><div class="land-row">
-        <span class="swatch" style="background:#ff0000"></span>
-        <span class="coord">空きA: (362,897)–(372,907)</span>
+        <span class="swatch" style="background:#ffffff"></span>
+        <span class="coord">空き: (362,897)–(372,907)</span>
         <span class="rename" title="名前を変更">✎</span>
         <span class="del" title="削除">✕</span>
       </div><div class="land-row">
-        <span class="swatch" style="background:#ff0000"></span>
-        <span class="coord">空きC: (373,908)–(383,918)</span>
+        <span class="swatch" style="background:#ffffff"></span>
+        <span class="coord">ちゅん ・ ちゅん: (373,908)–(383,918)</span>
         <span class="rename" title="名前を変更">✎</span>
         <span class="del" title="削除">✕</span>
       </div><div class="land-row">
@@ -710,7 +742,117 @@
 
     <div class="section accordion-section">
       <button type="button" class="accordion-toggle" aria-expanded="false">メモ</button><div class="accordion-content" style="height: 180px;">
-      <div id="memoList"><div style="font-size:11.5px; color:var(--text-dim); padding:2px 2px;">まだメモはありません（<b>メモ</b>モードで地図をタップして追加）</div></div>
+      <div id="memoList"><div class="land-row">
+        <span class="swatch" style="background:#c9a24b"></span>
+        <span class="coord" style="cursor:pointer" title="9/2チェックOK">(407,821) 9/2チェックOK</span>
+        <span class="rename" title="編集">✎</span>
+        <span class="del" title="削除">✕</span>
+      </div><div class="land-row">
+        <span class="swatch" style="background:#c9a24b"></span>
+        <span class="coord" style="cursor:pointer" title="9/2チェックOK">(414,825) 9/2チェックOK</span>
+        <span class="rename" title="編集">✎</span>
+        <span class="del" title="削除">✕</span>
+      </div><div class="land-row">
+        <span class="swatch" style="background:#c9a24b"></span>
+        <span class="coord" style="cursor:pointer" title="9/2チェックOK">(402,812) 9/2チェックOK</span>
+        <span class="rename" title="編集">✎</span>
+        <span class="del" title="削除">✕</span>
+      </div><div class="land-row">
+        <span class="swatch" style="background:#c9a24b"></span>
+        <span class="coord" style="cursor:pointer" title="9/2チェックOK">(416,804) 9/2チェックOK</span>
+        <span class="rename" title="編集">✎</span>
+        <span class="del" title="削除">✕</span>
+      </div><div class="land-row">
+        <span class="swatch" style="background:#c9a24b"></span>
+        <span class="coord" style="cursor:pointer" title="9/2チェックOK">(403,796) 9/2チェックOK</span>
+        <span class="rename" title="編集">✎</span>
+        <span class="del" title="削除">✕</span>
+      </div><div class="land-row">
+        <span class="swatch" style="background:#c9a24b"></span>
+        <span class="coord" style="cursor:pointer" title="9/2チェックOK">(404,776) 9/2チェックOK</span>
+        <span class="rename" title="編集">✎</span>
+        <span class="del" title="削除">✕</span>
+      </div><div class="land-row">
+        <span class="swatch" style="background:#c9a24b"></span>
+        <span class="coord" style="cursor:pointer" title="9/2チェックOK">(394,776) 9/2チェックOK</span>
+        <span class="rename" title="編集">✎</span>
+        <span class="del" title="削除">✕</span>
+      </div><div class="land-row">
+        <span class="swatch" style="background:#c9a24b"></span>
+        <span class="coord" style="cursor:pointer" title="9/2チェックOK">(383,782) 9/2チェックOK</span>
+        <span class="rename" title="編集">✎</span>
+        <span class="del" title="削除">✕</span>
+      </div><div class="land-row">
+        <span class="swatch" style="background:#c9a24b"></span>
+        <span class="coord" style="cursor:pointer" title="9/2チェックOK">(395,797) 9/2チェックOK</span>
+        <span class="rename" title="編集">✎</span>
+        <span class="del" title="削除">✕</span>
+      </div><div class="land-row">
+        <span class="swatch" style="background:#c9a24b"></span>
+        <span class="coord" style="cursor:pointer" title="9/2チェックOK">(389,807) 9/2チェックOK</span>
+        <span class="rename" title="編集">✎</span>
+        <span class="del" title="削除">✕</span>
+      </div><div class="land-row">
+        <span class="swatch" style="background:#c9a24b"></span>
+        <span class="coord" style="cursor:pointer" title="9/2チェックOK">(397,820) 9/2チェックOK</span>
+        <span class="rename" title="編集">✎</span>
+        <span class="del" title="削除">✕</span>
+      </div><div class="land-row">
+        <span class="swatch" style="background:#c9a24b"></span>
+        <span class="coord" style="cursor:pointer" title="9/2チェックOK">(382,806) 9/2チェックOK</span>
+        <span class="rename" title="編集">✎</span>
+        <span class="del" title="削除">✕</span>
+      </div><div class="land-row">
+        <span class="swatch" style="background:#c9a24b"></span>
+        <span class="coord" style="cursor:pointer" title="9/2チェックOK">(367,813) 9/2チェックOK</span>
+        <span class="rename" title="編集">✎</span>
+        <span class="del" title="削除">✕</span>
+      </div><div class="land-row">
+        <span class="swatch" style="background:#c9a24b"></span>
+        <span class="coord" style="cursor:pointer" title="9/2チェックOK">(371,798) 9/2チェックOK</span>
+        <span class="rename" title="編集">✎</span>
+        <span class="del" title="削除">✕</span>
+      </div><div class="land-row">
+        <span class="swatch" style="background:#c9a24b"></span>
+        <span class="coord" style="cursor:pointer" title="9/2チェックOK">(413,831) 9/2チェックOK</span>
+        <span class="rename" title="編集">✎</span>
+        <span class="del" title="削除">✕</span>
+      </div><div class="land-row">
+        <span class="swatch" style="background:#c9a24b"></span>
+        <span class="coord" style="cursor:pointer" title="9/2チェックOK">(411,920) 9/2チェックOK</span>
+        <span class="rename" title="編集">✎</span>
+        <span class="del" title="削除">✕</span>
+      </div><div class="land-row">
+        <span class="swatch" style="background:#c9a24b"></span>
+        <span class="coord" style="cursor:pointer" title="9/2チェックOK">(392,910) 9/2チェックOK</span>
+        <span class="rename" title="編集">✎</span>
+        <span class="del" title="削除">✕</span>
+      </div><div class="land-row">
+        <span class="swatch" style="background:#c9a24b"></span>
+        <span class="coord" style="cursor:pointer" title="9/2チェックOK">(368,910) 9/2チェックOK</span>
+        <span class="rename" title="編集">✎</span>
+        <span class="del" title="削除">✕</span>
+      </div><div class="land-row">
+        <span class="swatch" style="background:#c9a24b"></span>
+        <span class="coord" style="cursor:pointer" title="9/4区画確認後対応">(358,927) 9/4区画確認後対応</span>
+        <span class="rename" title="編集">✎</span>
+        <span class="del" title="削除">✕</span>
+      </div><div class="land-row">
+        <span class="swatch" style="background:#c9a24b"></span>
+        <span class="coord" style="cursor:pointer" title="9/4区画確認後対応">(358,913) 9/4区画確認後対応</span>
+        <span class="rename" title="編集">✎</span>
+        <span class="del" title="削除">✕</span>
+      </div><div class="land-row">
+        <span class="swatch" style="background:#c9a24b"></span>
+        <span class="coord" style="cursor:pointer" title="9/3チェックOK">(265,858) 9/3チェックOK</span>
+        <span class="rename" title="編集">✎</span>
+        <span class="del" title="削除">✕</span>
+      </div><div class="land-row">
+        <span class="swatch" style="background:#c9a24b"></span>
+        <span class="coord" style="cursor:pointer" title="9/3チェックOK">(303,931) 9/3チェックOK</span>
+        <span class="rename" title="編集">✎</span>
+        <span class="del" title="削除">✕</span>
+      </div></div>
     </div><div class="accordion-resize-handle" title="ドラッグして表示高さを調整" aria-label="メモの表示高さを調整"></div></div>
 
     <div class="section accordion-section">
@@ -1175,8 +1317,8 @@
       <button id="saveSnapshotBtn" class="snapshot-save-btn">名前をつけて保存</button>
       <div id="snapshotList"><div class="snapshot-row">
         <div class="info">
-          <span class="sname">保存 2026/09/02 17:56</span>
-          <span class="sdate">2026/09/02 17:56</span>
+          <span class="sname">保存 2026/09/04 15:31</span>
+          <span class="sdate">2026/09/04 15:31</span>
         </div>
         <span class="icon load" title="このスナップショットを読み込む">⇩</span>
         <span class="icon rename" title="名前を変更">✎</span>
@@ -1205,8 +1347,8 @@
 
   <div id="canvasWrap">
     <button id="sidebarToggle" title="パネルの表示/非表示">◀</button>
-    <canvas id="mapCanvas" width="1545" height="869" style="width: 1236px; height: 695.2px;" class=""></canvas>
-    <div id="hud">x: 321, y: 669</div>
+    <canvas id="mapCanvas" width="1272" height="869" style="width: 1018px; height: 695.2px;" class=""></canvas>
+    <div id="hud">x: 12, y: 310</div>
     <div id="assignBar">
       <span>この土地を割り当てる:</span>
       <select id="assignSelect"></select>
@@ -1222,7 +1364,7 @@
 </div>
 
 <!-- GitHub公開用に書き出す際、ここにスナップショット等の初期データがJSONとして埋め込まれる -->
-<script id="embedded-state" type="application/json">{"members":[{"id":"5icqcvh4","name":"肥後菊池武光","color":"#fafafa"},{"id":"ndqa8vpm","name":"Pマン","color":"#ff6beb"},{"id":"wppbuce7","name":"巴","color":"#ffffff"},{"id":"7e9n285w","name":"ホルモン男","color":"#ffffff"},{"id":"ugs4zcvm","name":"りくな","color":"#ffffff"},{"id":"w7er63b8","name":"とみ","color":"#ffffff"},{"id":"3jnkclf9","name":"どらみ","color":"#ffffff"},{"id":"c6t48y9p","name":"瀧","color":"#ffffff"},{"id":"yqcasrlz","name":"あいにゃん","color":"#ffffff"},{"id":"ttci1nf0","name":"臥龍","color":"#ffffff"},{"id":"vnt9pv02","name":"パグ","color":"#ffffff"},{"id":"je7225jm","name":"マヨ","color":"#ffffff"},{"id":"i7njs1cb","name":"あんどぅ","color":"#ffffff"},{"id":"k0xggels","name":"ぷ～","color":"#ffffff"},{"id":"dfgr0mua","name":"くろこぶ","color":"#ffffff"},{"id":"pljqjpea","name":"ユッチ","color":"#ffffff"},{"id":"oe1hkwgy","name":"ちゅん","color":"#ffffff"},{"id":"hfhu1fk1","name":"一瞬で灰","color":"#ffffff"},{"id":"5u8wgf4q","name":"摎","color":"#ffffff"},{"id":"8wqyt1bc","name":"ぴこ","color":"#ffffff"},{"id":"wfu8uqfn","name":"まるちゃ～ん","color":"#ffffff"},{"id":"mybg4ua3","name":"綾野剛","color":"#ffffff"},{"id":"jkah7vm5","name":"空きA","color":"#ff0000"},{"id":"lpqiju2e","name":"空きC","color":"#ff0000"},{"id":"graz2tw5","name":"平原哲","color":"#ffffff"}],"lands":[{"id":"78yly7s8","memberId":"5icqcvh4","x1":407,"x2":417,"y1":828,"y2":838},{"id":"bk6vr0ks","memberId":"wppbuce7","x1":401,"x2":408,"y1":785,"y2":802},{"id":"03wz2i81","memberId":"ugs4zcvm","x1":365,"x2":376,"y1":806,"y2":815},{"id":"6l804n29","memberId":"k0xggels","x1":365,"x2":376,"y1":795,"y2":804},{"id":"yv0o3pxz","memberId":"7e9n285w","x1":377,"x2":386,"y1":803,"y2":815},{"id":"tbdgwi9f","memberId":"ndqa8vpm","x1":387,"x2":397,"y1":803,"y2":814},{"id":"8yxkfn3b","memberId":"i7njs1cb","x1":376,"x2":389,"y1":779,"y2":786},{"id":"uhqa279k","memberId":"je7225jm","x1":390,"x2":400,"y1":770,"y2":780},{"id":"xua8fqtj","memberId":"w7er63b8","x1":388,"x2":400,"y1":793,"y2":802},{"id":"p9xwwb55","memberId":"vnt9pv02","x1":401,"x2":408,"y1":770,"y2":784},{"id":"ycbwn97o","memberId":"c6t48y9p","x1":409,"x2":423,"y1":801,"y2":808},{"id":"1r03rvqi","memberId":"yqcasrlz","x1":412,"x2":419,"y1":813,"y2":827},{"id":"hhaajg0x","memberId":"ttci1nf0","x1":403,"x2":411,"y1":815,"y2":827},{"id":"14germx0","memberId":"3jnkclf9","x1":398,"x2":408,"y1":803,"y2":814},{"id":"q3z7dnwk","memberId":"5u8wgf4q","x1":352,"x2":360,"y1":916,"y2":929},{"id":"rseq0cak","memberId":"hfhu1fk1","x1":355,"x2":361,"y1":897,"y2":915},{"id":"3zkgx0ku","memberId":"dfgr0mua","x1":362,"x2":372,"y1":908,"y2":918},{"id":"y5ijmy7c","memberId":"pljqjpea","x1":384,"x2":394,"y1":908,"y2":918},{"id":"5ssjylo8","memberId":"wfu8uqfn","x1":261,"x2":270,"y1":854,"y2":864},{"id":"h0x2j15d","memberId":"8wqyt1bc","x1":391,"x2":402,"y1":815,"y2":827},{"id":"nsbj5hj5","memberId":"mybg4ua3","x1":407,"x2":417,"y1":919,"y2":929},{"id":"8gdo1own","memberId":"jkah7vm5","x1":362,"x2":372,"y1":897,"y2":907},{"id":"i11298x1","memberId":"lpqiju2e","x1":373,"x2":383,"y1":908,"y2":918},{"id":"vgofh0pm","memberId":"graz2tw5","x1":298,"x2":307,"y1":924,"y2":936}],"freeformCells":{"365,805":"ugs4zcvm","366,805":"k0xggels","367,805":"k0xggels","368,805":"k0xggels","369,805":"k0xggels","370,805":"k0xggels","371,805":"k0xggels","372,805":"k0xggels","373,805":"k0xggels","374,805":"k0xggels","375,805":"k0xggels","376,805":"k0xggels","366,794":"k0xggels","367,794":"k0xggels","368,794":"k0xggels","369,794":"k0xggels","370,794":"k0xggels","371,794":"k0xggels","372,794":"k0xggels","373,794":"k0xggels","374,794":"k0xggels","375,794":"k0xggels","376,794":"k0xggels","387,815":"ndqa8vpm","388,815":"ndqa8vpm","389,815":"ndqa8vpm","390,815":"ndqa8vpm","376,778":"i7njs1cb","377,778":"i7njs1cb","378,778":"i7njs1cb","380,778":"i7njs1cb","381,778":"i7njs1cb","382,778":"i7njs1cb","383,778":"i7njs1cb","384,778":"i7njs1cb","386,778":"i7njs1cb","387,778":"i7njs1cb","388,778":"i7njs1cb","389,778":"i7njs1cb","385,778":"i7njs1cb","387,787":"i7njs1cb","387,788":"i7njs1cb","377,787":"i7njs1cb","377,788":"i7njs1cb","378,788":"i7njs1cb","379,788":"i7njs1cb","380,788":"i7njs1cb","381,788":"i7njs1cb","382,788":"i7njs1cb","383,788":"i7njs1cb","384,788":"i7njs1cb","385,788":"i7njs1cb","386,788":"i7njs1cb","386,787":"i7njs1cb","385,787":"i7njs1cb","384,787":"i7njs1cb","383,787":"i7njs1cb","382,787":"i7njs1cb","381,787":"i7njs1cb","380,787":"i7njs1cb","379,787":"i7njs1cb","378,787":"i7njs1cb","411,814":"ttci1nf0","410,814":"ttci1nf0","409,814":"ttci1nf0","361,916":"dfgr0mua","361,917":"dfgr0mua","361,918":"dfgr0mua","260,858":"wfu8uqfn","260,859":"wfu8uqfn","260,860":"wfu8uqfn","260,861":"wfu8uqfn","260,862":"wfu8uqfn","260,863":"wfu8uqfn","260,864":"wfu8uqfn","271,854":"wfu8uqfn","271,855":"wfu8uqfn","271,856":"wfu8uqfn","271,857":"wfu8uqfn","303,937":"graz2tw5","303,938":"graz2tw5","302,938":"graz2tw5","301,938":"graz2tw5","300,938":"graz2tw5","299,938":"graz2tw5","298,938":"graz2tw5","298,937":"graz2tw5","299,937":"graz2tw5","300,937":"graz2tw5","301,937":"graz2tw5","302,937":"graz2tw5","297,932":"graz2tw5","297,931":"graz2tw5"},"positions":{"5icqcvh4":{"x":411,"y":833},"wppbuce7":{"x":406,"y":792},"ugs4zcvm":{"x":372,"y":809},"k0xggels":{"x":369,"y":799},"7e9n285w":{"x":383,"y":810},"ndqa8vpm":{"x":395,"y":805},"i7njs1cb":{"x":381,"y":784},"je7225jm":{"x":397,"y":774},"w7er63b8":{"x":391,"y":797},"vnt9pv02":{"x":405,"y":779},"c6t48y9p":{"x":414,"y":805},"yqcasrlz":{"x":415,"y":820},"3jnkclf9":{"x":400,"y":809},"ttci1nf0":{"x":409,"y":825},"5u8wgf4q":{"x":356,"y":921},"hfhu1fk1":{"x":356,"y":906},"dfgr0mua":{"x":367,"y":913},"pljqjpea":{"x":389,"y":913},"wfu8uqfn":{"x":265,"y":861},"8wqyt1bc":{"x":393,"y":823},"mybg4ua3":{"x":412,"y":924},"jkah7vm5":{"x":367,"y":902},"lpqiju2e":{"x":378,"y":913},"graz2tw5":{"x":301,"y":934}},"markedCells":{"407,830":true,"407,831":true,"407,832":true,"365,806":true,"365,808":true,"365,814":true,"365,812":true,"365,811":true,"410,801":true,"411,801":true,"412,801":true,"398,770":true},"memos":[],"mountains":[{"id":"lfwteuf2","x":365,"y":794},{"id":"bkob9ysy","x":375,"y":803},{"id":"5unrsgd3","x":374,"y":804},{"id":"sburbg4f","x":374,"y":803},{"id":"ta14vc1q","x":374,"y":802},{"id":"fq2rvs6g","x":373,"y":802},{"id":"op9f16t8","x":372,"y":802},{"id":"38achscb","x":372,"y":803},{"id":"agnix850","x":372,"y":804},{"id":"idcyha2i","x":373,"y":804},{"id":"g2kpfzg5","x":373,"y":803},{"id":"6y864gdi","x":391,"y":811},{"id":"3yl1y59l","x":391,"y":810},{"id":"mf316m29","x":391,"y":809},{"id":"4eims3tl","x":390,"y":811},{"id":"q2d2el8w","x":390,"y":810},{"id":"r5oamrkd","x":392,"y":811},{"id":"nweqawrw","x":392,"y":810},{"id":"llc8e0lb","x":392,"y":809},{"id":"18wzfemh","x":392,"y":808},{"id":"3kb19xsv","x":392,"y":807},{"id":"yijrriy0","x":393,"y":810},{"id":"z450md4j","x":393,"y":809},{"id":"hu39g7ru","x":393,"y":808},{"id":"kb7jwql3","x":393,"y":807},{"id":"i2o2o5ol","x":392,"y":801},{"id":"jmhjpj7i","x":393,"y":801},{"id":"7cpodj9a","x":392,"y":800},{"id":"8e8xyw5e","x":393,"y":800},{"id":"ccvg2at4","x":393,"y":799},{"id":"jds8lsas","x":403,"y":810},{"id":"3df1nr3r","x":403,"y":809},{"id":"dvz74b6i","x":403,"y":808},{"id":"4lqspffj","x":404,"y":809},{"id":"k2qxlm09","x":404,"y":808},{"id":"nnb39jxh","x":404,"y":807},{"id":"nn6v3u1b","x":405,"y":809},{"id":"w21ct07w","x":405,"y":808},{"id":"uaucqgeu","x":409,"y":815},{"id":"qt5c223j","x":409,"y":816},{"id":"b2y38we7","x":408,"y":816},{"id":"xwuzuorr","x":408,"y":815},{"id":"0kvhf0np","x":407,"y":815},{"id":"hnra4zmb","x":406,"y":815},{"id":"yfq9mw1m","x":407,"y":816},{"id":"lqo3mnsq","x":406,"y":816},{"id":"7cqe16vw","x":405,"y":816},{"id":"qgogtzad","x":405,"y":817},{"id":"o8hszs69","x":406,"y":817},{"id":"2dbm42kc","x":407,"y":817},{"id":"oa1yqi03","x":352,"y":929},{"id":"kwrhczfw","x":352,"y":928},{"id":"8wsonbnk","x":352,"y":927},{"id":"jhs3yg8x","x":352,"y":926},{"id":"xum9kaug","x":353,"y":926},{"id":"oddllnot","x":353,"y":927},{"id":"477raqu7","x":353,"y":928},{"id":"rhafa8ui","x":353,"y":929},{"id":"bx27vjrd","x":354,"y":926},{"id":"rn1d8bbk","x":353,"y":918},{"id":"83ysx6jv","x":353,"y":919},{"id":"m7ls77fv","x":354,"y":919},{"id":"mbb4qjqz","x":354,"y":918},{"id":"ysqsp04d","x":361,"y":908},{"id":"p7lfu1th","x":360,"y":908},{"id":"m3pt9zcj","x":359,"y":908},{"id":"qf3x9wj5","x":358,"y":908},{"id":"ujgqzzok","x":357,"y":908},{"id":"anh05kgm","x":357,"y":907},{"id":"tvl7fki9","x":358,"y":907},{"id":"od4d33ch","x":359,"y":907},{"id":"vq1hl2xt","x":360,"y":907},{"id":"khp3pvrb","x":361,"y":907},{"id":"emlk14jg","x":358,"y":909},{"id":"ztss6c01","x":359,"y":909},{"id":"5cbzf8ri","x":360,"y":909},{"id":"chtct38s","x":358,"y":910},{"id":"pw5jfgk1","x":357,"y":906},{"id":"ve2t9fz1","x":358,"y":906},{"id":"jvn7m754","x":359,"y":906},{"id":"n13ftlea","x":360,"y":906},{"id":"n6cj67lm","x":359,"y":905},{"id":"l4tzl4vw","x":358,"y":905},{"id":"pxn3daj4","x":372,"y":908},{"id":"cw8ug5vm","x":372,"y":909},{"id":"fwpnh1f4","x":372,"y":910},{"id":"tn2aitxt","x":373,"y":910},{"id":"qazu55xd","x":373,"y":909},{"id":"jovsxc9a","x":373,"y":908},{"id":"clrnurvc","x":374,"y":908},{"id":"yiyacrmy","x":375,"y":908},{"id":"rjvbv48z","x":374,"y":909},{"id":"cy2eicfe","x":298,"y":925},{"id":"ys8qypzo","x":298,"y":926},{"id":"wkueapzw","x":298,"y":927},{"id":"kck4v71p","x":299,"y":924},{"id":"79xvexsb","x":299,"y":925},{"id":"tvlcuf07","x":299,"y":926},{"id":"57zztxkc","x":299,"y":927},{"id":"6gm6ya93","x":299,"y":928},{"id":"urjsnmbu","x":299,"y":929},{"id":"9zzfpzfi","x":300,"y":924},{"id":"rn0qzlnr","x":300,"y":925},{"id":"uebcatl8","x":300,"y":926},{"id":"biw9mohp","x":300,"y":927},{"id":"jyx3nr3s","x":300,"y":928},{"id":"1xqv60hv","x":300,"y":929},{"id":"hagg8htd","x":301,"y":929},{"id":"alo8o0yy","x":301,"y":928},{"id":"gko6yx9g","x":301,"y":927},{"id":"fq4sdmzw","x":301,"y":926},{"id":"zk9w827g","x":302,"y":927},{"id":"c9r90wgk","x":302,"y":928}],"selectedMemberId":null,"snapshots":[{"id":"gzozslh1","name":"保存 2026/09/02 17:56","savedAt":"2026-09-02T08:56:59.289Z","data":{"members":[{"id":"5icqcvh4","name":"肥後菊池武光","color":"#fafafa"},{"id":"ndqa8vpm","name":"Pマン","color":"#ff6beb"},{"id":"wppbuce7","name":"巴","color":"#ffffff"},{"id":"7e9n285w","name":"ホルモン男","color":"#ffffff"},{"id":"ugs4zcvm","name":"りくな","color":"#ffffff"},{"id":"w7er63b8","name":"とみ","color":"#ffffff"},{"id":"3jnkclf9","name":"どらみ","color":"#ffffff"},{"id":"c6t48y9p","name":"瀧","color":"#ffffff"},{"id":"yqcasrlz","name":"あいにゃん","color":"#ffffff"},{"id":"ttci1nf0","name":"臥龍","color":"#ffffff"},{"id":"vnt9pv02","name":"パグ","color":"#ffffff"},{"id":"je7225jm","name":"マヨ","color":"#ffffff"},{"id":"i7njs1cb","name":"あんどぅ","color":"#ffffff"},{"id":"k0xggels","name":"ぷ～","color":"#ffffff"},{"id":"dfgr0mua","name":"くろこぶ","color":"#ffffff"},{"id":"pljqjpea","name":"ユッチ","color":"#ffffff"},{"id":"oe1hkwgy","name":"ちゅん","color":"#ffffff"},{"id":"hfhu1fk1","name":"一瞬で灰","color":"#ffffff"},{"id":"5u8wgf4q","name":"摎","color":"#ffffff"},{"id":"8wqyt1bc","name":"ぴこ","color":"#ffffff"},{"id":"wfu8uqfn","name":"まるちゃ～ん","color":"#ffffff"},{"id":"mybg4ua3","name":"綾野剛","color":"#ffffff"},{"id":"jkah7vm5","name":"空きA","color":"#ff0000"},{"id":"lpqiju2e","name":"空きC","color":"#ff0000"},{"id":"graz2tw5","name":"平原哲","color":"#ffffff"}],"lands":[{"id":"78yly7s8","memberId":"5icqcvh4","x1":407,"x2":417,"y1":828,"y2":838},{"id":"bk6vr0ks","memberId":"wppbuce7","x1":401,"x2":408,"y1":785,"y2":802},{"id":"03wz2i81","memberId":"ugs4zcvm","x1":365,"x2":376,"y1":806,"y2":815},{"id":"6l804n29","memberId":"k0xggels","x1":365,"x2":376,"y1":795,"y2":804},{"id":"yv0o3pxz","memberId":"7e9n285w","x1":377,"x2":386,"y1":803,"y2":815},{"id":"tbdgwi9f","memberId":"ndqa8vpm","x1":387,"x2":397,"y1":803,"y2":814},{"id":"8yxkfn3b","memberId":"i7njs1cb","x1":376,"x2":389,"y1":779,"y2":786},{"id":"uhqa279k","memberId":"je7225jm","x1":390,"x2":400,"y1":770,"y2":780},{"id":"xua8fqtj","memberId":"w7er63b8","x1":388,"x2":400,"y1":793,"y2":802},{"id":"p9xwwb55","memberId":"vnt9pv02","x1":401,"x2":408,"y1":770,"y2":784},{"id":"ycbwn97o","memberId":"c6t48y9p","x1":409,"x2":423,"y1":801,"y2":808},{"id":"1r03rvqi","memberId":"yqcasrlz","x1":412,"x2":419,"y1":813,"y2":827},{"id":"hhaajg0x","memberId":"ttci1nf0","x1":403,"x2":411,"y1":815,"y2":827},{"id":"14germx0","memberId":"3jnkclf9","x1":398,"x2":408,"y1":803,"y2":814},{"id":"q3z7dnwk","memberId":"5u8wgf4q","x1":352,"x2":360,"y1":916,"y2":929},{"id":"rseq0cak","memberId":"hfhu1fk1","x1":355,"x2":361,"y1":897,"y2":915},{"id":"3zkgx0ku","memberId":"dfgr0mua","x1":362,"x2":372,"y1":908,"y2":918},{"id":"y5ijmy7c","memberId":"pljqjpea","x1":384,"x2":394,"y1":908,"y2":918},{"id":"5ssjylo8","memberId":"wfu8uqfn","x1":261,"x2":270,"y1":854,"y2":864},{"id":"h0x2j15d","memberId":"8wqyt1bc","x1":391,"x2":402,"y1":815,"y2":827},{"id":"nsbj5hj5","memberId":"mybg4ua3","x1":407,"x2":417,"y1":919,"y2":929},{"id":"8gdo1own","memberId":"jkah7vm5","x1":362,"x2":372,"y1":897,"y2":907},{"id":"i11298x1","memberId":"lpqiju2e","x1":373,"x2":383,"y1":908,"y2":918},{"id":"vgofh0pm","memberId":"graz2tw5","x1":298,"x2":307,"y1":924,"y2":936}],"freeformCells":{"365,805":"ugs4zcvm","366,805":"k0xggels","367,805":"k0xggels","368,805":"k0xggels","369,805":"k0xggels","370,805":"k0xggels","371,805":"k0xggels","372,805":"k0xggels","373,805":"k0xggels","374,805":"k0xggels","375,805":"k0xggels","376,805":"k0xggels","366,794":"k0xggels","367,794":"k0xggels","368,794":"k0xggels","369,794":"k0xggels","370,794":"k0xggels","371,794":"k0xggels","372,794":"k0xggels","373,794":"k0xggels","374,794":"k0xggels","375,794":"k0xggels","376,794":"k0xggels","387,815":"ndqa8vpm","388,815":"ndqa8vpm","389,815":"ndqa8vpm","390,815":"ndqa8vpm","376,778":"i7njs1cb","377,778":"i7njs1cb","378,778":"i7njs1cb","380,778":"i7njs1cb","381,778":"i7njs1cb","382,778":"i7njs1cb","383,778":"i7njs1cb","384,778":"i7njs1cb","386,778":"i7njs1cb","387,778":"i7njs1cb","388,778":"i7njs1cb","389,778":"i7njs1cb","385,778":"i7njs1cb","387,787":"i7njs1cb","387,788":"i7njs1cb","377,787":"i7njs1cb","377,788":"i7njs1cb","378,788":"i7njs1cb","379,788":"i7njs1cb","380,788":"i7njs1cb","381,788":"i7njs1cb","382,788":"i7njs1cb","383,788":"i7njs1cb","384,788":"i7njs1cb","385,788":"i7njs1cb","386,788":"i7njs1cb","386,787":"i7njs1cb","385,787":"i7njs1cb","384,787":"i7njs1cb","383,787":"i7njs1cb","382,787":"i7njs1cb","381,787":"i7njs1cb","380,787":"i7njs1cb","379,787":"i7njs1cb","378,787":"i7njs1cb","411,814":"ttci1nf0","410,814":"ttci1nf0","409,814":"ttci1nf0","361,916":"dfgr0mua","361,917":"dfgr0mua","361,918":"dfgr0mua","260,858":"wfu8uqfn","260,859":"wfu8uqfn","260,860":"wfu8uqfn","260,861":"wfu8uqfn","260,862":"wfu8uqfn","260,863":"wfu8uqfn","260,864":"wfu8uqfn","271,854":"wfu8uqfn","271,855":"wfu8uqfn","271,856":"wfu8uqfn","271,857":"wfu8uqfn","303,937":"graz2tw5","303,938":"graz2tw5","302,938":"graz2tw5","301,938":"graz2tw5","300,938":"graz2tw5","299,938":"graz2tw5","298,938":"graz2tw5","298,937":"graz2tw5","299,937":"graz2tw5","300,937":"graz2tw5","301,937":"graz2tw5","302,937":"graz2tw5","297,932":"graz2tw5","297,931":"graz2tw5"},"positions":{"5icqcvh4":{"x":411,"y":833},"wppbuce7":{"x":406,"y":792},"ugs4zcvm":{"x":372,"y":809},"k0xggels":{"x":369,"y":799},"7e9n285w":{"x":383,"y":810},"ndqa8vpm":{"x":395,"y":805},"i7njs1cb":{"x":381,"y":784},"je7225jm":{"x":397,"y":774},"w7er63b8":{"x":391,"y":797},"vnt9pv02":{"x":405,"y":779},"c6t48y9p":{"x":414,"y":805},"yqcasrlz":{"x":415,"y":820},"3jnkclf9":{"x":400,"y":809},"ttci1nf0":{"x":409,"y":825},"5u8wgf4q":{"x":356,"y":921},"hfhu1fk1":{"x":356,"y":906},"dfgr0mua":{"x":367,"y":913},"pljqjpea":{"x":389,"y":913},"wfu8uqfn":{"x":265,"y":861},"8wqyt1bc":{"x":393,"y":823},"mybg4ua3":{"x":412,"y":924},"jkah7vm5":{"x":367,"y":902},"lpqiju2e":{"x":378,"y":913},"graz2tw5":{"x":301,"y":934}},"markedCells":{"407,830":true,"407,831":true,"407,832":true,"365,806":true,"365,808":true,"365,814":true,"365,812":true,"365,811":true,"410,801":true,"411,801":true,"412,801":true,"398,770":true},"memos":[],"mountains":[{"id":"lfwteuf2","x":365,"y":794},{"id":"bkob9ysy","x":375,"y":803},{"id":"5unrsgd3","x":374,"y":804},{"id":"sburbg4f","x":374,"y":803},{"id":"ta14vc1q","x":374,"y":802},{"id":"fq2rvs6g","x":373,"y":802},{"id":"op9f16t8","x":372,"y":802},{"id":"38achscb","x":372,"y":803},{"id":"agnix850","x":372,"y":804},{"id":"idcyha2i","x":373,"y":804},{"id":"g2kpfzg5","x":373,"y":803},{"id":"6y864gdi","x":391,"y":811},{"id":"3yl1y59l","x":391,"y":810},{"id":"mf316m29","x":391,"y":809},{"id":"4eims3tl","x":390,"y":811},{"id":"q2d2el8w","x":390,"y":810},{"id":"r5oamrkd","x":392,"y":811},{"id":"nweqawrw","x":392,"y":810},{"id":"llc8e0lb","x":392,"y":809},{"id":"18wzfemh","x":392,"y":808},{"id":"3kb19xsv","x":392,"y":807},{"id":"yijrriy0","x":393,"y":810},{"id":"z450md4j","x":393,"y":809},{"id":"hu39g7ru","x":393,"y":808},{"id":"kb7jwql3","x":393,"y":807},{"id":"i2o2o5ol","x":392,"y":801},{"id":"jmhjpj7i","x":393,"y":801},{"id":"7cpodj9a","x":392,"y":800},{"id":"8e8xyw5e","x":393,"y":800},{"id":"ccvg2at4","x":393,"y":799},{"id":"jds8lsas","x":403,"y":810},{"id":"3df1nr3r","x":403,"y":809},{"id":"dvz74b6i","x":403,"y":808},{"id":"4lqspffj","x":404,"y":809},{"id":"k2qxlm09","x":404,"y":808},{"id":"nnb39jxh","x":404,"y":807},{"id":"nn6v3u1b","x":405,"y":809},{"id":"w21ct07w","x":405,"y":808},{"id":"uaucqgeu","x":409,"y":815},{"id":"qt5c223j","x":409,"y":816},{"id":"b2y38we7","x":408,"y":816},{"id":"xwuzuorr","x":408,"y":815},{"id":"0kvhf0np","x":407,"y":815},{"id":"hnra4zmb","x":406,"y":815},{"id":"yfq9mw1m","x":407,"y":816},{"id":"lqo3mnsq","x":406,"y":816},{"id":"7cqe16vw","x":405,"y":816},{"id":"qgogtzad","x":405,"y":817},{"id":"o8hszs69","x":406,"y":817},{"id":"2dbm42kc","x":407,"y":817},{"id":"oa1yqi03","x":352,"y":929},{"id":"kwrhczfw","x":352,"y":928},{"id":"8wsonbnk","x":352,"y":927},{"id":"jhs3yg8x","x":352,"y":926},{"id":"xum9kaug","x":353,"y":926},{"id":"oddllnot","x":353,"y":927},{"id":"477raqu7","x":353,"y":928},{"id":"rhafa8ui","x":353,"y":929},{"id":"bx27vjrd","x":354,"y":926},{"id":"rn1d8bbk","x":353,"y":918},{"id":"83ysx6jv","x":353,"y":919},{"id":"m7ls77fv","x":354,"y":919},{"id":"mbb4qjqz","x":354,"y":918},{"id":"ysqsp04d","x":361,"y":908},{"id":"p7lfu1th","x":360,"y":908},{"id":"m3pt9zcj","x":359,"y":908},{"id":"qf3x9wj5","x":358,"y":908},{"id":"ujgqzzok","x":357,"y":908},{"id":"anh05kgm","x":357,"y":907},{"id":"tvl7fki9","x":358,"y":907},{"id":"od4d33ch","x":359,"y":907},{"id":"vq1hl2xt","x":360,"y":907},{"id":"khp3pvrb","x":361,"y":907},{"id":"emlk14jg","x":358,"y":909},{"id":"ztss6c01","x":359,"y":909},{"id":"5cbzf8ri","x":360,"y":909},{"id":"chtct38s","x":358,"y":910},{"id":"pw5jfgk1","x":357,"y":906},{"id":"ve2t9fz1","x":358,"y":906},{"id":"jvn7m754","x":359,"y":906},{"id":"n13ftlea","x":360,"y":906},{"id":"n6cj67lm","x":359,"y":905},{"id":"l4tzl4vw","x":358,"y":905},{"id":"pxn3daj4","x":372,"y":908},{"id":"cw8ug5vm","x":372,"y":909},{"id":"fwpnh1f4","x":372,"y":910},{"id":"tn2aitxt","x":373,"y":910},{"id":"qazu55xd","x":373,"y":909},{"id":"jovsxc9a","x":373,"y":908},{"id":"clrnurvc","x":374,"y":908},{"id":"yiyacrmy","x":375,"y":908},{"id":"rjvbv48z","x":374,"y":909},{"id":"cy2eicfe","x":298,"y":925},{"id":"ys8qypzo","x":298,"y":926},{"id":"wkueapzw","x":298,"y":927},{"id":"kck4v71p","x":299,"y":924},{"id":"79xvexsb","x":299,"y":925},{"id":"tvlcuf07","x":299,"y":926},{"id":"57zztxkc","x":299,"y":927},{"id":"6gm6ya93","x":299,"y":928},{"id":"urjsnmbu","x":299,"y":929},{"id":"9zzfpzfi","x":300,"y":924},{"id":"rn0qzlnr","x":300,"y":925},{"id":"uebcatl8","x":300,"y":926},{"id":"biw9mohp","x":300,"y":927},{"id":"jyx3nr3s","x":300,"y":928},{"id":"1xqv60hv","x":300,"y":929},{"id":"hagg8htd","x":301,"y":929},{"id":"alo8o0yy","x":301,"y":928},{"id":"gko6yx9g","x":301,"y":927},{"id":"fq4sdmzw","x":301,"y":926},{"id":"zk9w827g","x":302,"y":927},{"id":"c9r90wgk","x":302,"y":928}]}}]}</script>
+<script id="embedded-state" type="application/json">{"members":[{"id":"5icqcvh4","name":"肥後菊池武光","color":"#fafafa","groupId":"da82x2vu"},{"id":"ndqa8vpm","name":"Pマン","color":"#ff6beb","groupId":"da82x2vu"},{"id":"wppbuce7","name":"q巴p","color":"#ffffff","groupId":"da82x2vu"},{"id":"7e9n285w","name":"ホルモン男","color":"#ffffff","groupId":"da82x2vu"},{"id":"ugs4zcvm","name":"りくな","color":"#ffffff","groupId":"da82x2vu"},{"id":"w7er63b8","name":"とみ","color":"#ffffff","groupId":"da82x2vu"},{"id":"3jnkclf9","name":"どらみ","color":"#ffffff","groupId":"da82x2vu"},{"id":"c6t48y9p","name":"瀧","color":"#ffffff","groupId":"da82x2vu"},{"id":"yqcasrlz","name":"あいにゃん","color":"#ffffff","groupId":"da82x2vu"},{"id":"ttci1nf0","name":"q臥龍p","color":"#ffffff","groupId":"da82x2vu"},{"id":"vnt9pv02","name":"パグ","color":"#ffffff","groupId":"da82x2vu"},{"id":"je7225jm","name":"網野真夜助","color":"#ffffff","groupId":"da82x2vu"},{"id":"i7njs1cb","name":"あんどぅ","color":"#ffffff","groupId":"da82x2vu"},{"id":"k0xggels","name":"qぷ～p","color":"#ffffff","groupId":"da82x2vu"},{"id":"dfgr0mua","name":"くろこぶ","color":"#ffffff","groupId":"da82x2vu"},{"id":"pljqjpea","name":"ユッチ","color":"#ffffff","groupId":"da82x2vu"},{"id":"oe1hkwgy","name":"ちゅん","color":"#ffffff","groupId":"da82x2vu"},{"id":"hfhu1fk1","name":"一瞬で灰","color":"#ffffff","groupId":"da82x2vu"},{"id":"5u8wgf4q","name":"摎","color":"#ffffff","groupId":"da82x2vu"},{"id":"8wqyt1bc","name":"ぴこ","color":"#ffffff","groupId":"da82x2vu"},{"id":"wfu8uqfn","name":"まるちゃ～ん","color":"#ffffff","groupId":"da82x2vu"},{"id":"mybg4ua3","name":"綾野剛","color":"#ffffff","groupId":"da82x2vu"},{"id":"jkah7vm5","name":"空き","color":"#ff0000","groupId":"da82x2vu"},{"id":"lpqiju2e","name":"ちゅん","color":"#ffffff","groupId":"da82x2vu"},{"id":"graz2tw5","name":"平原哲","color":"#ffffff","groupId":"da82x2vu"}],"groups":[{"id":"da82x2vu","name":"モミーズ","color":"#ffffff"}],"lands":[{"id":"78yly7s8","memberId":"5icqcvh4","x1":407,"x2":417,"y1":828,"y2":838},{"id":"bk6vr0ks","memberId":"wppbuce7","x1":401,"x2":408,"y1":785,"y2":802},{"id":"03wz2i81","memberId":"ugs4zcvm","x1":365,"x2":376,"y1":806,"y2":815},{"id":"6l804n29","memberId":"k0xggels","x1":365,"x2":376,"y1":795,"y2":804},{"id":"yv0o3pxz","memberId":"7e9n285w","x1":377,"x2":386,"y1":803,"y2":815},{"id":"tbdgwi9f","memberId":"ndqa8vpm","x1":387,"x2":397,"y1":803,"y2":814},{"id":"8yxkfn3b","memberId":"i7njs1cb","x1":376,"x2":389,"y1":779,"y2":786},{"id":"uhqa279k","memberId":"je7225jm","x1":390,"x2":400,"y1":770,"y2":780},{"id":"xua8fqtj","memberId":"w7er63b8","x1":388,"x2":400,"y1":793,"y2":802},{"id":"p9xwwb55","memberId":"vnt9pv02","x1":401,"x2":408,"y1":770,"y2":784},{"id":"ycbwn97o","memberId":"c6t48y9p","x1":409,"x2":423,"y1":801,"y2":808},{"id":"1r03rvqi","memberId":"yqcasrlz","x1":412,"x2":419,"y1":813,"y2":827},{"id":"hhaajg0x","memberId":"ttci1nf0","x1":403,"x2":411,"y1":815,"y2":827},{"id":"14germx0","memberId":"3jnkclf9","x1":398,"x2":408,"y1":803,"y2":814},{"id":"q3z7dnwk","memberId":"5u8wgf4q","x1":352,"x2":360,"y1":916,"y2":929},{"id":"rseq0cak","memberId":"hfhu1fk1","x1":355,"x2":361,"y1":897,"y2":915},{"id":"3zkgx0ku","memberId":"dfgr0mua","x1":362,"x2":372,"y1":908,"y2":918},{"id":"y5ijmy7c","memberId":"pljqjpea","x1":384,"x2":394,"y1":908,"y2":918},{"id":"5ssjylo8","memberId":"wfu8uqfn","x1":261,"x2":270,"y1":854,"y2":864},{"id":"h0x2j15d","memberId":"8wqyt1bc","x1":391,"x2":402,"y1":815,"y2":827},{"id":"nsbj5hj5","memberId":"mybg4ua3","x1":407,"x2":417,"y1":919,"y2":929},{"id":"8gdo1own","memberId":"jkah7vm5","x1":362,"x2":372,"y1":897,"y2":907},{"id":"i11298x1","memberId":"lpqiju2e","x1":373,"x2":383,"y1":908,"y2":918,"name":"ちゅん"},{"id":"vgofh0pm","memberId":"graz2tw5","x1":298,"x2":307,"y1":924,"y2":936}],"freeformCells":{"365,805":"ugs4zcvm","366,805":"k0xggels","367,805":"k0xggels","368,805":"k0xggels","369,805":"k0xggels","370,805":"k0xggels","371,805":"k0xggels","372,805":"k0xggels","373,805":"k0xggels","374,805":"k0xggels","375,805":"k0xggels","376,805":"k0xggels","366,794":"k0xggels","367,794":"k0xggels","368,794":"k0xggels","369,794":"k0xggels","370,794":"k0xggels","371,794":"k0xggels","372,794":"k0xggels","373,794":"k0xggels","374,794":"k0xggels","375,794":"k0xggels","376,794":"k0xggels","387,815":"ndqa8vpm","388,815":"ndqa8vpm","389,815":"ndqa8vpm","390,815":"ndqa8vpm","376,778":"i7njs1cb","377,778":"i7njs1cb","378,778":"i7njs1cb","380,778":"i7njs1cb","381,778":"i7njs1cb","382,778":"i7njs1cb","383,778":"i7njs1cb","384,778":"i7njs1cb","386,778":"i7njs1cb","387,778":"i7njs1cb","388,778":"i7njs1cb","389,778":"i7njs1cb","385,778":"i7njs1cb","387,787":"i7njs1cb","387,788":"i7njs1cb","377,787":"i7njs1cb","377,788":"i7njs1cb","378,788":"i7njs1cb","379,788":"i7njs1cb","380,788":"i7njs1cb","381,788":"i7njs1cb","382,788":"i7njs1cb","383,788":"i7njs1cb","384,788":"i7njs1cb","385,788":"i7njs1cb","386,788":"i7njs1cb","386,787":"i7njs1cb","385,787":"i7njs1cb","384,787":"i7njs1cb","383,787":"i7njs1cb","382,787":"i7njs1cb","381,787":"i7njs1cb","380,787":"i7njs1cb","379,787":"i7njs1cb","378,787":"i7njs1cb","411,814":"ttci1nf0","410,814":"ttci1nf0","409,814":"ttci1nf0","361,916":"dfgr0mua","361,917":"dfgr0mua","361,918":"dfgr0mua","260,858":"wfu8uqfn","260,859":"wfu8uqfn","260,860":"wfu8uqfn","260,861":"wfu8uqfn","260,862":"wfu8uqfn","260,863":"wfu8uqfn","260,864":"wfu8uqfn","271,854":"wfu8uqfn","271,855":"wfu8uqfn","271,856":"wfu8uqfn","271,857":"wfu8uqfn","303,937":"graz2tw5","303,938":"graz2tw5","302,938":"graz2tw5","301,938":"graz2tw5","300,938":"graz2tw5","299,938":"graz2tw5","298,938":"graz2tw5","298,937":"graz2tw5","299,937":"graz2tw5","300,937":"graz2tw5","301,937":"graz2tw5","302,937":"graz2tw5","297,932":"graz2tw5","297,931":"graz2tw5"},"positions":{"5icqcvh4":{"x":411,"y":833},"wppbuce7":{"x":406,"y":792},"ugs4zcvm":{"x":372,"y":809},"k0xggels":{"x":369,"y":799},"7e9n285w":{"x":383,"y":810},"ndqa8vpm":{"x":395,"y":805},"i7njs1cb":{"x":381,"y":784},"je7225jm":{"x":397,"y":774},"w7er63b8":{"x":391,"y":797},"vnt9pv02":{"x":405,"y":779},"c6t48y9p":{"x":414,"y":805},"yqcasrlz":{"x":415,"y":820},"3jnkclf9":{"x":400,"y":809},"ttci1nf0":{"x":409,"y":825},"5u8wgf4q":{"x":356,"y":921},"hfhu1fk1":{"x":356,"y":906},"dfgr0mua":{"x":367,"y":913},"pljqjpea":{"x":389,"y":913},"wfu8uqfn":{"x":265,"y":861},"8wqyt1bc":{"x":393,"y":823},"mybg4ua3":{"x":412,"y":924},"jkah7vm5":{"x":367,"y":902},"lpqiju2e":{"x":378,"y":913},"graz2tw5":{"x":301,"y":934}},"markedCells":{"365,806":true,"365,808":true,"365,814":true,"365,812":true,"365,811":true,"410,801":true,"411,801":true,"412,801":true,"398,770":true,"412,816":true,"410,816":true,"408,799":true,"408,793":true,"408,789":true,"417,921":true,"417,923":true,"361,897":true,"361,900":true,"360,900":true,"360,899":true,"360,898":true,"360,897":true,"361,898":true,"361,899":true,"359,900":true,"359,899":true,"359,898":true,"359,897":true,"358,900":true,"358,899":true,"358,898":true,"358,897":true,"357,900":true,"357,899":true,"357,898":true,"357,897":true,"356,900":true,"356,899":true,"356,898":true,"356,897":true,"355,900":true,"355,899":true,"355,898":true,"355,897":true},"memos":[{"id":"gus2z3p5","x":407,"y":821,"text":"9/2チェックOK"},{"id":"pi410es1","x":414,"y":825,"text":"9/2チェックOK"},{"id":"epsq015b","x":402,"y":812,"text":"9/2チェックOK"},{"id":"lubk97m3","x":416,"y":804,"text":"9/2チェックOK"},{"id":"krslv5yw","x":403,"y":796,"text":"9/2チェックOK"},{"id":"scr4rxbd","x":404,"y":776,"text":"9/2チェックOK"},{"id":"69o7l4rz","x":394,"y":776,"text":"9/2チェックOK"},{"id":"6are244g","x":383,"y":782,"text":"9/2チェックOK"},{"id":"tquzazeb","x":395,"y":797,"text":"9/2チェックOK"},{"id":"kxg47bi8","x":389,"y":807,"text":"9/2チェックOK"},{"id":"oh9tbcz9","x":397,"y":820,"text":"9/2チェックOK"},{"id":"oeqgsvcu","x":382,"y":806,"text":"9/2チェックOK"},{"id":"o45wmfys","x":367,"y":813,"text":"9/2チェックOK"},{"id":"nl6w1idu","x":371,"y":798,"text":"9/2チェックOK"},{"id":"9wl3kqj3","x":413,"y":831,"text":"9/2チェックOK"},{"id":"eudmneig","x":411,"y":920,"text":"9/2チェックOK"},{"id":"ckpdvddg","x":392,"y":910,"text":"9/2チェックOK"},{"id":"gyivbhqb","x":368,"y":910,"text":"9/2チェックOK"},{"id":"fub50c4g","x":358,"y":927,"text":"9/4区画確認後対応"},{"id":"gihfmypw","x":358,"y":913,"text":"9/4区画確認後対応"},{"id":"lkgjpte6","x":265,"y":858,"text":"9/3チェックOK"},{"id":"1hksck8r","x":303,"y":931,"text":"9/3チェックOK"}],"mountains":[{"id":"lfwteuf2","x":365,"y":794},{"id":"bkob9ysy","x":375,"y":803},{"id":"5unrsgd3","x":374,"y":804},{"id":"sburbg4f","x":374,"y":803},{"id":"ta14vc1q","x":374,"y":802},{"id":"fq2rvs6g","x":373,"y":802},{"id":"op9f16t8","x":372,"y":802},{"id":"38achscb","x":372,"y":803},{"id":"agnix850","x":372,"y":804},{"id":"idcyha2i","x":373,"y":804},{"id":"g2kpfzg5","x":373,"y":803},{"id":"6y864gdi","x":391,"y":811},{"id":"3yl1y59l","x":391,"y":810},{"id":"mf316m29","x":391,"y":809},{"id":"4eims3tl","x":390,"y":811},{"id":"q2d2el8w","x":390,"y":810},{"id":"r5oamrkd","x":392,"y":811},{"id":"nweqawrw","x":392,"y":810},{"id":"llc8e0lb","x":392,"y":809},{"id":"18wzfemh","x":392,"y":808},{"id":"3kb19xsv","x":392,"y":807},{"id":"yijrriy0","x":393,"y":810},{"id":"z450md4j","x":393,"y":809},{"id":"hu39g7ru","x":393,"y":808},{"id":"kb7jwql3","x":393,"y":807},{"id":"i2o2o5ol","x":392,"y":801},{"id":"jmhjpj7i","x":393,"y":801},{"id":"7cpodj9a","x":392,"y":800},{"id":"8e8xyw5e","x":393,"y":800},{"id":"ccvg2at4","x":393,"y":799},{"id":"jds8lsas","x":403,"y":810},{"id":"3df1nr3r","x":403,"y":809},{"id":"dvz74b6i","x":403,"y":808},{"id":"4lqspffj","x":404,"y":809},{"id":"k2qxlm09","x":404,"y":808},{"id":"nnb39jxh","x":404,"y":807},{"id":"nn6v3u1b","x":405,"y":809},{"id":"w21ct07w","x":405,"y":808},{"id":"uaucqgeu","x":409,"y":815},{"id":"qt5c223j","x":409,"y":816},{"id":"b2y38we7","x":408,"y":816},{"id":"xwuzuorr","x":408,"y":815},{"id":"0kvhf0np","x":407,"y":815},{"id":"hnra4zmb","x":406,"y":815},{"id":"yfq9mw1m","x":407,"y":816},{"id":"lqo3mnsq","x":406,"y":816},{"id":"7cqe16vw","x":405,"y":816},{"id":"qgogtzad","x":405,"y":817},{"id":"o8hszs69","x":406,"y":817},{"id":"2dbm42kc","x":407,"y":817},{"id":"oa1yqi03","x":352,"y":929},{"id":"kwrhczfw","x":352,"y":928},{"id":"8wsonbnk","x":352,"y":927},{"id":"jhs3yg8x","x":352,"y":926},{"id":"xum9kaug","x":353,"y":926},{"id":"oddllnot","x":353,"y":927},{"id":"477raqu7","x":353,"y":928},{"id":"rhafa8ui","x":353,"y":929},{"id":"bx27vjrd","x":354,"y":926},{"id":"rn1d8bbk","x":353,"y":918},{"id":"83ysx6jv","x":353,"y":919},{"id":"m7ls77fv","x":354,"y":919},{"id":"mbb4qjqz","x":354,"y":918},{"id":"ysqsp04d","x":361,"y":908},{"id":"p7lfu1th","x":360,"y":908},{"id":"m3pt9zcj","x":359,"y":908},{"id":"qf3x9wj5","x":358,"y":908},{"id":"ujgqzzok","x":357,"y":908},{"id":"anh05kgm","x":357,"y":907},{"id":"tvl7fki9","x":358,"y":907},{"id":"od4d33ch","x":359,"y":907},{"id":"vq1hl2xt","x":360,"y":907},{"id":"khp3pvrb","x":361,"y":907},{"id":"emlk14jg","x":358,"y":909},{"id":"ztss6c01","x":359,"y":909},{"id":"5cbzf8ri","x":360,"y":909},{"id":"chtct38s","x":358,"y":910},{"id":"pw5jfgk1","x":357,"y":906},{"id":"ve2t9fz1","x":358,"y":906},{"id":"jvn7m754","x":359,"y":906},{"id":"n13ftlea","x":360,"y":906},{"id":"n6cj67lm","x":359,"y":905},{"id":"l4tzl4vw","x":358,"y":905},{"id":"pxn3daj4","x":372,"y":908},{"id":"cw8ug5vm","x":372,"y":909},{"id":"fwpnh1f4","x":372,"y":910},{"id":"tn2aitxt","x":373,"y":910},{"id":"qazu55xd","x":373,"y":909},{"id":"jovsxc9a","x":373,"y":908},{"id":"clrnurvc","x":374,"y":908},{"id":"yiyacrmy","x":375,"y":908},{"id":"rjvbv48z","x":374,"y":909},{"id":"cy2eicfe","x":298,"y":925},{"id":"ys8qypzo","x":298,"y":926},{"id":"wkueapzw","x":298,"y":927},{"id":"kck4v71p","x":299,"y":924},{"id":"79xvexsb","x":299,"y":925},{"id":"tvlcuf07","x":299,"y":926},{"id":"57zztxkc","x":299,"y":927},{"id":"6gm6ya93","x":299,"y":928},{"id":"urjsnmbu","x":299,"y":929},{"id":"9zzfpzfi","x":300,"y":924},{"id":"rn0qzlnr","x":300,"y":925},{"id":"uebcatl8","x":300,"y":926},{"id":"biw9mohp","x":300,"y":927},{"id":"jyx3nr3s","x":300,"y":928},{"id":"1xqv60hv","x":300,"y":929},{"id":"hagg8htd","x":301,"y":929},{"id":"alo8o0yy","x":301,"y":928},{"id":"gko6yx9g","x":301,"y":927},{"id":"fq4sdmzw","x":301,"y":926},{"id":"zk9w827g","x":302,"y":927},{"id":"c9r90wgk","x":302,"y":928}],"selectedMemberId":null,"snapshots":[{"id":"clqblx4g","name":"保存 2026/09/04 15:31","savedAt":"2026-09-04T06:31:56.071Z","data":{"members":[{"id":"5icqcvh4","name":"肥後菊池武光","color":"#fafafa","groupId":"da82x2vu"},{"id":"ndqa8vpm","name":"Pマン","color":"#ff6beb","groupId":"da82x2vu"},{"id":"wppbuce7","name":"巴","color":"#ffffff","groupId":"da82x2vu"},{"id":"7e9n285w","name":"ホルモン男","color":"#ffffff","groupId":"da82x2vu"},{"id":"ugs4zcvm","name":"りくな","color":"#ffffff","groupId":"da82x2vu"},{"id":"w7er63b8","name":"とみ","color":"#ffffff","groupId":"da82x2vu"},{"id":"3jnkclf9","name":"どらみ","color":"#ffffff","groupId":"da82x2vu"},{"id":"c6t48y9p","name":"瀧","color":"#ffffff","groupId":"da82x2vu"},{"id":"yqcasrlz","name":"あいにゃん","color":"#ffffff","groupId":"da82x2vu"},{"id":"ttci1nf0","name":"臥龍","color":"#ffffff","groupId":"da82x2vu"},{"id":"vnt9pv02","name":"パグ","color":"#ffffff","groupId":"da82x2vu"},{"id":"je7225jm","name":"マヨ","color":"#ffffff","groupId":"da82x2vu"},{"id":"i7njs1cb","name":"あんどぅ","color":"#ffffff","groupId":"da82x2vu"},{"id":"k0xggels","name":"ぷ～","color":"#ffffff","groupId":"da82x2vu"},{"id":"dfgr0mua","name":"くろこぶ","color":"#ffffff","groupId":"da82x2vu"},{"id":"pljqjpea","name":"ユッチ","color":"#ffffff","groupId":"da82x2vu"},{"id":"oe1hkwgy","name":"ちゅん","color":"#ffffff","groupId":"da82x2vu"},{"id":"hfhu1fk1","name":"一瞬で灰","color":"#ffffff","groupId":"da82x2vu"},{"id":"5u8wgf4q","name":"摎","color":"#ffffff","groupId":"da82x2vu"},{"id":"8wqyt1bc","name":"ぴこ","color":"#ffffff","groupId":"da82x2vu"},{"id":"wfu8uqfn","name":"まるちゃ～ん","color":"#ffffff","groupId":"da82x2vu"},{"id":"mybg4ua3","name":"綾野剛","color":"#ffffff","groupId":"da82x2vu"},{"id":"jkah7vm5","name":"空き","color":"#ff0000","groupId":"da82x2vu"},{"id":"lpqiju2e","name":"ちゅん","color":"#ffffff","groupId":"da82x2vu"},{"id":"graz2tw5","name":"平原哲","color":"#ffffff","groupId":"da82x2vu"}],"groups":[{"id":"da82x2vu","name":"モミーズ","color":"#ffffff"}],"lands":[{"id":"78yly7s8","memberId":"5icqcvh4","x1":407,"x2":417,"y1":828,"y2":838},{"id":"bk6vr0ks","memberId":"wppbuce7","x1":401,"x2":408,"y1":785,"y2":802},{"id":"03wz2i81","memberId":"ugs4zcvm","x1":365,"x2":376,"y1":806,"y2":815},{"id":"6l804n29","memberId":"k0xggels","x1":365,"x2":376,"y1":795,"y2":804},{"id":"yv0o3pxz","memberId":"7e9n285w","x1":377,"x2":386,"y1":803,"y2":815},{"id":"tbdgwi9f","memberId":"ndqa8vpm","x1":387,"x2":397,"y1":803,"y2":814},{"id":"8yxkfn3b","memberId":"i7njs1cb","x1":376,"x2":389,"y1":779,"y2":786},{"id":"uhqa279k","memberId":"je7225jm","x1":390,"x2":400,"y1":770,"y2":780},{"id":"xua8fqtj","memberId":"w7er63b8","x1":388,"x2":400,"y1":793,"y2":802},{"id":"p9xwwb55","memberId":"vnt9pv02","x1":401,"x2":408,"y1":770,"y2":784},{"id":"ycbwn97o","memberId":"c6t48y9p","x1":409,"x2":423,"y1":801,"y2":808},{"id":"1r03rvqi","memberId":"yqcasrlz","x1":412,"x2":419,"y1":813,"y2":827},{"id":"hhaajg0x","memberId":"ttci1nf0","x1":403,"x2":411,"y1":815,"y2":827},{"id":"14germx0","memberId":"3jnkclf9","x1":398,"x2":408,"y1":803,"y2":814},{"id":"q3z7dnwk","memberId":"5u8wgf4q","x1":352,"x2":360,"y1":916,"y2":929},{"id":"rseq0cak","memberId":"hfhu1fk1","x1":355,"x2":361,"y1":897,"y2":915},{"id":"3zkgx0ku","memberId":"dfgr0mua","x1":362,"x2":372,"y1":908,"y2":918},{"id":"y5ijmy7c","memberId":"pljqjpea","x1":384,"x2":394,"y1":908,"y2":918},{"id":"5ssjylo8","memberId":"wfu8uqfn","x1":261,"x2":270,"y1":854,"y2":864},{"id":"h0x2j15d","memberId":"8wqyt1bc","x1":391,"x2":402,"y1":815,"y2":827},{"id":"nsbj5hj5","memberId":"mybg4ua3","x1":407,"x2":417,"y1":919,"y2":929},{"id":"8gdo1own","memberId":"jkah7vm5","x1":362,"x2":372,"y1":897,"y2":907},{"id":"i11298x1","memberId":"lpqiju2e","x1":373,"x2":383,"y1":908,"y2":918,"name":"ちゅん"},{"id":"vgofh0pm","memberId":"graz2tw5","x1":298,"x2":307,"y1":924,"y2":936}],"freeformCells":{"365,805":"ugs4zcvm","366,805":"k0xggels","367,805":"k0xggels","368,805":"k0xggels","369,805":"k0xggels","370,805":"k0xggels","371,805":"k0xggels","372,805":"k0xggels","373,805":"k0xggels","374,805":"k0xggels","375,805":"k0xggels","376,805":"k0xggels","366,794":"k0xggels","367,794":"k0xggels","368,794":"k0xggels","369,794":"k0xggels","370,794":"k0xggels","371,794":"k0xggels","372,794":"k0xggels","373,794":"k0xggels","374,794":"k0xggels","375,794":"k0xggels","376,794":"k0xggels","387,815":"ndqa8vpm","388,815":"ndqa8vpm","389,815":"ndqa8vpm","390,815":"ndqa8vpm","376,778":"i7njs1cb","377,778":"i7njs1cb","378,778":"i7njs1cb","380,778":"i7njs1cb","381,778":"i7njs1cb","382,778":"i7njs1cb","383,778":"i7njs1cb","384,778":"i7njs1cb","386,778":"i7njs1cb","387,778":"i7njs1cb","388,778":"i7njs1cb","389,778":"i7njs1cb","385,778":"i7njs1cb","387,787":"i7njs1cb","387,788":"i7njs1cb","377,787":"i7njs1cb","377,788":"i7njs1cb","378,788":"i7njs1cb","379,788":"i7njs1cb","380,788":"i7njs1cb","381,788":"i7njs1cb","382,788":"i7njs1cb","383,788":"i7njs1cb","384,788":"i7njs1cb","385,788":"i7njs1cb","386,788":"i7njs1cb","386,787":"i7njs1cb","385,787":"i7njs1cb","384,787":"i7njs1cb","383,787":"i7njs1cb","382,787":"i7njs1cb","381,787":"i7njs1cb","380,787":"i7njs1cb","379,787":"i7njs1cb","378,787":"i7njs1cb","411,814":"ttci1nf0","410,814":"ttci1nf0","409,814":"ttci1nf0","361,916":"dfgr0mua","361,917":"dfgr0mua","361,918":"dfgr0mua","260,858":"wfu8uqfn","260,859":"wfu8uqfn","260,860":"wfu8uqfn","260,861":"wfu8uqfn","260,862":"wfu8uqfn","260,863":"wfu8uqfn","260,864":"wfu8uqfn","271,854":"wfu8uqfn","271,855":"wfu8uqfn","271,856":"wfu8uqfn","271,857":"wfu8uqfn","303,937":"graz2tw5","303,938":"graz2tw5","302,938":"graz2tw5","301,938":"graz2tw5","300,938":"graz2tw5","299,938":"graz2tw5","298,938":"graz2tw5","298,937":"graz2tw5","299,937":"graz2tw5","300,937":"graz2tw5","301,937":"graz2tw5","302,937":"graz2tw5","297,932":"graz2tw5","297,931":"graz2tw5"},"positions":{"5icqcvh4":{"x":411,"y":833},"wppbuce7":{"x":406,"y":792},"ugs4zcvm":{"x":372,"y":809},"k0xggels":{"x":369,"y":799},"7e9n285w":{"x":383,"y":810},"ndqa8vpm":{"x":395,"y":805},"i7njs1cb":{"x":381,"y":784},"je7225jm":{"x":397,"y":774},"w7er63b8":{"x":391,"y":797},"vnt9pv02":{"x":405,"y":779},"c6t48y9p":{"x":414,"y":805},"yqcasrlz":{"x":415,"y":820},"3jnkclf9":{"x":400,"y":809},"ttci1nf0":{"x":409,"y":825},"5u8wgf4q":{"x":356,"y":921},"hfhu1fk1":{"x":356,"y":906},"dfgr0mua":{"x":367,"y":913},"pljqjpea":{"x":389,"y":913},"wfu8uqfn":{"x":265,"y":861},"8wqyt1bc":{"x":393,"y":823},"mybg4ua3":{"x":412,"y":924},"jkah7vm5":{"x":367,"y":902},"lpqiju2e":{"x":378,"y":913},"graz2tw5":{"x":301,"y":934}},"markedCells":{"365,806":true,"365,808":true,"365,814":true,"365,812":true,"365,811":true,"410,801":true,"411,801":true,"412,801":true,"398,770":true,"412,816":true,"410,816":true,"408,799":true,"408,793":true,"408,789":true,"417,921":true,"417,923":true,"361,897":true,"361,900":true,"360,900":true,"360,899":true,"360,898":true,"360,897":true,"361,898":true,"361,899":true,"359,900":true,"359,899":true,"359,898":true,"359,897":true,"358,900":true,"358,899":true,"358,898":true,"358,897":true,"357,900":true,"357,899":true,"357,898":true,"357,897":true,"356,900":true,"356,899":true,"356,898":true,"356,897":true,"355,900":true,"355,899":true,"355,898":true,"355,897":true},"memos":[{"id":"gus2z3p5","x":407,"y":821,"text":"9/2チェックOK"},{"id":"pi410es1","x":414,"y":825,"text":"9/2チェックOK"},{"id":"epsq015b","x":402,"y":812,"text":"9/2チェックOK"},{"id":"lubk97m3","x":416,"y":804,"text":"9/2チェックOK"},{"id":"krslv5yw","x":404,"y":793,"text":"9/2チェックOK"},{"id":"scr4rxbd","x":404,"y":776,"text":"9/2チェックOK"},{"id":"69o7l4rz","x":394,"y":776,"text":"9/2チェックOK"},{"id":"6are244g","x":383,"y":782,"text":"9/2チェックOK"},{"id":"tquzazeb","x":395,"y":797,"text":"9/2チェックOK"},{"id":"kxg47bi8","x":389,"y":807,"text":"9/2チェックOK"},{"id":"oh9tbcz9","x":397,"y":820,"text":"9/2チェックOK"},{"id":"oeqgsvcu","x":379,"y":812,"text":"9/2チェックOK"},{"id":"o45wmfys","x":369,"y":811,"text":"9/2チェックOK"},{"id":"nl6w1idu","x":371,"y":798,"text":"9/2チェックOK"},{"id":"9wl3kqj3","x":413,"y":831,"text":"9/2チェックOK"},{"id":"eudmneig","x":409,"y":927,"text":"9/2チェックOK"},{"id":"ckpdvddg","x":386,"y":916,"text":"9/2チェックOK"},{"id":"gyivbhqb","x":364,"y":916,"text":"9/2チェックOK"},{"id":"fub50c4g","x":355,"y":925,"text":"9/4区画確認後対応"},{"id":"gihfmypw","x":356,"y":911,"text":"9/4区画確認後対応"},{"id":"lkgjpte6","x":265,"y":858,"text":"9/3チェックOK"},{"id":"1hksck8r","x":303,"y":931,"text":"9/3チェックOK"}],"mountains":[{"id":"lfwteuf2","x":365,"y":794},{"id":"bkob9ysy","x":375,"y":803},{"id":"5unrsgd3","x":374,"y":804},{"id":"sburbg4f","x":374,"y":803},{"id":"ta14vc1q","x":374,"y":802},{"id":"fq2rvs6g","x":373,"y":802},{"id":"op9f16t8","x":372,"y":802},{"id":"38achscb","x":372,"y":803},{"id":"agnix850","x":372,"y":804},{"id":"idcyha2i","x":373,"y":804},{"id":"g2kpfzg5","x":373,"y":803},{"id":"6y864gdi","x":391,"y":811},{"id":"3yl1y59l","x":391,"y":810},{"id":"mf316m29","x":391,"y":809},{"id":"4eims3tl","x":390,"y":811},{"id":"q2d2el8w","x":390,"y":810},{"id":"r5oamrkd","x":392,"y":811},{"id":"nweqawrw","x":392,"y":810},{"id":"llc8e0lb","x":392,"y":809},{"id":"18wzfemh","x":392,"y":808},{"id":"3kb19xsv","x":392,"y":807},{"id":"yijrriy0","x":393,"y":810},{"id":"z450md4j","x":393,"y":809},{"id":"hu39g7ru","x":393,"y":808},{"id":"kb7jwql3","x":393,"y":807},{"id":"i2o2o5ol","x":392,"y":801},{"id":"jmhjpj7i","x":393,"y":801},{"id":"7cpodj9a","x":392,"y":800},{"id":"8e8xyw5e","x":393,"y":800},{"id":"ccvg2at4","x":393,"y":799},{"id":"jds8lsas","x":403,"y":810},{"id":"3df1nr3r","x":403,"y":809},{"id":"dvz74b6i","x":403,"y":808},{"id":"4lqspffj","x":404,"y":809},{"id":"k2qxlm09","x":404,"y":808},{"id":"nnb39jxh","x":404,"y":807},{"id":"nn6v3u1b","x":405,"y":809},{"id":"w21ct07w","x":405,"y":808},{"id":"uaucqgeu","x":409,"y":815},{"id":"qt5c223j","x":409,"y":816},{"id":"b2y38we7","x":408,"y":816},{"id":"xwuzuorr","x":408,"y":815},{"id":"0kvhf0np","x":407,"y":815},{"id":"hnra4zmb","x":406,"y":815},{"id":"yfq9mw1m","x":407,"y":816},{"id":"lqo3mnsq","x":406,"y":816},{"id":"7cqe16vw","x":405,"y":816},{"id":"qgogtzad","x":405,"y":817},{"id":"o8hszs69","x":406,"y":817},{"id":"2dbm42kc","x":407,"y":817},{"id":"oa1yqi03","x":352,"y":929},{"id":"kwrhczfw","x":352,"y":928},{"id":"8wsonbnk","x":352,"y":927},{"id":"jhs3yg8x","x":352,"y":926},{"id":"xum9kaug","x":353,"y":926},{"id":"oddllnot","x":353,"y":927},{"id":"477raqu7","x":353,"y":928},{"id":"rhafa8ui","x":353,"y":929},{"id":"bx27vjrd","x":354,"y":926},{"id":"rn1d8bbk","x":353,"y":918},{"id":"83ysx6jv","x":353,"y":919},{"id":"m7ls77fv","x":354,"y":919},{"id":"mbb4qjqz","x":354,"y":918},{"id":"ysqsp04d","x":361,"y":908},{"id":"p7lfu1th","x":360,"y":908},{"id":"m3pt9zcj","x":359,"y":908},{"id":"qf3x9wj5","x":358,"y":908},{"id":"ujgqzzok","x":357,"y":908},{"id":"anh05kgm","x":357,"y":907},{"id":"tvl7fki9","x":358,"y":907},{"id":"od4d33ch","x":359,"y":907},{"id":"vq1hl2xt","x":360,"y":907},{"id":"khp3pvrb","x":361,"y":907},{"id":"emlk14jg","x":358,"y":909},{"id":"ztss6c01","x":359,"y":909},{"id":"5cbzf8ri","x":360,"y":909},{"id":"chtct38s","x":358,"y":910},{"id":"pw5jfgk1","x":357,"y":906},{"id":"ve2t9fz1","x":358,"y":906},{"id":"jvn7m754","x":359,"y":906},{"id":"n13ftlea","x":360,"y":906},{"id":"n6cj67lm","x":359,"y":905},{"id":"l4tzl4vw","x":358,"y":905},{"id":"pxn3daj4","x":372,"y":908},{"id":"cw8ug5vm","x":372,"y":909},{"id":"fwpnh1f4","x":372,"y":910},{"id":"tn2aitxt","x":373,"y":910},{"id":"qazu55xd","x":373,"y":909},{"id":"jovsxc9a","x":373,"y":908},{"id":"clrnurvc","x":374,"y":908},{"id":"yiyacrmy","x":375,"y":908},{"id":"rjvbv48z","x":374,"y":909},{"id":"cy2eicfe","x":298,"y":925},{"id":"ys8qypzo","x":298,"y":926},{"id":"wkueapzw","x":298,"y":927},{"id":"kck4v71p","x":299,"y":924},{"id":"79xvexsb","x":299,"y":925},{"id":"tvlcuf07","x":299,"y":926},{"id":"57zztxkc","x":299,"y":927},{"id":"6gm6ya93","x":299,"y":928},{"id":"urjsnmbu","x":299,"y":929},{"id":"9zzfpzfi","x":300,"y":924},{"id":"rn0qzlnr","x":300,"y":925},{"id":"uebcatl8","x":300,"y":926},{"id":"biw9mohp","x":300,"y":927},{"id":"jyx3nr3s","x":300,"y":928},{"id":"1xqv60hv","x":300,"y":929},{"id":"hagg8htd","x":301,"y":929},{"id":"alo8o0yy","x":301,"y":928},{"id":"gko6yx9g","x":301,"y":927},{"id":"fq4sdmzw","x":301,"y":926},{"id":"zk9w827g","x":302,"y":927},{"id":"c9r90wgk","x":302,"y":928}]}}]}</script>
 
 <script>
 (function(){
@@ -3570,6 +3712,7 @@
   })();
 })();
 </script>
+
 
 
 
