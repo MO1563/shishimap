@@ -1159,6 +1159,10 @@
       <input type="file" id="importFile" accept="application/json" style="display:none;">
     </div>
     <div class="footer-actions">
+      <button id="importCsvBtn">メンバーCSV読み込み</button>
+      <input type="file" id="importCsvFile" accept=".csv,text/csv" style="display:none;">
+    </div>
+    <div class="footer-actions">
       <button id="exportGithubBtn">GitHub公開用に書き出す</button>
     </div>
   </div>
@@ -2957,13 +2961,15 @@
     URL.revokeObjectURL(url);
   };
   document.getElementById("exportCsvBtn").onclick = () => {
-    const usableCellCounts = getUsableCellCounts();
+    const groupById = {};
+    (state.groups || []).forEach(g => { groupById[g.id] = g; });
     const escapeCsv = value => `"${String(value).replace(/"/g, '""')}"`;
-    const rows = [["番号", "ハンドルネーム", "主城座標", "有効マス数"]];
-    state.members.forEach((member, index) => {
+    const rows = [["メンバー名", "所属一族名", "主城座標"]];
+    state.members.forEach(member => {
+      const groupName = member.groupId && groupById[member.groupId] ? groupById[member.groupId].name : "";
       const pos = state.positions[member.id];
       const castleCoord = pos ? `(${pos.x}, ${pos.y})` : "";
-      rows.push([index + 1, member.name, castleCoord, usableCellCounts[member.id] || 0]);
+      rows.push([member.name, groupName, castleCoord]);
     });
     const csv = "\uFEFF" + rows.map(row => row.map(escapeCsv).join(",")).join("\r\n");
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
@@ -2973,6 +2979,152 @@
     a.click();
     URL.revokeObjectURL(url);
   };
+
+  // ---------------- メンバーCSV読み込み ----------------
+  function parseCSV(text) {
+    if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+    const rows = [];
+    let row = [], field = "", inQuotes = false;
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i];
+      if (inQuotes) {
+        if (c === '"') {
+          if (text[i + 1] === '"') { field += '"'; i++; }
+          else inQuotes = false;
+        } else field += c;
+      } else {
+        if (c === '"') inQuotes = true;
+        else if (c === ',') { row.push(field); field = ""; }
+        else if (c === '\n') { row.push(field); rows.push(row); row = []; field = ""; }
+        else if (c === '\r') { /* 無視（\nとセットで処理） */ }
+        else field += c;
+      }
+    }
+    if (field.length > 0 || row.length > 0) { row.push(field); rows.push(row); }
+    return rows.filter(r => !(r.length === 1 && r[0].trim() === ""));
+  }
+
+  // "413,782" "(413, 782)" "X413,Y782" などを { x, y } に変換。空欄はnull、不正な形式はundefinedを返す
+  function parseCastleCoord(str) {
+    const s = (str || "").trim();
+    if (!s) return null;
+    const m = s.match(/(-?\d+)\D+(-?\d+)/);
+    if (!m) return undefined;
+    return { x: parseInt(m[1], 10), y: parseInt(m[2], 10) };
+  }
+
+  function importMembersCSV(text) {
+    const rows = parseCSV(text);
+    if (rows.length === 0) { alert("CSVにデータがありません。"); return; }
+
+    // ヘッダー行を判定（新フォーマット: メンバー名,所属一族名,主城座標 / 旧フォーマット: 番号,ハンドルネーム,主城座標,有効マス数）
+    let dataRows = rows;
+    let format = "new";
+    const header0 = (rows[0][0] || "").trim();
+    if (header0 === "メンバー名") { dataRows = rows.slice(1); format = "new"; }
+    else if (header0 === "番号") { dataRows = rows.slice(1); format = "old"; }
+
+    const parsed = [];
+    const errors = [];
+    dataRows.forEach((cols, i) => {
+      const rowNum = i + (dataRows.length === rows.length ? 1 : 2);
+      if (cols.every(c => c.trim() === "")) return;
+      let name, groupName, coordStr;
+      if (format === "old") {
+        name = cols[1]; groupName = ""; coordStr = cols[2];
+      } else {
+        name = cols[0]; groupName = cols[1]; coordStr = cols[2];
+      }
+      name = (name || "").trim();
+      groupName = (groupName || "").trim();
+      coordStr = (coordStr || "").trim();
+      if (!name) { errors.push(`${rowNum}行目: メンバー名が空です`); return; }
+      const pos = parseCastleCoord(coordStr);
+      if (pos === undefined) { errors.push(`${rowNum}行目: 主城座標の形式が正しくありません（例: 413,782）`); return; }
+      parsed.push({ rowNum, name, groupName, pos });
+    });
+
+    if (errors.length > 0) {
+      alert("CSVの形式に誤りがあります:\n" + errors.join("\n"));
+      return;
+    }
+    if (parsed.length === 0) {
+      alert("読み込めるデータがありませんでした。");
+      return;
+    }
+
+    // 重複チェック（メンバー名・主城座標）
+    const nameRows = {};
+    const coordRows = {};
+    parsed.forEach(p => {
+      (nameRows[p.name] = nameRows[p.name] || []).push(p.rowNum);
+      if (p.pos) {
+        const key = p.pos.x + "," + p.pos.y;
+        (coordRows[key] = coordRows[key] || []).push(p.rowNum);
+      }
+    });
+    const dupNames = Object.keys(nameRows).filter(n => nameRows[n].length > 1);
+    const dupCoords = Object.keys(coordRows).filter(c => coordRows[c].length > 1);
+    if (dupNames.length > 0 || dupCoords.length > 0) {
+      let msg = "CSVの内容に重複があるため読み込めません。";
+      if (dupNames.length > 0) {
+        msg += "\n\n重複しているメンバー名:\n" + dupNames.map(n => `「${n}」（${nameRows[n].join("行目, ")}行目）`).join("\n");
+      }
+      if (dupCoords.length > 0) {
+        msg += "\n\n重複している主城座標:\n" + dupCoords.map(c => `(${c})（${coordRows[c].join("行目, ")}行目）`).join("\n");
+      }
+      alert(msg);
+      return;
+    }
+
+    if (!confirm(`${parsed.length}件のメンバー情報を読み込みます。既存の同名メンバーは所属一族・主城座標が上書きされます。よろしいですか？`)) return;
+
+    pushHistory();
+    if (!state.groups) state.groups = [];
+    parsed.forEach(p => {
+      let groupId = null;
+      if (p.groupName) {
+        let g = state.groups.find(x => x.name === p.groupName);
+        if (!g) {
+          g = { id: uid(), name: p.groupName, color: GROUP_COLOR_PALETTE[state.groups.length % GROUP_COLOR_PALETTE.length] };
+          state.groups.push(g);
+        }
+        groupId = g.id;
+      }
+      let member = state.members.find(m => m.name === p.name);
+      if (!member) {
+        const hue = (state.members.length * 47) % 360;
+        member = { id: uid(), name: p.name, color: `hsl(${hue}, 55%, 55%)`, groupId: null };
+        state.members.push(member);
+      }
+      member.groupId = groupId;
+      if (p.pos) {
+        state.positions[member.id] = { x: p.pos.x, y: p.pos.y };
+      } else {
+        delete state.positions[member.id];
+      }
+    });
+
+    save(); renderMemberList(); renderLandList(); draw();
+    flashHint(`CSVから${parsed.length}件のメンバー情報を読み込みました`);
+  }
+
+  document.getElementById("importCsvBtn").onclick = () => document.getElementById("importCsvFile").click();
+  document.getElementById("importCsvFile").addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        importMembersCSV(String(reader.result));
+      } catch (err) {
+        alert("CSVの読み込みに失敗しました: " + err.message);
+      }
+    };
+    reader.readAsText(file, "utf-8");
+    e.target.value = "";
+  });
+
   document.getElementById("importBtn").onclick = () => document.getElementById("importFile").click();
   document.getElementById("importFile").addEventListener("change", (e) => {
     const file = e.target.files[0];
