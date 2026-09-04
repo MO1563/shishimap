@@ -76,13 +76,32 @@
 
   .clan-filter-row {
     display: flex; align-items: center; gap: 8px; margin: 0 14px 12px;
-    font-size: 11.5px; color: var(--text-dim);
+    font-size: 11.5px; color: var(--text-dim); position: relative;
   }
   .clan-filter-row label { flex-shrink: 0; white-space: nowrap; }
-  .clan-filter-row select {
-    flex: 1; min-width: 0; padding: 6px 8px; font-size: 12px;
+  #clanFilterBtn {
+    flex: 1; min-width: 0; padding: 6px 8px; font-size: 12px; text-align: left;
     background: var(--panel-2); border: 1px solid var(--line); border-radius: 5px; color: var(--text);
+    cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 6px;
   }
+  #clanFilterBtn:hover { border-color: var(--accent-2); }
+  #clanFilterBtn .label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #clanFilterBtn .arrow { flex-shrink: 0; font-size: 9px; color: var(--text-dim); }
+  #clanFilterPanel {
+    position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px; z-index: 20;
+    background: var(--panel-2); border: 1px solid var(--line); border-radius: 6px;
+    padding: 6px; max-height: 220px; overflow-y: auto;
+    box-shadow: 0 6px 18px rgba(0,0,0,.35);
+  }
+  #clanFilterPanel .clan-filter-option {
+    display: flex; align-items: center; gap: 7px; padding: 5px 6px; border-radius: 4px;
+    font-size: 12.5px; color: var(--text); cursor: pointer;
+  }
+  #clanFilterPanel .clan-filter-option:hover { background: var(--panel); }
+  #clanFilterPanel .clan-filter-option input { flex-shrink: 0; width: 14px; height: 14px; cursor: pointer; }
+  #clanFilterPanel .clan-filter-option .swatch { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  #clanFilterPanel .clan-filter-divider { border-top: 1px solid var(--line); margin: 4px 2px; }
+  #clanFilterPanel .clan-filter-empty { font-size: 11px; color: var(--text-dim); padding: 4px 6px; }
 
   #freeformToggleWrap {
     display: flex; align-items: center; gap: 6px; margin: 0 14px 12px;
@@ -351,10 +370,9 @@
     </div>
 
     <div class="clan-filter-row">
-      <label for="clanFilterSelect">地図に表示する一族</label>
-      <select id="clanFilterSelect">
-        <option value="">すべて表示</option>
-      </select>
+      <label for="clanFilterBtn">地図に表示する一族</label>
+      <button type="button" id="clanFilterBtn"><span class="label">すべて表示</span><span class="arrow">▾</span></button>
+      <div id="clanFilterPanel" style="display:none;"></div>
     </div>
 
     <label id="freeformToggleWrap" style="display:none;">
@@ -1380,14 +1398,16 @@
   let mode = "view";
   let dpr = Math.max(1, window.devicePixelRatio || 1);
 
-  // 地図に表示する一族の絞り込み（"" = すべて表示, "__none__" = 未分類のみ, それ以外は一族id）
-  const MAP_CLAN_FILTER_KEY = "shishi_land_clan_filter_v1";
-  let mapClanFilter = "";
-  try { mapClanFilter = localStorage.getItem(MAP_CLAN_FILTER_KEY) || ""; } catch (e) { mapClanFilter = ""; }
+  // 地図に表示する一族の絞り込み（空配列 = すべて表示, "__none__" = 未分類, それ以外は一族id。複数選択可）
+  const MAP_CLAN_FILTER_KEY = "shishi_land_clan_filter_v2";
+  let mapClanFilters = [];
+  try {
+    const raw = JSON.parse(localStorage.getItem(MAP_CLAN_FILTER_KEY) || "[]");
+    if (Array.isArray(raw)) mapClanFilters = raw;
+  } catch (e) { mapClanFilters = []; }
   function isMemberVisibleOnMap(m) {
-    if (!mapClanFilter) return true;
-    if (mapClanFilter === "__none__") return !m.groupId;
-    return m.groupId === mapClanFilter;
+    if (mapClanFilters.length === 0) return true;
+    return mapClanFilters.includes(m.groupId || "__none__");
   }
 
   // マップ回転: X439,Y760(北東の角)が南(画面下)に来るよう135°回転
@@ -2562,36 +2582,91 @@
     save(); renderMemberList();
   }
 
-  function renderClanFilterOptions() {
-    const sel = document.getElementById("clanFilterSelect");
-    if (!sel) return;
-    const prev = mapClanFilter;
-    sel.innerHTML = "";
-    const allOpt = document.createElement("option");
-    allOpt.value = ""; allOpt.textContent = "すべて表示";
-    sel.appendChild(allOpt);
-    (state.groups || []).forEach(g => {
-      const opt = document.createElement("option");
-      opt.value = g.id; opt.textContent = g.name;
-      sel.appendChild(opt);
-    });
-    const noneOpt = document.createElement("option");
-    noneOpt.value = "__none__"; noneOpt.textContent = "未分類のみ";
-    sel.appendChild(noneOpt);
+  function saveMapClanFilters() {
+    try { localStorage.setItem(MAP_CLAN_FILTER_KEY, JSON.stringify(mapClanFilters)); } catch (e) { /* 保存できない環境では今回の表示だけ反映 */ }
+  }
 
-    if ([...sel.options].some(o => o.value === prev)) {
-      sel.value = prev;
+  function updateClanFilterButtonLabel() {
+    const labelEl = document.querySelector("#clanFilterBtn .label");
+    if (!labelEl) return;
+    if (mapClanFilters.length === 0) {
+      labelEl.textContent = "すべて表示";
+      return;
+    }
+    const nameById = {};
+    (state.groups || []).forEach(g => { nameById[g.id] = g.name; });
+    nameById["__none__"] = "未分類";
+    const names = mapClanFilters.map(id => nameById[id]).filter(Boolean);
+    if (names.length === 0) {
+      labelEl.textContent = "すべて表示";
+    } else if (names.length <= 2) {
+      labelEl.textContent = names.join("、");
     } else {
-      mapClanFilter = "";
-      sel.value = "";
-      try { localStorage.setItem(MAP_CLAN_FILTER_KEY, mapClanFilter); } catch (e) { /* 保存できない環境では今回の表示だけ反映 */ }
+      labelEl.textContent = `${names[0]} 他${names.length - 1}件`;
     }
   }
-  document.getElementById("clanFilterSelect").addEventListener("change", (e) => {
-    mapClanFilter = e.target.value;
-    try { localStorage.setItem(MAP_CLAN_FILTER_KEY, mapClanFilter); } catch (err) { /* 保存できない環境では今回の表示だけ反映 */ }
-    draw();
-  });
+
+  function renderClanFilterOptions() {
+    const panel = document.getElementById("clanFilterPanel");
+    if (!panel) return;
+
+    // 存在しなくなった一族は選択状態から除去
+    const validIds = new Set((state.groups || []).map(g => g.id));
+    validIds.add("__none__");
+    mapClanFilters = mapClanFilters.filter(id => validIds.has(id));
+
+    panel.innerHTML = "";
+    if (!state.groups || state.groups.length === 0) {
+      panel.innerHTML = '<div class="clan-filter-empty">一族がまだありません</div>';
+      updateClanFilterButtonLabel();
+      return;
+    }
+
+    state.groups.forEach(g => {
+      const opt = document.createElement("label");
+      opt.className = "clan-filter-option";
+      opt.innerHTML = `<input type="checkbox" value="${g.id}"${mapClanFilters.includes(g.id) ? " checked" : ""}><span class="swatch" style="background:${g.color || "#8ab4d8"}"></span><span>${escapeHtml(g.name)}</span>`;
+      panel.appendChild(opt);
+    });
+    const divider = document.createElement("div");
+    divider.className = "clan-filter-divider";
+    panel.appendChild(divider);
+    const noneOpt = document.createElement("label");
+    noneOpt.className = "clan-filter-option";
+    noneOpt.innerHTML = `<input type="checkbox" value="__none__"${mapClanFilters.includes("__none__") ? " checked" : ""}><span class="swatch" style="background:#666"></span><span>未分類</span>`;
+    panel.appendChild(noneOpt);
+
+    panel.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+      cb.addEventListener("change", (e) => {
+        const val = e.target.value;
+        if (e.target.checked) {
+          if (!mapClanFilters.includes(val)) mapClanFilters.push(val);
+        } else {
+          mapClanFilters = mapClanFilters.filter(v => v !== val);
+        }
+        saveMapClanFilters();
+        updateClanFilterButtonLabel();
+        draw();
+      });
+    });
+
+    updateClanFilterButtonLabel();
+  }
+
+  {
+    const filterBtn = document.getElementById("clanFilterBtn");
+    const filterPanel = document.getElementById("clanFilterPanel");
+    filterBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const showing = filterPanel.style.display !== "none";
+      filterPanel.style.display = showing ? "none" : "block";
+    });
+    document.addEventListener("click", (e) => {
+      if (filterPanel.style.display === "none") return;
+      if (e.target === filterBtn || filterBtn.contains(e.target) || filterPanel.contains(e.target)) return;
+      filterPanel.style.display = "none";
+    });
+  }
 
   function renderMemberList() {
     const listEl = document.getElementById("memberList");
